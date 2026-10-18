@@ -42,7 +42,7 @@ OUT = ROOT / "out" / "exp05"  # caches (gitignored)
 DATA = ROOT / "reports" / "data"  # committed raw results
 PANELS = ROOT / "reports" / "figures" / "exp05_anchors"  # committed blinded panels
 LABELS = DATA / "exp05_anchor_labels.json"  # annotator's labels
-KEY = OUT / "anchor_key.json"  # hidden panel key
+KEY = OUT / "anchor_key.json"  # hidden panel key (copied to reports/data/exp05_anchor_key.json after unblinding)
 N_BOOT = 10_000  # pre-registered resamples
 log = logging.getLogger("exp05")  # stable logger name
 
@@ -163,7 +163,7 @@ def main() -> None:
         KEY.write_text(json.dumps(key, indent=1), encoding="utf-8")  # hidden until labels exist
         log.info("Wrote %d blinded panels to %s. Label them in %s, then run again.", len(key), PANELS, LABELS)
         return
-    key = json.loads(KEY.read_text(encoding="utf-8"))
+    key = json.loads((KEY if KEY.exists() else DATA / "exp05_anchor_key.json").read_text(encoding="utf-8"))  # clone: committed key
     assert [k["word_index"] for k in key] == anchors, "anchor selection changed since the panels were made"
     labelled = json.loads(LABELS.read_text(encoding="utf-8"))  # committed before this phase ran
     labels = labelled["labels"]
