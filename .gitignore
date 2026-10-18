@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Secrets: the Suno API key lives only in .env (never commit it)
+.env
+
+# Run artifacts: timestamped logs, rendered video, stills, caches
+logs/
+out/
+.pytest_cache/
+
+# Node / Remotion build artifacts
+node_modules/
+video/build/

@@ -1,0 +1,27 @@
+[project]
+name = "anthem"
+version = "0.1.0"
+description = "Suno-generated anthem + code-animated Remotion music video about ambitious interpretability and a science of deep learning"
+readme = "README.md"
+authors = [
+    { name = "BurnyCoder", email = "happymancz@email.cz" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "librosa>=1.0.0",
+    "python-dotenv>=1.2.4",
+    "soundfile>=0.14.0",
+]
+
+[project.scripts]
+anthem = "anthem:main"
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
