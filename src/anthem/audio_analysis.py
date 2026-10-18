@@ -55,9 +55,9 @@ def analyze_audio(path: Path, fps: int, hop: int = HOP) -> AudioAnalysis:
     onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop)  # spectral flux novelty curve
     tempo, beats = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr, hop_length=hop, units="time")  # DP tracker
     raw_tempo = float(np.atleast_1d(tempo)[0])  # librosa returns a 1-element array
-    # The tempogram estimate is quantized to integer frame lags (e.g. hop 512 @ 22.05 kHz: 120 BPM sits between
-    # lag 21 = 123.0 BPM and lag 22 = 117.45 BPM), so report the tracked beats' median spacing instead.
-    tempo = 60.0 / float(np.median(np.diff(beats))) if len(beats) > 1 else raw_tempo  # sub-frame accurate
+    # Both the tempogram estimate and the median beat spacing are quantized to whole frames (hop 512 @ 22.05 kHz:
+    # 120 BPM sits between lag 21 = 123.0 and lag 22 = 117.45 BPM); hop 256 halves that error (reports/exp02).
+    tempo = 60.0 / float(np.median(np.diff(beats))) if len(beats) > 1 else raw_tempo  # robust to a skipped beat
     rms = librosa.feature.rms(y=y, hop_length=hop)[0]  # frame-wise loudness
     feat_t = librosa.frames_to_time(np.arange(len(rms)), sr=sr, hop_length=hop)  # feature frame centers
     onset_t = librosa.frames_to_time(np.arange(len(onset_env)), sr=sr, hop_length=hop)  # onset frame centers
