@@ -1,0 +1,81 @@
+"""Tests for anthem.song (the song phase).
+
+Local: checks loading the song spec from content/ and the generate-or-reuse cache,
+using a fake Suno client so no credits are spent.
+Global context: this phase turns content/lyrics.txt + content/song.toml into two
+downloaded takes plus their word timings; later phases only read its cache file.
+"""
+
+import json  # read the cache file
+
+import pytest  # tmp_path fixture + raises
+
+from anthem.config import load_settings  # real Settings, rooted in tmp_path
+from anthem.song import SpecError, generate_or_load_song, load_song_spec  # units under test
+from anthem.suno_client import Track  # the normalized track type the fake returns
+
+
+def write_content(root, title="We Will Know", lyrics="[Chorus]\nWe will know"):
+    """Local: create a minimal content/ folder.  Global: mirrors the real content/ layout."""
+    content = root / "content"  # content dir under the project root
+    content.mkdir()  # fresh dir per test
+    (content / "lyrics.txt").write_text(lyrics, encoding="utf-8")  # Suno-format lyrics
+    (content / "song.toml").write_text(  # metadata in TOML (stdlib tomllib reads it)
+        f'title = "{title}"\nstyle = "epic cinematic anthem"\nnegative_tags = "lo-fi"\nvocal_gender = "m"\n',
+        encoding="utf-8")
+    return content  # path for load_song_spec
+
+
+class FakeClient:
+    """Local: stands in for SunoClient and records calls.
+    Global: lets the song phase be tested end to end without the network."""
+
+    def __init__(self):
+        self.generated = 0  # how many paid generations were requested
+
+    def credits(self):
+        return 500  # pretend balance
+
+    def generate(self, **kwargs):
+        self.generated += 1  # count paid calls
+        self.kwargs = kwargs  # keep payload for assertions
+        return "task-9"  # fake task id
+
+    def wait_for(self, task_id, poll_interval, timeout):
+        return [Track("a1", "https://cdn/a1.mp3", "https://cdn/a1.jpg", "We Will Know", "epic", 240.0),
+                Track("a2", "https://cdn/a2.mp3", None, "We Will Know", "epic", 238.0)]  # two takes
+
+    def timestamped_lyrics(self, task_id, audio_id):
+        return {"alignedWords": [{"word": "We", "success": True, "startS": 1.0, "endS": 1.3}], "hootCer": 0.2}
+
+    def download(self, url, path):
+        path.write_bytes(b"fake:" + url.encode())  # write placeholder bytes instead of fetching
+
+
+def test_load_song_spec_reads_toml_and_lyrics(tmp_path):
+    spec = load_song_spec(write_content(tmp_path))  # parse content/
+    assert spec.title == "We Will Know" and spec.style == "epic cinematic anthem"  # from song.toml
+    assert spec.lyrics == "[Chorus]\nWe will know" and spec.vocal_gender == "m"  # lyrics file verbatim
+
+
+def test_load_song_spec_enforces_documented_limits(tmp_path):
+    with pytest.raises(SpecError, match="title"):  # V6 title max 80 chars
+        load_song_spec(write_content(tmp_path, title="x" * 81))
+
+
+def test_generate_then_reuse_cache(tmp_path):
+    (tmp_path / ".env").write_text("SUNO_API_KEY=abc\n", encoding="utf-8")  # temp env
+    settings = load_settings(env_file=tmp_path / ".env", root=tmp_path)  # rooted in tmp
+    spec = load_song_spec(write_content(tmp_path))  # minimal spec
+    client = FakeClient()  # fake Suno
+    song = generate_or_load_song(settings, client, spec)  # first run: generate + download
+    assert client.generated == 1 and song.task_id == "task-9"  # exactly one paid call
+    assert client.kwargs["duration"] == 240 and client.kwargs["model"] == "V6"  # settings flow into payload
+    assert [t.id for t in song.takes] == ["a1", "a2"]  # both takes kept
+    assert song.takes[0].audio_path.read_bytes() == b"fake:https://cdn/a1.mp3"  # audio downloaded
+    assert song.takes[1].image_path is None  # missing cover tolerated
+    aligned = json.loads(song.takes[0].aligned_path.read_text(encoding="utf-8"))  # raw word timings saved
+    assert aligned["alignedWords"][0]["word"] == "We"  # stored verbatim
+    again = generate_or_load_song(settings, client, spec)  # second run
+    assert client.generated == 1 and again.task_id == "task-9"  # cache reused, no new credits spent
+    assert again.takes[0].audio_path == song.takes[0].audio_path  # same files
