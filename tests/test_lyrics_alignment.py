@@ -97,3 +97,13 @@ def test_moderately_long_mid_line_word_does_not_cascade():
     words, stats = align_words(sections, aligned)  # align + repair
     assert [w.start for w in words] == pytest.approx([54.26, 54.45, 54.77, 56.45])  # nothing moved
     assert stats["repaired"] == 0  # no repairs at all
+
+
+def test_forced_take_must_exist(tmp_path):
+    from anthem.song import Song, Take  # records
+    from anthem.take_selection import select_take  # unit under test
+    aligned = tmp_path / "a.json"  # minimal timing file
+    aligned.write_text('{"alignedWords": [], "hootCer": 0.1}', encoding="utf-8")
+    song = Song("t", [Take("abc123", tmp_path / "a.mp3", None, aligned, 1.0, None, None)])
+    with pytest.raises(ValueError, match="abc123"):  # lists the valid ids instead of a bare StopIteration
+        select_take(song, parse_lyrics("[Verse]\nhi\n"), forced_id="zzz")

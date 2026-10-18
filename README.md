@@ -59,7 +59,7 @@ uv run anthem --stage timeline --take f16f     # rebuild timeline from take 2 in
 uv run anthem --stage render --preview         # 30 s at 960x540 for a quick look
 cd video && npm run studio                     # scrub the video interactively in Remotion Studio
 cd video && node scripts/stills.mjs 2084 5419  # render specific frames to out/stills/
-uv run pytest -q                               # 32 offline tests (no credits spent)
+uv run pytest -q                               # 33 offline tests (no credits spent)
 ```
 
 Settings live in `.env`; see `.env.example`. They are `SUNO_API_KEY`, `SUNO_API_BASE_URL`, `SUNO_MODEL` (V6), `SONG_DURATION_S` (240), `SUNO_POLL_INTERVAL_S`, `SUNO_TIMEOUT_S`, `SUNO_CALLBACK_URL`, `VIDEO_FPS` (30) and `RENDER_CONCURRENCY` (8).

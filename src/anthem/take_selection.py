@@ -37,7 +37,9 @@ def select_take(song: Song, sections: list[Section], forced_id: str | None = Non
         log.info("Take %s: coverage=%.4f hootCer=%s matched=%s/%s repaired=%s", take.id, s["coverage"],
                  s["hoot_cer"], s["matched"], s["total"], s["repaired"])
     if forced_id:  # explicit user override (--take)
-        chosen = next(t for t in song.takes if t.id.startswith(forced_id))  # prefix match is enough
+        chosen = next((t for t in song.takes if t.id.startswith(forced_id)), None)  # prefix match is enough
+        if chosen is None:  # typo or a take from another generation
+            raise ValueError(f"--take {forced_id!r} matches no take; available: {[t.id for t in song.takes]}")
         log.info("Take %s forced by --take", chosen.id)
     else:  # pre-specified rule: max coverage, then min hootCer
         best = max(scores, key=lambda s: (s["coverage"], -(s["hoot_cer"] if s["hoot_cer"] is not None else 1e9)))
