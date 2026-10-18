@@ -113,4 +113,78 @@ Suno's word spans are nearly contiguous: a line-final word runs on until the nex
 
 ## Results
 
-*(appended after the run)*
+Raw output: [`data/exp05_onset_offset.json`](data/exp05_onset_offset.json) (per-word onsets of all three systems, all statistics, the decision). Labels: [`data/exp05_anchor_labels.json`](data/exp05_anchor_labels.json); hidden key: [`data/exp05_anchor_key.json`](data/exp05_anchor_key.json); panels: [`figures/exp05_anchors/`](figures/exp05_anchors/). Logs: `logs/exp05_20261018_201240.log` (run 1: references + original anchor rule), `exp05_20261018_202901.log` (panels after amendment 1), `exp05_20261018_203742.log` (comparison); not committed, `logs/` is gitignored. Script: [`scripts/validate_onset_offset.py`](../scripts/validate_onset_offset.py).
+
+**Runtime (CPU, 16 threads).** Demucs took 117 s (take 1) and 139 s (take 2). MMS_FA alignment took 51 s and 81 s: 12 020 and 11 996 emission frames, all 430 words aligned. faster-whisper took about 1 min per take.
+
+### Technical checks
+
+| Check | Take 1 | Take 2 | Criterion |
+|---|---|---|---|
+| Mix vs sum of the four stems, lag | 0 samples | 0 samples | 0 (pass) |
+| ffmpeg vs librosa decoding of the MP3, lag | 0.0 ms | – | reported |
+| Audio track of the v1.0.0 render (`out/anthem.mp4`) vs librosa decoding of the MP3 | +11.0 ms (video audio later) | – | reported, not corrected (one third of a frame) |
+| Reproduction of exp03: median Suno − Whisper over all matched words | +0.2335 s (n = 393) | +0.1646 s (n = 401) | identical to exp03 |
+
+### Primary result and the decision
+
+| Quantity (lead words, Suno = repair v2) | Take 1 (video) | Take 2 (replication) |
+|---|---|---|
+| **δ = median(Suno − MMS)** [95 % line-cluster CI] | **+0.137 s [0.125, 0.147]** | +0.061 s [0.052, 0.070] |
+| δ, word-level bootstrap CI | [0.129, 0.144] | [0.055, 0.068] |
+| δ, only words with MMS score ≥ 0.5 | +0.131 s [0.118, 0.147] (n = 200) | +0.061 s [0.051, 0.077] (n = 215) |
+| Share of words with Suno later than MMS | 96.0 % | 85.2 % |
+| Spread around δ, median \|d − δ\| | 0.046 s | 0.044 s |
+| Drift over the song, Spearman ρ(time, d) | −0.002 (p = 0.96) | −0.083 (p = 0.095) |
+| δ per section, range of the 10 section medians | 0.108 to 0.163 s | 0.027 to 0.096 s |
+| **Whisper − MMS** [line-cluster CI] | **−0.080 s [−0.100, −0.080]** (n = 374) | −0.080 s [−0.100, −0.080] (n = 380) |
+| Suno − Whisper, lead words | +0.233 s [0.219, 0.248] | +0.164 s [0.143, 0.183] |
+| Median \|Suno − MMS\| | 0.140 s [0.132, 0.144] | 0.065 s [0.058, 0.071] |
+| Median \|Whisper − MMS\| | 0.100 s [0.080, 0.100] | 0.100 s [0.080, 0.120] |
+| Random-shift control, median \|Suno + U(−1, 1) − MMS\| | 0.563 s [0.519, 0.601] | 0.543 s [0.477, 0.602] |
+| Median MMS score (mean token probability) | 0.47 | 0.50 |
+
+Both MMS and Whisper report times on a 20 ms grid, so Whisper − MMS differences are multiples of 0.02 s; this is why that CI collapses onto grid values.
+
+**Anchor check (take 1).** Of the 56 panels, 34 were labelled (18 high, 16 moderate confidence) and 22 were marked ambiguous.
+
+| System − hand-labelled onset | Median [95 % CI], all 34 usable anchors | High-confidence only, n = 18 (post hoc) |
+|---|---|---|
+| α_S: Suno (repair v2) | **+0.220 s [0.148, 0.347]** | +0.187 s [0.145, 0.320] |
+| β: MMS forced aligner | **+0.041 s [0.009, 0.105]** | +0.026 s [−0.000, 0.124] |
+| α_W: Whisper (n = 31 matched) | **−0.292 s [−0.359, −0.161]** | −0.266 s [−0.369, −0.156] |
+
+**Decision (pre-registered rule, amendment 1).**
+
+| Condition | Value | Holds |
+|---|---|---|
+| D1: CI of δ excludes 0 | [0.125, 0.147] | yes |
+| D2: \|δ\| ≥ 0.033 s | 0.137 s | yes |
+| D3: ≥ 10 usable anchors and \|β\| ≤ 0.05 s | 34 anchors, β = 0.041 s | yes |
+| D4: α_S has δ's sign and its CI excludes 0 | +0.220 s [0.148, 0.347] | yes |
+
+→ **`VIDEO_WORD_OFFSET_S = −0.137`** (basis: MMS). Under the anchor rule as originally pre-registered, only 1 anchor qualified, D3 failed, and the offset would have stayed 0 (see Amendment 1).
+
+**Hypotheses.** H_W ("Whisper is early, Suno is right") is **falsified**: the CI of δ, [0.125, 0.147], lies entirely above +0.05 s. H_S ("Suno is late") is **not falsified**: the CI does not lie below +0.10 s. But the effect is smaller than H_S predicted (0.137 vs about 0.23 s), because Whisper is also biased early by 0.08 s. The 0.23 s lag of exp03 is therefore shared: about 0.14 s is Suno being late and about 0.08 s is Whisper being early, both measured against MMS.
+
+### Post-hoc analyses (not pre-registered)
+
+- **The correction, checked on the anchors.** δ was estimated from MMS alone, so the hand-labelled anchors are an independent test of it.
+  - After shifting by −0.137 s, the median \|Suno − anchor\| fell from 0.233 s [0.177, 0.347] to 0.131 s [0.049, 0.235].
+  - 32 of 34 anchors (94 %) moved closer; one-sided Wilcoxon signed-rank p = 9 × 10⁻⁷.
+  - On the 18 high-confidence anchors it fell from 0.187 s to 0.051 s.
+  - At line starts the corrected onsets are still late by +0.083 s [0.011, 0.210]. Two things contribute: Suno is later at line starts (α_S = 0.220 s) than over all words (δ + β ≈ 0.18 s), and MMS itself is about 0.04 s late.
+- **Whisper is earliest at line starts.** Whisper − MMS is −0.08 s over all words, but Whisper − anchor is −0.29 s at line starts. This fits the known tendency of Whisper's timestamps to absorb the preceding pause into the first word after it (Bain et al., 2023).
+- **Possible label errors.** Five anchors have both Suno and MMS more than 0.3 s late (panels 19, 21, 49, 43, 2). The likeliest explanation is that the annotator picked an earlier syllable. Errors in that direction make both α_S and β look *later*, so β = 0.041 s is, if anything, an overestimate of MMS's bias. The medians are robust to five outliers out of 34.
+
+## Interpretation and decision
+
+- **What we conclude.** On take 1, Suno's word onsets are late, by 0.137 s against a forced alignment of the known lyrics on the separated voice. The lag is constant over the song (no drift, section medians 0.11–0.16 s, residual spread 0.046 s). The forced aligner agrees with hand-labelled acoustic onsets to within 0.04 s.
+- **What changed in the video.** The pre-registered rule applied a global offset of −0.137 s to every word. Section cuts follow, but they stay snapped to beats: only the bridge cut moved, from 164.502 s to the previous beat at 164.049 s. The video was re-rendered and verified (exp04's criteria; see the README for the release).
+- **What we do not conclude.**
+  - The offset is **take-specific**: take 2's lag is 0.061 s, while Whisper's bias against MMS is the same −0.08 s on both takes. So the lag lives in Suno's per-take alignment, not in a fixed pipeline delay, and −0.137 s must not be reused for another take or song without measuring it.
+  - Absolute accuracy better than about one frame is not claimed. MMS's own +0.04 s (CI 0.009–0.105 s) means the corrected karaoke is probably still about one frame late on average, and more at line starts.
+- **Remaining limitations.**
+  - The anchors were labelled by the agent from plots, not by listening.
+  - 22 of 56 panels were ambiguous.
+  - The amendment changed the anchor sample after run 1. It was made before any comparison, but it was still made after the original rule failed.
