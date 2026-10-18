@@ -2,8 +2,8 @@
 
 Local: cleans Suno's tokens (section tags and line breaks are glued onto words, e.g.
 "[Verse 1]\\nA "), sequence-aligns them to the written words with difflib, interpolates
-words Suno skipped, and repairs two artifacts seen in our real takes: mid-line words
-whose start is seconds too early ("matrix" spanning 7.7 s) and mid-line gaps.
+words Suno skipped, and repairs one artifact seen in our real takes: mid-line words whose
+start is seconds too early ("matrix" spanning 7.7 s), together with the words left behind before them.
 Global context: the resulting per-word start/end times drive the karaoke highlight
 and, via each section's first word, the scene boundaries of the video.
 Sources:
@@ -20,8 +20,8 @@ from difflib import SequenceMatcher  # stdlib sequence alignment (Ratcliff/Obers
 from anthem.lyrics import Section, all_words, normalize_word  # written words
 
 TAG_IN_TOKEN = re.compile(r"\[[^\]]*\]")  # "[Verse 1]" glued to the following word
-MAX_MID_WORD_S = 1.2  # a non-final word sung longer than this is treated as a mis-placed start
-MAX_MID_GAP_S = 0.6  # a silence longer than this inside a line is treated as a mis-placed word
+MAX_MID_WORD_S = 3.0  # a non-final word longer than this (> 6 beats at 129 BPM) has a mis-placed start (v1: 1.2)
+MAX_MID_GAP_S = 0.6  # a word this far before its repaired successor follows it (chain)
 REPAIRED_WORD_S = 0.5  # duration given to a repaired word (~a quarter note at 124 BPM is 0.48 s)
 
 
@@ -87,19 +87,23 @@ def _interpolate(spans: list[tuple[float, float] | None]) -> list[tuple[float, f
 
 
 def repair_timings(words: list[TimedWord]) -> list[TimedWord]:
-    """Local: within each line, walking backwards, pull too-early mid-line words up to their successor.
+    """Local: within each line, walking backwards: a mid-line word longer than MAX_MID_WORD_S gets its start
+    moved to just before its (trusted) end; words before it that are left behind by more than MAX_MID_GAP_S
+    follow it as a chain.
     Global: fixes Suno artifacts so a word lights up when it is sung, not seconds before.
+    v2 (reports/exp03): v1 used a 1.2 s threshold and an unconditional gap rule; the Whisper check showed it
+    shortened real sung notes ("go", 1.64 s) and the created gap cascaded lines 0.8-2.5 s late.
     Line-final words are left alone: long final words are real sustained notes ("know!" held 6 s)."""
     out = list(words)  # copy
     for i in range(len(out) - 2, -1, -1):  # backwards so chains of early words move together
         w, nxt = out[i], out[i + 1]  # this word and the following one
         if w.line_index != nxt.line_index:  # line-final word: keep sustain
             continue
-        if nxt.start - w.end > MAX_MID_GAP_S:  # silence inside a line -> word placed too early
-            dur = min(w.end - w.start, REPAIRED_WORD_S)  # keep short words short
-            out[i] = replace(w, start=nxt.start - dur, end=nxt.start, repaired=True)  # butt against successor
-        elif w.end - w.start > MAX_MID_WORD_S:  # implausibly long mid-line word -> start too early
+        if w.end - w.start > MAX_MID_WORD_S:  # implausibly long mid-line word -> start too early
             out[i] = replace(w, start=w.end - REPAIRED_WORD_S, repaired=True)  # keep its end, shorten
+        elif nxt.repaired and nxt.start - w.end > MAX_MID_GAP_S:  # successor moved later, this word left behind
+            dur = min(w.end - w.start, REPAIRED_WORD_S)  # keep short words short
+            out[i] = replace(w, start=nxt.start - dur, end=nxt.start, repaired=True)  # follow the successor
     return out
 
 

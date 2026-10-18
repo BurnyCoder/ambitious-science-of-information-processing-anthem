@@ -87,3 +87,13 @@ def test_repair_moves_too_early_mid_line_words_but_keeps_sustained_final_word():
     assert (words[0].start, words[0].end) == (pytest.approx(4.3), pytest.approx(4.5))  # "A" pulled up to it
     assert words[5].end - words[5].start == pytest.approx(5.6) and not words[5].repaired  # sustain kept
     assert stats["repaired"] == 2  # exactly the two early words
+
+
+def test_moderately_long_mid_line_word_does_not_cascade():
+    # Regression (exp03): "go" sung 1.64 s in "So we go inside!" was wrongly shortened, which created a gap that
+    # pulled the earlier words of the line 0.8-2.5 s late. Words up to 3 s mid-line are plausible sung notes and must stay put.
+    sections = parse_lyrics("[Pre-Chorus]\nSo we go inside!\n")
+    aligned = [aw("So", 54.26, 54.34), aw("we", 54.45, 54.65), aw("go", 54.77, 56.41), aw("inside!", 56.45, 57.5)]
+    words, stats = align_words(sections, aligned)  # align + repair
+    assert [w.start for w in words] == pytest.approx([54.26, 54.45, 54.77, 56.45])  # nothing moved
+    assert stats["repaired"] == 0  # no repairs at all
