@@ -21,7 +21,7 @@ from dataclasses import asdict, dataclass  # spec/take records
 from datetime import datetime, timezone  # cache timestamp
 from pathlib import Path  # file paths
 
-from anthem.config import Settings  # paths + Suno parameters
+from anthem.config import ConfigError, Settings  # paths + Suno parameters
 from anthem.suno_client import SunoError  # alignment failures are tolerated, not fatal
 
 log = logging.getLogger(__name__)  # module logger
@@ -88,7 +88,7 @@ def _cache_path(settings: Settings) -> Path:
     return settings.song_dir / "song.json"  # single cache file for the current song
 
 
-def _load_cache(settings: Settings, spec: SongSpec) -> Song | None:
+def load_cached_song(settings: Settings, spec: SongSpec) -> Song | None:
     """Local: rebuild Song from song.json if it exists.  Global: avoids re-spending credits."""
     path = _cache_path(settings)  # cache location
     if not path.exists():  # first run
@@ -109,8 +109,10 @@ def _load_cache(settings: Settings, spec: SongSpec) -> Song | None:
 def generate_or_load_song(settings: Settings, client, spec: SongSpec, regenerate: bool = False) -> Song:
     """Local: return the cached song, or generate, download and cache a new one.
     Global: phase 1 of the pipeline; `client` is a SunoClient (or a test fake)."""
-    if not regenerate and (cached := _load_cache(settings, spec)):  # cheap path
+    if not regenerate and (cached := load_cached_song(settings, spec)):  # cheap path
         return cached
+    if not settings.suno_api_key:  # only a fresh generation needs the key
+        raise ConfigError("SUNO_API_KEY is missing: copy .env.example to .env and set your sunoapi.org key")
     log.info("Remaining Suno credits before generation: %s", client.credits())  # cost visibility
     task_id = client.generate(lyrics=spec.lyrics, style=spec.style, title=spec.title, model=settings.suno_model,
                               duration=settings.song_duration_s, negative_tags=spec.negative_tags,
@@ -144,3 +146,14 @@ def generate_or_load_song(settings: Settings, client, spec: SongSpec, regenerate
         "created_utc": datetime.now(timezone.utc).isoformat(), "takes": records}, indent=2), encoding="utf-8")
     log.info("Song cached at %s", _cache_path(settings))
     return Song(task_id=task_id, takes=takes)
+
+
+def produce_song(settings: Settings, regenerate: bool = False) -> Song:
+    """Local: load content/, build the real client, generate or reuse.
+    Global: the "song" phase as called by pipeline.run()."""
+    from anthem.suno_client import SunoClient  # local import keeps tests free of real-client construction
+    spec = load_song_spec(settings.content_dir)  # hand-written lyrics + style
+    client = SunoClient(settings.suno_api_key, settings.suno_base_url)  # network boundary
+    song = generate_or_load_song(settings, client, spec, regenerate=regenerate)  # paid at most once
+    log.info("Song task %s takes: %s", song.task_id, [t.audio_path.name for t in song.takes])
+    return song
