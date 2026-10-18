@@ -20,3 +20,6 @@ out/
 # Node / Remotion build artifacts
 node_modules/
 video/build/
+
+# Duplicate of the chosen take, copied by the timeline phase
+video/public/anthem.mp3

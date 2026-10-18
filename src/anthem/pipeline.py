@@ -1,10 +1,10 @@
 """Pipeline wrapper: runs the anthem phases in order.
 
 Local: parses the CLI, sets up timestamped logging, and calls each phase as one
-clearly named function, timing each.
+clearly named imported function, timing each.
 Global context: this is the only file a user runs (`uv run anthem`); each phase lives
-in its own module and communicates through files on disk (data/song, video/public, out/),
-so any stage can be re-run alone with --stage.
+in its own module and the phases communicate through files on disk
+(data/song -> video/public -> out/), so any stage can be re-run alone with --stage.
 Sources: argparse https://docs.python.org/3/library/argparse.html
 """
 
@@ -15,12 +15,12 @@ from contextlib import contextmanager  # timing context manager
 
 from anthem.config import load_settings  # .env -> Settings
 from anthem.logging_setup import setup_logging  # timestamped terminal + file logs
-from anthem.song import generate_or_load_song, load_song_spec  # phase 1
-from anthem.suno_client import SunoClient  # network boundary
+from anthem.song import produce_song  # phase 1: Suno takes on disk
+from anthem.timeline import produce_timeline  # phase 2: video/public/timeline.json
 
 log = logging.getLogger("anthem.pipeline")  # stable name in logs
 
-STAGES = ["song"]  # ordered phases; later stages are appended as they land
+STAGES = ["song", "timeline"]  # ordered phases; later stages are appended as they land
 
 
 @contextmanager
@@ -37,21 +37,22 @@ def parse_args(argv=None) -> argparse.Namespace:
     p = argparse.ArgumentParser(prog="anthem", description="Generate the anthem song and its animated music video.")
     p.add_argument("--stage", choices=STAGES + ["all"], default="all", help="run one stage or all (default)")
     p.add_argument("--regenerate-song", action="store_true", help="pay for a new Suno generation even if cached")
+    p.add_argument("--take", default=None, help="force a take by (prefix of) its Suno audio id")
     return p.parse_args(argv)
 
 
 def run(args: argparse.Namespace) -> None:
     """Local: execute the selected stages.  Global: the end-to-end data flow of the project."""
-    settings = load_settings()  # .env in the working directory
+    settings = load_settings(require_key=False)  # key is checked only if a paid generation is needed
     log_path = setup_logging(settings.logs_dir)  # logs/run_<ts>.log
     log.info("Run log: %s | args: %s", log_path, vars(args))  # where to look afterwards
     wanted = STAGES if args.stage == "all" else [args.stage]  # stage filter
     if "song" in wanted:
         with phase("song"):
-            spec = load_song_spec(settings.content_dir)  # hand-written lyrics + style
-            client = SunoClient(settings.suno_api_key, settings.suno_base_url)  # real API
-            song = generate_or_load_song(settings, client, spec, regenerate=args.regenerate_song)  # paid at most once
-            log.info("Song task %s takes: %s", song.task_id, [t.audio_path.name for t in song.takes])
+            produce_song(settings, regenerate=args.regenerate_song)  # Suno -> data/song/
+    if "timeline" in wanted:
+        with phase("timeline"):
+            produce_timeline(settings, forced_take=args.take)  # data/song/ -> video/public/
 
 
 def main(argv=None) -> None:

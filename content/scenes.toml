@@ -1,0 +1,14 @@
+# Which visual scene plays during which song section.
+# Local: key = "<section kind> <occurrence>" (e.g. "pre-chorus 2") or just "<kind>" for every occurrence.
+# Global: read by anthem.timeline.load_scene_map(); scene ids must match video/src/scenes/index.ts.
+[scenes]
+intro = "intro"            # one token unfolds into an embedding vector; title card
+"verse 1" = "layers"       # matmul + nonlinearity stacked ad infinitum
+"pre-chorus 1" = "landscape"  # SGD descending a non-convex loss surface into a flat basin
+chorus = "chorus"          # "WE WILL KNOW" kinetic type over a circuit lighting up on beats
+"verse 2" = "ladder"       # ladder of abstraction: neurons -> ... -> drives
+"pre-chorus 2" = "manifolds"  # feature manifolds sharpening with scale
+"verse 3" = "theory"       # five pillars of a scientific theory of deep learning
+bridge = "atlas"           # star-map atlas of the mathematics
+"final chorus" = "finale"  # causal DAG + do()-interventions + Kolmogorov compression
+outro = "outro"            # back to a single token; the goal is to understand

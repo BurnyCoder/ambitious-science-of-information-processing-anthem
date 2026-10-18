@@ -1,0 +1,4280 @@
+{
+  "alignedWords": [
+    {
+      "word": "[Intro]\n\n\n(",
+      "success": true,
+      "startS": 0.0,
+      "endS": 0.01455,
+      "palign": 0
+    },
+    {
+      "word": "Ooh, ",
+      "success": true,
+      "startS": 0.016,
+      "endS": 0.02182,
+      "palign": 0
+    },
+    {
+      "word": "ooh, ",
+      "success": true,
+      "startS": 0.02327,
+      "endS": 0.02909,
+      "palign": 0
+    },
+    {
+      "word": "ooh)\n\n\n(",
+      "success": true,
+      "startS": 0.03055,
+      "endS": 0.04073,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 0.04218,
+      "endS": 0.04509,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 0.04655,
+      "endS": 0.05236,
+      "palign": 0
+    },
+    {
+      "word": "know)\n\n\n",
+      "success": true,
+      "startS": 0.05382,
+      "endS": 0.064,
+      "palign": 0
+    },
+    {
+      "word": "[Verse 1]\nA ",
+      "success": true,
+      "startS": 0.06545,
+      "endS": 0.08,
+      "palign": 0
+    },
+    {
+      "word": "matrix ",
+      "success": true,
+      "startS": 0.133,
+      "endS": 0.399,
+      "palign": 0
+    },
+    {
+      "word": "and ",
+      "success": true,
+      "startS": 0.42567,
+      "endS": 0.479,
+      "palign": 0
+    },
+    {
+      "word": "a ",
+      "success": true,
+      "startS": 0.559,
+      "endS": 0.559,
+      "palign": 0
+    },
+    {
+      "word": "bend, ",
+      "success": true,
+      "startS": 0.6585,
+      "endS": 6.17033,
+      "palign": 0
+    },
+    {
+      "word": "repeated ",
+      "success": true,
+      "startS": 6.27667,
+      "endS": 7.34,
+      "palign": 0
+    },
+    {
+      "word": "without ",
+      "success": true,
+      "startS": 7.43129,
+      "endS": 10.053,
+      "palign": 0
+    },
+    {
+      "word": "end,\n",
+      "success": true,
+      "startS": 10.15933,
+      "endS": 13.2045,
+      "palign": 0
+    },
+    {
+      "word": "A ",
+      "success": true,
+      "startS": 13.324,
+      "endS": 13.324,
+      "palign": 0
+    },
+    {
+      "word": "matrix ",
+      "success": true,
+      "startS": 13.37733,
+      "endS": 13.723,
+      "palign": 0
+    },
+    {
+      "word": "and ",
+      "success": true,
+      "startS": 13.77633,
+      "endS": 13.883,
+      "palign": 0
+    },
+    {
+      "word": "a ",
+      "success": true,
+      "startS": 14.043,
+      "endS": 14.043,
+      "palign": 0
+    },
+    {
+      "word": "bend, ",
+      "success": true,
+      "startS": 14.1425,
+      "endS": 15.23089,
+      "palign": 0
+    },
+    {
+      "word": "repeated ",
+      "success": true,
+      "startS": 15.30178,
+      "endS": 15.798,
+      "palign": 0
+    },
+    {
+      "word": "without ",
+      "success": true,
+      "startS": 15.84357,
+      "endS": 16.117,
+      "palign": 0
+    },
+    {
+      "word": "end,\n",
+      "success": true,
+      "startS": 16.22333,
+      "endS": 16.815,
+      "palign": 0
+    },
+    {
+      "word": "The ",
+      "success": true,
+      "startS": 16.875,
+      "endS": 16.995,
+      "palign": 0
+    },
+    {
+      "word": "simplest ",
+      "success": true,
+      "startS": 17.048,
+      "endS": 17.473,
+      "palign": 0
+    },
+    {
+      "word": "moves ",
+      "success": true,
+      "startS": 17.521,
+      "endS": 17.713,
+      "palign": 0
+    },
+    {
+      "word": "we ",
+      "success": true,
+      "startS": 17.8325,
+      "endS": 17.952,
+      "palign": 0
+    },
+    {
+      "word": "know, ",
+      "success": true,
+      "startS": 18.05175,
+      "endS": 18.46088,
+      "palign": 0
+    },
+    {
+      "word": "stacked ",
+      "success": true,
+      "startS": 18.49075,
+      "endS": 18.67,
+      "palign": 0
+    },
+    {
+      "word": "a ",
+      "success": true,
+      "startS": 18.83,
+      "endS": 18.91,
+      "palign": 0
+    },
+    {
+      "word": "trillion ",
+      "success": true,
+      "startS": 18.93633,
+      "endS": 19.548,
+      "palign": 0
+    },
+    {
+      "word": "high,\n",
+      "success": true,
+      "startS": 19.64775,
+      "endS": 20.3138,
+      "palign": 0
+    },
+    {
+      "word": "Linear, ",
+      "success": true,
+      "startS": 20.3616,
+      "endS": 21.0318,
+      "palign": 0
+    },
+    {
+      "word": "then ",
+      "success": true,
+      "startS": 21.0796,
+      "endS": 21.223,
+      "palign": 0
+    },
+    {
+      "word": "nonlinear, ",
+      "success": true,
+      "startS": 21.27633,
+      "endS": 22.5158,
+      "palign": 0
+    },
+    {
+      "word": "over ",
+      "success": true,
+      "startS": 22.6116,
+      "endS": 23.059,
+      "palign": 0
+    },
+    {
+      "word": "and ",
+      "success": true,
+      "startS": 23.16533,
+      "endS": 23.457,
+      "palign": 0
+    },
+    {
+      "word": "again,\n",
+      "success": true,
+      "startS": 23.5528,
+      "endS": 24.23575,
+      "palign": 0
+    },
+    {
+      "word": "And ",
+      "success": true,
+      "startS": 24.2955,
+      "endS": 24.415,
+      "palign": 0
+    },
+    {
+      "word": "out ",
+      "success": true,
+      "startS": 24.468,
+      "endS": 24.574,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 24.654,
+      "endS": 24.734,
+      "palign": 0
+    },
+    {
+      "word": "it ",
+      "success": true,
+      "startS": 24.8535,
+      "endS": 25.133,
+      "palign": 0
+    },
+    {
+      "word": "a ",
+      "success": true,
+      "startS": 25.293,
+      "endS": 25.293,
+      "palign": 0
+    },
+    {
+      "word": "mind ",
+      "success": true,
+      "startS": 25.37275,
+      "endS": 25.612,
+      "palign": 0
+    },
+    {
+      "word": "that ",
+      "success": true,
+      "startS": 25.67175,
+      "endS": 25.851,
+      "palign": 0
+    },
+    {
+      "word": "learns ",
+      "success": true,
+      "startS": 25.883,
+      "endS": 26.09,
+      "palign": 0
+    },
+    {
+      "word": "to ",
+      "success": true,
+      "startS": 26.21,
+      "endS": 26.33,
+      "palign": 0
+    },
+    {
+      "word": "answer ",
+      "success": true,
+      "startS": 26.423,
+      "endS": 26.968,
+      "palign": 0
+    },
+    {
+      "word": "why.\n",
+      "success": true,
+      "startS": 27.07433,
+      "endS": 27.823,
+      "palign": 0
+    },
+    {
+      "word": "Nobody ",
+      "success": true,
+      "startS": 27.88,
+      "endS": 28.165,
+      "palign": 0
+    },
+    {
+      "word": "wrote ",
+      "success": true,
+      "startS": 28.2288,
+      "endS": 28.484,
+      "palign": 0
+    },
+    {
+      "word": "its ",
+      "success": true,
+      "startS": 28.59033,
+      "endS": 28.883,
+      "palign": 0
+    },
+    {
+      "word": "circuits, ",
+      "success": true,
+      "startS": 28.97275,
+      "endS": 30.12557,
+      "palign": 0
+    },
+    {
+      "word": "nobody ",
+      "success": true,
+      "startS": 30.17114,
+      "endS": 30.399,
+      "palign": 0
+    },
+    {
+      "word": "drew ",
+      "success": true,
+      "startS": 30.45875,
+      "endS": 30.638,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 30.69133,
+      "endS": 30.798,
+      "palign": 0
+    },
+    {
+      "word": "plan,\n",
+      "success": true,
+      "startS": 30.89775,
+      "endS": 31.99467,
+      "palign": 0
+    },
+    {
+      "word": "Gradient ",
+      "success": true,
+      "startS": 32.07433,
+      "endS": 32.473,
+      "palign": 0
+    },
+    {
+      "word": "by ",
+      "success": true,
+      "startS": 32.593,
+      "endS": 32.872,
+      "palign": 0
+    },
+    {
+      "word": "gradient ",
+      "success": true,
+      "startS": 32.992,
+      "endS": 33.59,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 33.64333,
+      "endS": 33.75,
+      "palign": 0
+    },
+    {
+      "word": "hidden ",
+      "success": true,
+      "startS": 33.8165,
+      "endS": 34.149,
+      "palign": 0
+    },
+    {
+      "word": "world ",
+      "success": true,
+      "startS": 34.2448,
+      "endS": 34.707,
+      "palign": 0
+    },
+    {
+      "word": "began.\n\n",
+      "success": true,
+      "startS": 34.867,
+      "endS": 37.76426,
+      "palign": 0
+    },
+    {
+      "word": "[Pre-Chorus]\nDown ",
+      "success": true,
+      "startS": 37.77689,
+      "endS": 37.979,
+      "palign": 0
+    },
+    {
+      "word": "through ",
+      "success": true,
+      "startS": 38.00171,
+      "endS": 38.138,
+      "palign": 0
+    },
+    {
+      "word": "a ",
+      "success": true,
+      "startS": 38.298,
+      "endS": 38.378,
+      "palign": 0
+    },
+    {
+      "word": "billion-dimensional ",
+      "success": true,
+      "startS": 38.47775,
+      "endS": 39.973,
+      "palign": 0
+    },
+    {
+      "word": "night,\n",
+      "success": true,
+      "startS": 40.0688,
+      "endS": 41.4578,
+      "palign": 0
+    },
+    {
+      "word": "Past ",
+      "success": true,
+      "startS": 41.5056,
+      "endS": 41.649,
+      "palign": 0
+    },
+    {
+      "word": "every ",
+      "success": true,
+      "startS": 41.7288,
+      "endS": 42.048,
+      "palign": 0
+    },
+    {
+      "word": "saddle, ",
+      "success": true,
+      "startS": 42.12767,
+      "endS": 42.60667,
+      "palign": 0
+    },
+    {
+      "word": "to ",
+      "success": true,
+      "startS": 42.68633,
+      "endS": 42.766,
+      "palign": 0
+    },
+    {
+      "word": "valleys ",
+      "success": true,
+      "startS": 42.926,
+      "endS": 43.404,
+      "palign": 0
+    },
+    {
+      "word": "flat ",
+      "success": true,
+      "startS": 43.464,
+      "endS": 43.644,
+      "palign": 0
+    },
+    {
+      "word": "and ",
+      "success": true,
+      "startS": 43.72367,
+      "endS": 43.883,
+      "palign": 0
+    },
+    {
+      "word": "wide,\n",
+      "success": true,
+      "startS": 43.98275,
+      "endS": 45.07967,
+      "palign": 0
+    },
+    {
+      "word": "It ",
+      "success": true,
+      "startS": 45.15933,
+      "endS": 45.239,
+      "palign": 0
+    },
+    {
+      "word": "finds ",
+      "success": true,
+      "startS": 45.287,
+      "endS": 45.479,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 45.532,
+      "endS": 45.638,
+      "palign": 0
+    },
+    {
+      "word": "minima ",
+      "success": true,
+      "startS": 45.74433,
+      "endS": 46.356,
+      "palign": 0
+    },
+    {
+      "word": "that ",
+      "success": true,
+      "startS": 46.416,
+      "endS": 46.596,
+      "palign": 0
+    },
+    {
+      "word": "generalize,\n",
+      "success": true,
+      "startS": 46.6916,
+      "endS": 48.251,
+      "palign": 0
+    },
+    {
+      "word": "But ",
+      "success": true,
+      "startS": 48.311,
+      "endS": 48.431,
+      "palign": 0
+    },
+    {
+      "word": "no ",
+      "success": true,
+      "startS": 48.5505,
+      "endS": 48.67,
+      "palign": 0
+    },
+    {
+      "word": "one ",
+      "success": true,
+      "startS": 48.75,
+      "endS": 48.91,
+      "palign": 0
+    },
+    {
+      "word": "knows ",
+      "success": true,
+      "startS": 48.9898,
+      "endS": 49.309,
+      "palign": 0
+    },
+    {
+      "word": "why. ",
+      "success": true,
+      "startS": 49.41533,
+      "endS": 50.37233,
+      "palign": 0
+    },
+    {
+      "word": "So ",
+      "success": true,
+      "startS": 50.47867,
+      "endS": 50.745,
+      "palign": 0
+    },
+    {
+      "word": "we ",
+      "success": true,
+      "startS": 50.8645,
+      "endS": 51.144,
+      "palign": 0
+    },
+    {
+      "word": "go ",
+      "success": true,
+      "startS": 51.2635,
+      "endS": 52.101,
+      "palign": 0
+    },
+    {
+      "word": "inside!\n\n",
+      "success": true,
+      "startS": 52.2205,
+      "endS": 55.75238,
+      "palign": 0
+    },
+    {
+      "word": "[Chorus]\nWe ",
+      "success": true,
+      "startS": 55.78308,
+      "endS": 56.09,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 56.18975,
+      "endS": 56.569,
+      "palign": 0
+    },
+    {
+      "word": "know! (",
+      "success": true,
+      "startS": 56.66875,
+      "endS": 57.0875,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 57.14725,
+      "endS": 57.207,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 57.267,
+      "endS": 57.447,
+      "palign": 0
+    },
+    {
+      "word": "know!)\n",
+      "success": true,
+      "startS": 57.54675,
+      "endS": 58.4045,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 58.48425,
+      "endS": 58.564,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 58.66375,
+      "endS": 59.282,
+      "palign": 0
+    },
+    {
+      "word": "understand!\n",
+      "success": true,
+      "startS": 59.3219,
+      "endS": 59.7475,
+      "palign": 0
+    },
+    {
+      "word": "Every ",
+      "success": true,
+      "startS": 59.814,
+      "endS": 60.08,
+      "palign": 0
+    },
+    {
+      "word": "cause ",
+      "success": true,
+      "startS": 60.1758,
+      "endS": 60.638,
+      "palign": 0
+    },
+    {
+      "word": "behind ",
+      "success": true,
+      "startS": 60.69117,
+      "endS": 60.957,
+      "palign": 0
+    },
+    {
+      "word": "every ",
+      "success": true,
+      "startS": 61.0368,
+      "endS": 61.356,
+      "palign": 0
+    },
+    {
+      "word": "behavior, ",
+      "success": true,
+      "startS": 61.40933,
+      "endS": 62.0345,
+      "palign": 0
+    },
+    {
+      "word": "mapped ",
+      "success": true,
+      "startS": 62.074,
+      "endS": 62.314,
+      "palign": 0
+    },
+    {
+      "word": "out ",
+      "success": true,
+      "startS": 62.367,
+      "endS": 62.473,
+      "palign": 0
+    },
+    {
+      "word": "by ",
+      "success": true,
+      "startS": 62.593,
+      "endS": 62.713,
+      "palign": 0
+    },
+    {
+      "word": "our ",
+      "success": true,
+      "startS": 62.79267,
+      "endS": 62.952,
+      "palign": 0
+    },
+    {
+      "word": "hand!\n",
+      "success": true,
+      "startS": 63.05175,
+      "endS": 63.41075,
+      "palign": 0
+    },
+    {
+      "word": "Not ",
+      "success": true,
+      "startS": 63.4705,
+      "endS": 63.59,
+      "palign": 0
+    },
+    {
+      "word": "someday, ",
+      "success": true,
+      "startS": 63.66986,
+      "endS": 64.22867,
+      "palign": 0
+    },
+    {
+      "word": "we ",
+      "success": true,
+      "startS": 64.30833,
+      "endS": 64.388,
+      "palign": 0
+    },
+    {
+      "word": "must ",
+      "success": true,
+      "startS": 64.46775,
+      "endS": 64.707,
+      "palign": 0
+    },
+    {
+      "word": "now, ",
+      "success": true,
+      "startS": 64.81367,
+      "endS": 65.17,
+      "palign": 0
+    },
+    {
+      "word": "open ",
+      "success": true,
+      "startS": 65.234,
+      "endS": 65.426,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 65.479,
+      "endS": 65.585,
+      "palign": 0
+    },
+    {
+      "word": "black ",
+      "success": true,
+      "startS": 65.6488,
+      "endS": 65.904,
+      "palign": 0
+    },
+    {
+      "word": "box ",
+      "success": true,
+      "startS": 66.01033,
+      "endS": 66.303,
+      "palign": 0
+    },
+    {
+      "word": "wide,\n",
+      "success": true,
+      "startS": 66.40275,
+      "endS": 67.001,
+      "palign": 0
+    },
+    {
+      "word": "The ",
+      "success": true,
+      "startS": 67.061,
+      "endS": 67.181,
+      "palign": 0
+    },
+    {
+      "word": "goal ",
+      "success": true,
+      "startS": 67.28075,
+      "endS": 67.819,
+      "palign": 0
+    },
+    {
+      "word": "is ",
+      "success": true,
+      "startS": 67.939,
+      "endS": 68.059,
+      "palign": 0
+    },
+    {
+      "word": "to ",
+      "success": true,
+      "startS": 68.1785,
+      "endS": 69.176,
+      "palign": 0
+    },
+    {
+      "word": "understand!\n",
+      "success": true,
+      "startS": 69.2637,
+      "endS": 71.99433,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 72.10067,
+      "endS": 72.287,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 72.38675,
+      "endS": 72.766,
+      "palign": 0
+    },
+    {
+      "word": "know!\n\n",
+      "success": true,
+      "startS": 72.86575,
+      "endS": 83.08712,
+      "palign": 0
+    },
+    {
+      "word": "[Verse 2]\nStart ",
+      "success": true,
+      "startS": 83.10118,
+      "endS": 83.298,
+      "palign": 0
+    },
+    {
+      "word": "with ",
+      "success": true,
+      "startS": 83.33775,
+      "endS": 83.457,
+      "palign": 0
+    },
+    {
+      "word": "neurons, ",
+      "success": true,
+      "startS": 83.497,
+      "endS": 83.976,
+      "palign": 0
+    },
+    {
+      "word": "start ",
+      "success": true,
+      "startS": 84.016,
+      "endS": 84.176,
+      "palign": 0
+    },
+    {
+      "word": "with ",
+      "success": true,
+      "startS": 84.21575,
+      "endS": 84.335,
+      "palign": 0
+    },
+    {
+      "word": "heads, ",
+      "success": true,
+      "startS": 84.41475,
+      "endS": 85.173,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 85.213,
+      "endS": 85.293,
+      "palign": 0
+    },
+    {
+      "word": "bottom ",
+      "success": true,
+      "startS": 85.34617,
+      "endS": 85.612,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 85.6915,
+      "endS": 85.771,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 85.82433,
+      "endS": 85.931,
+      "palign": 0
+    },
+    {
+      "word": "climb,\n",
+      "success": true,
+      "startS": 86.0268,
+      "endS": 86.4578,
+      "palign": 0
+    },
+    {
+      "word": "Then ",
+      "success": true,
+      "startS": 86.5056,
+      "endS": 86.649,
+      "palign": 0
+    },
+    {
+      "word": "manifolds ",
+      "success": true,
+      "startS": 86.70233,
+      "endS": 87.527,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 87.6465,
+      "endS": 87.766,
+      "palign": 0
+    },
+    {
+      "word": "meaning ",
+      "success": true,
+      "startS": 87.85714,
+      "endS": 88.404,
+      "palign": 0
+    },
+    {
+      "word": "curving ",
+      "success": true,
+      "startS": 88.484,
+      "endS": 88.883,
+      "palign": 0
+    },
+    {
+      "word": "through ",
+      "success": true,
+      "startS": 88.92857,
+      "endS": 89.202,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 89.30833,
+      "endS": 89.521,
+      "palign": 0
+    },
+    {
+      "word": "space,\n",
+      "success": true,
+      "startS": 89.6168,
+      "endS": 90.05975,
+      "palign": 0
+    },
+    {
+      "word": "Parameter ",
+      "success": true,
+      "startS": 90.1195,
+      "endS": 90.638,
+      "palign": 0
+    },
+    {
+      "word": "components, ",
+      "success": true,
+      "startS": 90.658,
+      "endS": 91.53378,
+      "palign": 0
+    },
+    {
+      "word": "algorithms, ",
+      "success": true,
+      "startS": 91.55156,
+      "endS": 92.0745,
+      "palign": 0
+    },
+    {
+      "word": "rung ",
+      "success": true,
+      "startS": 92.154,
+      "endS": 92.314,
+      "palign": 0
+    },
+    {
+      "word": "by ",
+      "success": true,
+      "startS": 92.4335,
+      "endS": 92.553,
+      "palign": 0
+    },
+    {
+      "word": "rung, ",
+      "success": true,
+      "startS": 92.633,
+      "endS": 92.97833,
+      "palign": 0
+    },
+    {
+      "word": "in ",
+      "success": true,
+      "startS": 93.08467,
+      "endS": 93.191,
+      "palign": 0
+    },
+    {
+      "word": "time,\n",
+      "success": true,
+      "startS": 93.29075,
+      "endS": 93.8565,
+      "palign": 0
+    },
+    {
+      "word": "Decisions, ",
+      "success": true,
+      "startS": 93.883,
+      "endS": 94.3408,
+      "palign": 0
+    },
+    {
+      "word": "then ",
+      "success": true,
+      "startS": 94.3726,
+      "endS": 94.468,
+      "palign": 0
+    },
+    {
+      "word": "behaviors, ",
+      "success": true,
+      "startS": 94.52133,
+      "endS": 95.218,
+      "palign": 0
+    },
+    {
+      "word": "then ",
+      "success": true,
+      "startS": 95.25,
+      "endS": 95.346,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 95.399,
+      "endS": 95.505,
+      "palign": 0
+    },
+    {
+      "word": "drives ",
+      "success": true,
+      "startS": 95.59817,
+      "endS": 96.064,
+      "palign": 0
+    },
+    {
+      "word": "behind ",
+      "success": true,
+      "startS": 96.11717,
+      "endS": 96.383,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 96.48933,
+      "endS": 96.702,
+      "palign": 0
+    },
+    {
+      "word": "face.\n",
+      "success": true,
+      "startS": 96.80175,
+      "endS": 97.5,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 97.58,
+      "endS": 97.66,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 97.71975,
+      "endS": 97.899,
+      "palign": 0
+    },
+    {
+      "word": "write ",
+      "success": true,
+      "startS": 97.9628,
+      "endS": 98.218,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 98.29767,
+      "endS": 98.457,
+      "palign": 0
+    },
+    {
+      "word": "encyclopedia ",
+      "success": true,
+      "startS": 98.577,
+      "endS": 99.495,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 99.5745,
+      "endS": 99.654,
+      "palign": 0
+    },
+    {
+      "word": "everything ",
+      "success": true,
+      "startS": 99.7418,
+      "endS": 100.532,
+      "palign": 0
+    },
+    {
+      "word": "inside,\n",
+      "success": true,
+      "startS": 100.57183,
+      "endS": 100.831,
+      "palign": 0
+    },
+    {
+      "word": "How ",
+      "success": true,
+      "startS": 100.891,
+      "endS": 101.011,
+      "palign": 0
+    },
+    {
+      "word": "it ",
+      "success": true,
+      "startS": 101.0905,
+      "endS": 101.17,
+      "palign": 0
+    },
+    {
+      "word": "recalls ",
+      "success": true,
+      "startS": 101.25,
+      "endS": 101.809,
+      "palign": 0
+    },
+    {
+      "word": "a ",
+      "success": true,
+      "startS": 101.968,
+      "endS": 102.128,
+      "palign": 0
+    },
+    {
+      "word": "fact, ",
+      "success": true,
+      "startS": 102.22775,
+      "endS": 102.58675,
+      "palign": 0
+    },
+    {
+      "word": "and ",
+      "success": true,
+      "startS": 102.6465,
+      "endS": 102.766,
+      "palign": 0
+    },
+    {
+      "word": "where ",
+      "success": true,
+      "startS": 102.8138,
+      "endS": 103.005,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 103.085,
+      "endS": 103.245,
+      "palign": 0
+    },
+    {
+      "word": "reasoning ",
+      "success": true,
+      "startS": 103.338,
+      "endS": 104.122,
+      "palign": 0
+    },
+    {
+      "word": "hides.\n\n",
+      "success": true,
+      "startS": 104.2178,
+      "endS": 104.85684,
+      "palign": 0
+    },
+    {
+      "word": "[Pre-Chorus]\nThey ",
+      "success": true,
+      "startS": 104.86526,
+      "endS": 105.0,
+      "palign": 0
+    },
+    {
+      "word": "said ",
+      "success": true,
+      "startS": 105.04,
+      "endS": 105.16,
+      "palign": 0
+    },
+    {
+      "word": "it ",
+      "success": true,
+      "startS": 105.2395,
+      "endS": 105.319,
+      "palign": 0
+    },
+    {
+      "word": "would ",
+      "success": true,
+      "startS": 105.367,
+      "endS": 105.559,
+      "palign": 0
+    },
+    {
+      "word": "be ",
+      "success": true,
+      "startS": 105.6785,
+      "endS": 105.878,
+      "palign": 0
+    },
+    {
+      "word": "noise, ",
+      "success": true,
+      "startS": 105.9736,
+      "endS": 106.5638,
+      "palign": 0
+    },
+    {
+      "word": "they ",
+      "success": true,
+      "startS": 106.6116,
+      "endS": 106.755,
+      "palign": 0
+    },
+    {
+      "word": "said ",
+      "success": true,
+      "startS": 106.795,
+      "endS": 106.915,
+      "palign": 0
+    },
+    {
+      "word": "it ",
+      "success": true,
+      "startS": 106.9945,
+      "endS": 107.074,
+      "palign": 0
+    },
+    {
+      "word": "can't ",
+      "success": true,
+      "startS": 107.10067,
+      "endS": 107.394,
+      "palign": 0
+    },
+    {
+      "word": "be ",
+      "success": true,
+      "startS": 107.5135,
+      "endS": 107.633,
+      "palign": 0
+    },
+    {
+      "word": "read,\n",
+      "success": true,
+      "startS": 107.73275,
+      "endS": 108.15175,
+      "palign": 0
+    },
+    {
+      "word": "But ",
+      "success": true,
+      "startS": 108.1915,
+      "endS": 108.271,
+      "palign": 0
+    },
+    {
+      "word": "there's ",
+      "success": true,
+      "startS": 108.287,
+      "endS": 108.511,
+      "palign": 0
+    },
+    {
+      "word": "structure ",
+      "success": true,
+      "startS": 108.57075,
+      "endS": 109.468,
+      "palign": 0
+    },
+    {
+      "word": "everywhere, ",
+      "success": true,
+      "startS": 109.5079,
+      "endS": 109.94675,
+      "palign": 0
+    },
+    {
+      "word": "function ",
+      "success": true,
+      "startS": 110.0265,
+      "endS": 110.346,
+      "palign": 0
+    },
+    {
+      "word": "vectors, ",
+      "success": true,
+      "startS": 110.386,
+      "endS": 110.7608,
+      "palign": 0
+    },
+    {
+      "word": "shapes ",
+      "success": true,
+      "startS": 110.7766,
+      "endS": 110.984,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 111.1035,
+      "endS": 111.223,
+      "palign": 0
+    },
+    {
+      "word": "thought,\n",
+      "success": true,
+      "startS": 111.25729,
+      "endS": 111.54267,
+      "palign": 0
+    },
+    {
+      "word": "Geometry ",
+      "success": true,
+      "startS": 111.62233,
+      "endS": 112.34,
+      "palign": 0
+    },
+    {
+      "word": "that ",
+      "success": true,
+      "startS": 112.38,
+      "endS": 112.5,
+      "palign": 0
+    },
+    {
+      "word": "mirrors ",
+      "success": true,
+      "startS": 112.54557,
+      "endS": 112.819,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 112.87233,
+      "endS": 112.979,
+      "palign": 0
+    },
+    {
+      "word": "world, ",
+      "success": true,
+      "startS": 113.0746,
+      "endS": 113.517,
+      "palign": 0
+    },
+    {
+      "word": "and ",
+      "success": true,
+      "startS": 113.577,
+      "endS": 113.697,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 113.77667,
+      "endS": 113.936,
+      "palign": 0
+    },
+    {
+      "word": "bigger ",
+      "success": true,
+      "startS": 114.01583,
+      "endS": 114.415,
+      "palign": 0
+    },
+    {
+      "word": "they ",
+      "success": true,
+      "startS": 114.51475,
+      "endS": 114.814,
+      "palign": 0
+    },
+    {
+      "word": "get,\n",
+      "success": true,
+      "startS": 114.92033,
+      "endS": 115.51175,
+      "palign": 0
+    },
+    {
+      "word": "The ",
+      "success": true,
+      "startS": 115.5715,
+      "endS": 115.691,
+      "palign": 0
+    },
+    {
+      "word": "crisper ",
+      "success": true,
+      "startS": 115.811,
+      "endS": 116.17,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 116.22333,
+      "endS": 116.33,
+      "palign": 0
+    },
+    {
+      "word": "concepts, ",
+      "success": true,
+      "startS": 116.43633,
+      "endS": 117.267,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 117.327,
+      "endS": 117.447,
+      "palign": 0
+    },
+    {
+      "word": "clearer ",
+      "success": true,
+      "startS": 117.4948,
+      "endS": 118.404,
+      "palign": 0
+    },
+    {
+      "word": "what ",
+      "success": true,
+      "startS": 118.50375,
+      "endS": 118.803,
+      "palign": 0
+    },
+    {
+      "word": "they've ",
+      "success": true,
+      "startS": 118.823,
+      "endS": 119.282,
+      "palign": 0
+    },
+    {
+      "word": "caught!\n\n",
+      "success": true,
+      "startS": 119.375,
+      "endS": 122.13538,
+      "palign": 0
+    },
+    {
+      "word": "[Chorus]\nWe ",
+      "success": true,
+      "startS": 122.16608,
+      "endS": 122.473,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 122.57275,
+      "endS": 122.872,
+      "palign": 0
+    },
+    {
+      "word": "know! (",
+      "success": true,
+      "startS": 122.97175,
+      "endS": 123.4305,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 123.51025,
+      "endS": 123.59,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 123.65,
+      "endS": 123.83,
+      "palign": 0
+    },
+    {
+      "word": "know!)\n",
+      "success": true,
+      "startS": 123.92975,
+      "endS": 124.7075,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 124.78725,
+      "endS": 124.867,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 124.96675,
+      "endS": 125.585,
+      "palign": 0
+    },
+    {
+      "word": "understand!\n",
+      "success": true,
+      "startS": 125.6329,
+      "endS": 126.10383,
+      "palign": 0
+    },
+    {
+      "word": "Every ",
+      "success": true,
+      "startS": 126.14367,
+      "endS": 126.303,
+      "palign": 0
+    },
+    {
+      "word": "cause ",
+      "success": true,
+      "startS": 126.3988,
+      "endS": 126.782,
+      "palign": 0
+    },
+    {
+      "word": "behind ",
+      "success": true,
+      "startS": 126.8485,
+      "endS": 127.181,
+      "palign": 0
+    },
+    {
+      "word": "every ",
+      "success": true,
+      "startS": 127.2608,
+      "endS": 127.58,
+      "palign": 0
+    },
+    {
+      "word": "behavior, ",
+      "success": true,
+      "startS": 127.633,
+      "endS": 128.258,
+      "palign": 0
+    },
+    {
+      "word": "mapped ",
+      "success": true,
+      "startS": 128.298,
+      "endS": 128.537,
+      "palign": 0
+    },
+    {
+      "word": "out ",
+      "success": true,
+      "startS": 128.59033,
+      "endS": 128.697,
+      "palign": 0
+    },
+    {
+      "word": "by ",
+      "success": true,
+      "startS": 128.8165,
+      "endS": 128.936,
+      "palign": 0
+    },
+    {
+      "word": "our ",
+      "success": true,
+      "startS": 129.016,
+      "endS": 129.176,
+      "palign": 0
+    },
+    {
+      "word": "hand!\n",
+      "success": true,
+      "startS": 129.2755,
+      "endS": 129.634,
+      "palign": 0
+    },
+    {
+      "word": "Not ",
+      "success": true,
+      "startS": 129.694,
+      "endS": 129.814,
+      "palign": 0
+    },
+    {
+      "word": "someday, ",
+      "success": true,
+      "startS": 129.89371,
+      "endS": 130.452,
+      "palign": 0
+    },
+    {
+      "word": "we ",
+      "success": true,
+      "startS": 130.532,
+      "endS": 130.612,
+      "palign": 0
+    },
+    {
+      "word": "must ",
+      "success": true,
+      "startS": 130.69175,
+      "endS": 130.931,
+      "palign": 0
+    },
+    {
+      "word": "now, ",
+      "success": true,
+      "startS": 131.03733,
+      "endS": 131.3938,
+      "palign": 0
+    },
+    {
+      "word": "open ",
+      "success": true,
+      "startS": 131.4576,
+      "endS": 131.649,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 131.70233,
+      "endS": 131.809,
+      "palign": 0
+    },
+    {
+      "word": "black ",
+      "success": true,
+      "startS": 131.8728,
+      "endS": 132.128,
+      "palign": 0
+    },
+    {
+      "word": "box ",
+      "success": true,
+      "startS": 132.23433,
+      "endS": 132.527,
+      "palign": 0
+    },
+    {
+      "word": "wide,\n",
+      "success": true,
+      "startS": 132.62675,
+      "endS": 133.22475,
+      "palign": 0
+    },
+    {
+      "word": "The ",
+      "success": true,
+      "startS": 133.2845,
+      "endS": 133.404,
+      "palign": 0
+    },
+    {
+      "word": "goal ",
+      "success": true,
+      "startS": 133.50375,
+      "endS": 134.043,
+      "palign": 0
+    },
+    {
+      "word": "is ",
+      "success": true,
+      "startS": 134.1625,
+      "endS": 134.282,
+      "palign": 0
+    },
+    {
+      "word": "to ",
+      "success": true,
+      "startS": 134.4015,
+      "endS": 135.0,
+      "palign": 0
+    },
+    {
+      "word": "understand!\n",
+      "success": true,
+      "startS": 135.0878,
+      "endS": 138.21833,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 138.32467,
+      "endS": 138.511,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 138.61075,
+      "endS": 138.91,
+      "palign": 0
+    },
+    {
+      "word": "know!\n\n",
+      "success": true,
+      "startS": 139.00975,
+      "endS": 142.52812,
+      "palign": 0
+    },
+    {
+      "word": "[Verse 3]\nThere ",
+      "success": true,
+      "startS": 142.54218,
+      "endS": 142.739,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 142.799,
+      "endS": 142.979,
+      "palign": 0
+    },
+    {
+      "word": "be ",
+      "success": true,
+      "startS": 143.0585,
+      "endS": 143.138,
+      "palign": 0
+    },
+    {
+      "word": "a ",
+      "success": true,
+      "startS": 143.298,
+      "endS": 143.378,
+      "palign": 0
+    },
+    {
+      "word": "theory! ",
+      "success": true,
+      "startS": 143.45767,
+      "endS": 144.287,
+      "palign": 0
+    },
+    {
+      "word": "Settings ",
+      "success": true,
+      "startS": 144.319,
+      "endS": 144.654,
+      "palign": 0
+    },
+    {
+      "word": "we ",
+      "success": true,
+      "startS": 144.734,
+      "endS": 144.814,
+      "palign": 0
+    },
+    {
+      "word": "can ",
+      "success": true,
+      "startS": 144.92033,
+      "endS": 145.213,
+      "palign": 0
+    },
+    {
+      "word": "solve,\n",
+      "success": true,
+      "startS": 145.23967,
+      "endS": 146.068,
+      "palign": 0
+    },
+    {
+      "word": "Limits ",
+      "success": true,
+      "startS": 146.125,
+      "endS": 146.41,
+      "palign": 0
+    },
+    {
+      "word": "we ",
+      "success": true,
+      "startS": 146.5295,
+      "endS": 146.729,
+      "palign": 0
+    },
+    {
+      "word": "can ",
+      "success": true,
+      "startS": 146.80867,
+      "endS": 146.968,
+      "palign": 0
+    },
+    {
+      "word": "take ",
+      "success": true,
+      "startS": 147.008,
+      "endS": 147.128,
+      "palign": 0
+    },
+    {
+      "word": "as ",
+      "success": true,
+      "startS": 147.2075,
+      "endS": 147.287,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 147.34033,
+      "endS": 147.447,
+      "palign": 0
+    },
+    {
+      "word": "width ",
+      "success": true,
+      "startS": 147.47367,
+      "endS": 147.606,
+      "palign": 0
+    },
+    {
+      "word": "runs ",
+      "success": true,
+      "startS": 147.65933,
+      "endS": 147.926,
+      "palign": 0
+    },
+    {
+      "word": "to ",
+      "success": true,
+      "startS": 148.0455,
+      "endS": 148.245,
+      "palign": 0
+    },
+    {
+      "word": "infinity,\n",
+      "success": true,
+      "startS": 148.2928,
+      "endS": 149.19043,
+      "palign": 0
+    },
+    {
+      "word": "Simple ",
+      "success": true,
+      "startS": 149.25886,
+      "endS": 149.601,
+      "palign": 0
+    },
+    {
+      "word": "laws ",
+      "success": true,
+      "startS": 149.70075,
+      "endS": 150.0,
+      "palign": 0
+    },
+    {
+      "word": "for ",
+      "success": true,
+      "startS": 150.05333,
+      "endS": 150.16,
+      "palign": 0
+    },
+    {
+      "word": "what ",
+      "success": true,
+      "startS": 150.21975,
+      "endS": 150.399,
+      "palign": 0
+    },
+    {
+      "word": "we ",
+      "success": true,
+      "startS": 150.479,
+      "endS": 150.559,
+      "palign": 0
+    },
+    {
+      "word": "measure ",
+      "success": true,
+      "startS": 150.62729,
+      "endS": 151.037,
+      "palign": 0
+    },
+    {
+      "word": "as ",
+      "success": true,
+      "startS": 151.157,
+      "endS": 151.277,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 151.33,
+      "endS": 151.436,
+      "palign": 0
+    },
+    {
+      "word": "scaling ",
+      "success": true,
+      "startS": 151.496,
+      "endS": 151.915,
+      "palign": 0
+    },
+    {
+      "word": "curves ",
+      "success": true,
+      "startS": 151.94167,
+      "endS": 152.394,
+      "palign": 0
+    },
+    {
+      "word": "evolve,\n",
+      "success": true,
+      "startS": 152.41375,
+      "endS": 152.71267,
+      "palign": 0
+    },
+    {
+      "word": "Hyperparameters ",
+      "success": true,
+      "startS": 152.79233,
+      "endS": 153.83,
+      "palign": 0
+    },
+    {
+      "word": "untangled, ",
+      "success": true,
+      "startS": 153.93633,
+      "endS": 155.05687,
+      "palign": 0
+    },
+    {
+      "word": "universals ",
+      "success": true,
+      "startS": 155.08675,
+      "endS": 155.505,
+      "palign": 0
+    },
+    {
+      "word": "all ",
+      "success": true,
+      "startS": 155.55833,
+      "endS": 155.665,
+      "palign": 0
+    },
+    {
+      "word": "can ",
+      "success": true,
+      "startS": 155.74467,
+      "endS": 155.904,
+      "palign": 0
+    },
+    {
+      "word": "see.\n",
+      "success": true,
+      "startS": 156.01033,
+      "endS": 156.28511,
+      "palign": 0
+    },
+    {
+      "word": "Learning ",
+      "success": true,
+      "startS": 156.34722,
+      "endS": 156.782,
+      "palign": 0
+    },
+    {
+      "word": "mechanics, ",
+      "success": true,
+      "startS": 156.82183,
+      "endS": 157.2928,
+      "palign": 0
+    },
+    {
+      "word": "falsifiable, ",
+      "success": true,
+      "startS": 157.3246,
+      "endS": 158.58688,
+      "palign": 0
+    },
+    {
+      "word": "written ",
+      "success": true,
+      "startS": 158.63675,
+      "endS": 158.936,
+      "palign": 0
+    },
+    {
+      "word": "in ",
+      "success": true,
+      "startS": 159.016,
+      "endS": 159.096,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 159.149,
+      "endS": 159.255,
+      "palign": 0
+    },
+    {
+      "word": "math,\n",
+      "success": true,
+      "startS": 159.35475,
+      "endS": 159.766,
+      "palign": 0
+    },
+    {
+      "word": "Predict ",
+      "success": true,
+      "startS": 159.798,
+      "endS": 160.213,
+      "palign": 0
+    },
+    {
+      "word": "it ",
+      "success": true,
+      "startS": 160.3325,
+      "endS": 160.771,
+      "palign": 0
+    },
+    {
+      "word": "before ",
+      "success": true,
+      "startS": 160.811,
+      "endS": 161.011,
+      "palign": 0
+    },
+    {
+      "word": "you ",
+      "success": true,
+      "startS": 161.09067,
+      "endS": 161.25,
+      "palign": 0
+    },
+    {
+      "word": "train ",
+      "success": true,
+      "startS": 161.2978,
+      "endS": 161.489,
+      "palign": 0
+    },
+    {
+      "word": "it, ",
+      "success": true,
+      "startS": 161.609,
+      "endS": 161.9518,
+      "palign": 0
+    },
+    {
+      "word": "then ",
+      "success": true,
+      "startS": 162.0156,
+      "endS": 162.207,
+      "palign": 0
+    },
+    {
+      "word": "watch ",
+      "success": true,
+      "startS": 162.2868,
+      "endS": 162.606,
+      "palign": 0
+    },
+    {
+      "word": "it ",
+      "success": true,
+      "startS": 162.726,
+      "endS": 163.005,
+      "palign": 0
+    },
+    {
+      "word": "walk ",
+      "success": true,
+      "startS": 163.10475,
+      "endS": 163.484,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 163.59033,
+      "endS": 163.963,
+      "palign": 0
+    },
+    {
+      "word": "path!\n\n",
+      "success": true,
+      "startS": 164.06275,
+      "endS": 167.02687,
+      "palign": 0
+    },
+    {
+      "word": "[Bridge]\nLinear ",
+      "success": true,
+      "startS": 167.0428,
+      "endS": 167.473,
+      "palign": 0
+    },
+    {
+      "word": "algebra, ",
+      "success": true,
+      "startS": 167.553,
+      "endS": 167.992,
+      "palign": 0
+    },
+    {
+      "word": "calculus, ",
+      "success": true,
+      "startS": 168.032,
+      "endS": 168.55075,
+      "palign": 0
+    },
+    {
+      "word": "probability, ",
+      "success": true,
+      "startS": 168.5905,
+      "endS": 169.28875,
+      "palign": 0
+    },
+    {
+      "word": "information,\n",
+      "success": true,
+      "startS": 169.3485,
+      "endS": 170.44575,
+      "palign": 0
+    },
+    {
+      "word": "Optimization, ",
+      "success": true,
+      "startS": 170.5455,
+      "endS": 171.5825,
+      "palign": 0
+    },
+    {
+      "word": "dynamics, ",
+      "success": true,
+      "startS": 171.702,
+      "endS": 172.22075,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 172.2605,
+      "endS": 172.34,
+      "palign": 0
+    },
+    {
+      "word": "geometry ",
+      "success": true,
+      "startS": 172.46,
+      "endS": 173.457,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 173.577,
+      "endS": 173.697,
+      "palign": 0
+    },
+    {
+      "word": "loss,\n",
+      "success": true,
+      "startS": 173.75675,
+      "endS": 173.968,
+      "palign": 0
+    },
+    {
+      "word": "Statistical ",
+      "success": true,
+      "startS": 174.0,
+      "endS": 174.973,
+      "palign": 0
+    },
+    {
+      "word": "mechanics, ",
+      "success": true,
+      "startS": 175.013,
+      "endS": 175.492,
+      "palign": 0
+    },
+    {
+      "word": "random ",
+      "success": true,
+      "startS": 175.532,
+      "endS": 175.771,
+      "palign": 0
+    },
+    {
+      "word": "matrices, ",
+      "success": true,
+      "startS": 175.851,
+      "endS": 176.4098,
+      "palign": 0
+    },
+    {
+      "word": "singular ",
+      "success": true,
+      "startS": 176.4896,
+      "endS": 176.968,
+      "palign": 0
+    },
+    {
+      "word": "learning,\n",
+      "success": true,
+      "startS": 177.04775,
+      "endS": 177.65933,
+      "palign": 0
+    },
+    {
+      "word": "Symmetry ",
+      "success": true,
+      "startS": 177.71267,
+      "endS": 178.324,
+      "palign": 0
+    },
+    {
+      "word": "and ",
+      "success": true,
+      "startS": 178.37733,
+      "endS": 178.484,
+      "palign": 0
+    },
+    {
+      "word": "categories, ",
+      "success": true,
+      "startS": 178.644,
+      "endS": 179.22867,
+      "palign": 0
+    },
+    {
+      "word": "causality, ",
+      "success": true,
+      "startS": 179.25533,
+      "endS": 180.2078,
+      "palign": 0
+    },
+    {
+      "word": "compression,\n",
+      "success": true,
+      "startS": 180.2556,
+      "endS": 181.117,
+      "palign": 0
+    },
+    {
+      "word": "An ",
+      "success": true,
+      "startS": 181.197,
+      "endS": 181.277,
+      "palign": 0
+    },
+    {
+      "word": "atlas ",
+      "success": true,
+      "startS": 181.3965,
+      "endS": 181.755,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 181.835,
+      "endS": 181.915,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 181.99467,
+      "endS": 182.154,
+      "palign": 0
+    },
+    {
+      "word": "laws, ",
+      "success": true,
+      "startS": 182.25375,
+      "endS": 182.83275,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 182.8725,
+      "endS": 182.952,
+      "palign": 0
+    },
+    {
+      "word": "invariants ",
+      "success": true,
+      "startS": 183.00533,
+      "endS": 183.67,
+      "palign": 0
+    },
+    {
+      "word": "and ",
+      "success": true,
+      "startS": 183.75,
+      "endS": 183.91,
+      "palign": 0
+    },
+    {
+      "word": "bounds,\n",
+      "success": true,
+      "startS": 183.9418,
+      "endS": 184.60117,
+      "palign": 0
+    },
+    {
+      "word": "Every ",
+      "success": true,
+      "startS": 184.65433,
+      "endS": 184.867,
+      "palign": 0
+    },
+    {
+      "word": "level, ",
+      "success": true,
+      "startS": 184.907,
+      "endS": 185.346,
+      "palign": 0
+    },
+    {
+      "word": "every ",
+      "success": true,
+      "startS": 185.4258,
+      "endS": 185.745,
+      "palign": 0
+    },
+    {
+      "word": "scale, ",
+      "success": true,
+      "startS": 185.7845,
+      "endS": 186.335,
+      "palign": 0
+    },
+    {
+      "word": "from ",
+      "success": true,
+      "startS": 186.367,
+      "endS": 186.463,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 186.516,
+      "endS": 186.622,
+      "palign": 0
+    },
+    {
+      "word": "neuron ",
+      "success": true,
+      "startS": 186.662,
+      "endS": 187.021,
+      "palign": 0
+    },
+    {
+      "word": "to ",
+      "success": true,
+      "startS": 187.141,
+      "endS": 187.261,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 187.34067,
+      "endS": 187.5,
+      "palign": 0
+    },
+    {
+      "word": "drive,\n",
+      "success": true,
+      "startS": 187.5958,
+      "endS": 188.218,
+      "palign": 0
+    },
+    {
+      "word": "In ",
+      "success": true,
+      "startS": 188.298,
+      "endS": 188.378,
+      "palign": 0
+    },
+    {
+      "word": "carbon ",
+      "success": true,
+      "startS": 188.45767,
+      "endS": 188.777,
+      "palign": 0
+    },
+    {
+      "word": "or ",
+      "success": true,
+      "startS": 188.8965,
+      "endS": 189.016,
+      "palign": 0
+    },
+    {
+      "word": "in ",
+      "success": true,
+      "startS": 189.1355,
+      "endS": 189.255,
+      "palign": 0
+    },
+    {
+      "word": "silicon, ",
+      "success": true,
+      "startS": 189.30833,
+      "endS": 189.97367,
+      "palign": 0
+    },
+    {
+      "word": "or ",
+      "success": true,
+      "startS": 190.05333,
+      "endS": 190.133,
+      "palign": 0
+    },
+    {
+      "word": "something ",
+      "success": true,
+      "startS": 190.17733,
+      "endS": 190.532,
+      "palign": 0
+    },
+    {
+      "word": "from ",
+      "success": true,
+      "startS": 190.59175,
+      "endS": 190.771,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 190.851,
+      "endS": 191.011,
+      "palign": 0
+    },
+    {
+      "word": "stars,\n",
+      "success": true,
+      "startS": 191.1066,
+      "endS": 191.70875,
+      "palign": 0
+    },
+    {
+      "word": "One ",
+      "success": true,
+      "startS": 191.7685,
+      "endS": 191.888,
+      "palign": 0
+    },
+    {
+      "word": "science ",
+      "success": true,
+      "startS": 192.008,
+      "endS": 192.527,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 192.6465,
+      "endS": 192.766,
+      "palign": 0
+    },
+    {
+      "word": "information! (",
+      "success": true,
+      "startS": 192.81933,
+      "endS": 193.6756,
+      "palign": 0
+    },
+    {
+      "word": "One ",
+      "success": true,
+      "startS": 193.7714,
+      "endS": 195.479,
+      "palign": 0
+    },
+    {
+      "word": "science ",
+      "success": true,
+      "startS": 195.5585,
+      "endS": 196.117,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 196.197,
+      "endS": 196.277,
+      "palign": 0
+    },
+    {
+      "word": "information!)\n\n",
+      "success": true,
+      "startS": 196.35667,
+      "endS": 199.92685,
+      "palign": 0
+    },
+    {
+      "word": "[Final Chorus]\nWe ",
+      "success": true,
+      "startS": 199.9468,
+      "endS": 200.266,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 200.36575,
+      "endS": 200.745,
+      "palign": 0
+    },
+    {
+      "word": "know! (",
+      "success": true,
+      "startS": 200.82475,
+      "endS": 201.2235,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 201.30325,
+      "endS": 201.383,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 201.44275,
+      "endS": 201.622,
+      "palign": 0
+    },
+    {
+      "word": "know!)\n",
+      "success": true,
+      "startS": 201.72175,
+      "endS": 202.3005,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 202.32025,
+      "endS": 202.34,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 202.46,
+      "endS": 203.378,
+      "palign": 0
+    },
+    {
+      "word": "understand!\n",
+      "success": true,
+      "startS": 203.4019,
+      "endS": 203.657,
+      "palign": 0
+    },
+    {
+      "word": "The ",
+      "success": true,
+      "startS": 203.697,
+      "endS": 203.777,
+      "palign": 0
+    },
+    {
+      "word": "shortest ",
+      "success": true,
+      "startS": 203.8248,
+      "endS": 204.255,
+      "palign": 0
+    },
+    {
+      "word": "theory ",
+      "success": true,
+      "startS": 204.335,
+      "endS": 204.654,
+      "palign": 0
+    },
+    {
+      "word": "that ",
+      "success": true,
+      "startS": 204.714,
+      "endS": 204.894,
+      "palign": 0
+    },
+    {
+      "word": "predicts ",
+      "success": true,
+      "startS": 204.95375,
+      "endS": 205.372,
+      "palign": 0
+    },
+    {
+      "word": "it ",
+      "success": true,
+      "startS": 205.452,
+      "endS": 205.532,
+      "palign": 0
+    },
+    {
+      "word": "all, ",
+      "success": true,
+      "startS": 205.61167,
+      "endS": 205.831,
+      "palign": 0
+    },
+    {
+      "word": "the ",
+      "success": true,
+      "startS": 205.891,
+      "endS": 206.011,
+      "palign": 0
+    },
+    {
+      "word": "program ",
+      "success": true,
+      "startS": 206.09067,
+      "endS": 206.489,
+      "palign": 0
+    },
+    {
+      "word": "in ",
+      "success": true,
+      "startS": 206.569,
+      "endS": 206.649,
+      "palign": 0
+    },
+    {
+      "word": "our ",
+      "success": true,
+      "startS": 206.72867,
+      "endS": 206.888,
+      "palign": 0
+    },
+    {
+      "word": "hand!\n",
+      "success": true,
+      "startS": 206.98775,
+      "endS": 207.4335,
+      "palign": 0
+    },
+    {
+      "word": "Every ",
+      "success": true,
+      "startS": 207.5,
+      "endS": 207.766,
+      "palign": 0
+    },
+    {
+      "word": "counterfactual, ",
+      "success": true,
+      "startS": 207.823,
+      "endS": 208.92283,
+      "palign": 0
+    },
+    {
+      "word": "every ",
+      "success": true,
+      "startS": 208.96267,
+      "endS": 209.122,
+      "palign": 0
+    },
+    {
+      "word": "cause ",
+      "success": true,
+      "startS": 209.17,
+      "endS": 209.362,
+      "palign": 0
+    },
+    {
+      "word": "that ",
+      "success": true,
+      "startS": 209.42175,
+      "endS": 209.601,
+      "palign": 0
+    },
+    {
+      "word": "we ",
+      "success": true,
+      "startS": 209.7205,
+      "endS": 209.84,
+      "palign": 0
+    },
+    {
+      "word": "can ",
+      "success": true,
+      "startS": 209.92,
+      "endS": 210.319,
+      "palign": 0
+    },
+    {
+      "word": "steer,\n",
+      "success": true,
+      "startS": 210.34567,
+      "endS": 211.017,
+      "palign": 0
+    },
+    {
+      "word": "The ",
+      "success": true,
+      "startS": 211.077,
+      "endS": 211.197,
+      "palign": 0
+    },
+    {
+      "word": "goal ",
+      "success": true,
+      "startS": 211.29675,
+      "endS": 211.835,
+      "palign": 0
+    },
+    {
+      "word": "is ",
+      "success": true,
+      "startS": 211.9545,
+      "endS": 212.074,
+      "palign": 0
+    },
+    {
+      "word": "to ",
+      "success": true,
+      "startS": 212.194,
+      "endS": 213.112,
+      "palign": 0
+    },
+    {
+      "word": "understand!\n",
+      "success": true,
+      "startS": 213.1997,
+      "endS": 217.68633,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 217.79267,
+      "endS": 217.979,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 218.07875,
+      "endS": 218.378,
+      "palign": 0
+    },
+    {
+      "word": "know!\n\n",
+      "success": true,
+      "startS": 218.45775,
+      "endS": 218.72146,
+      "palign": 0
+    },
+    {
+      "word": "[Outro]\nThe ",
+      "success": true,
+      "startS": 218.73369,
+      "endS": 218.856,
+      "palign": 0
+    },
+    {
+      "word": "mathematics ",
+      "success": true,
+      "startS": 219.016,
+      "endS": 219.734,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 219.8535,
+      "endS": 219.973,
+      "palign": 0
+    },
+    {
+      "word": "AI (",
+      "success": true,
+      "startS": 220.093,
+      "endS": 221.27633,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 221.38267,
+      "endS": 221.489,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 221.58875,
+      "endS": 221.888,
+      "palign": 0
+    },
+    {
+      "word": "know)\n",
+      "success": true,
+      "startS": 221.96775,
+      "endS": 222.247,
+      "palign": 0
+    },
+    {
+      "word": "The ",
+      "success": true,
+      "startS": 222.287,
+      "endS": 222.367,
+      "palign": 0
+    },
+    {
+      "word": "mathematics ",
+      "success": true,
+      "startS": 222.527,
+      "endS": 223.245,
+      "palign": 0
+    },
+    {
+      "word": "of ",
+      "success": true,
+      "startS": 223.3645,
+      "endS": 223.723,
+      "palign": 0
+    },
+    {
+      "word": "intelligence (",
+      "success": true,
+      "startS": 223.803,
+      "endS": 224.86733,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 224.97367,
+      "endS": 225.08,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 225.17975,
+      "endS": 225.479,
+      "palign": 0
+    },
+    {
+      "word": "know)\n",
+      "success": true,
+      "startS": 225.53875,
+      "endS": 225.79767,
+      "palign": 0
+    },
+    {
+      "word": "Of ",
+      "success": true,
+      "startS": 225.87733,
+      "endS": 225.957,
+      "palign": 0
+    },
+    {
+      "word": "information ",
+      "success": true,
+      "startS": 226.01033,
+      "endS": 227.234,
+      "palign": 0
+    },
+    {
+      "word": "itself\n",
+      "success": true,
+      "startS": 227.32717,
+      "endS": 228.351,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 228.431,
+      "endS": 228.511,
+      "palign": 0
+    },
+    {
+      "word": "must ",
+      "success": true,
+      "startS": 228.57075,
+      "endS": 228.75,
+      "palign": 0
+    },
+    {
+      "word": "now. ",
+      "success": true,
+      "startS": 228.85633,
+      "endS": 230.05333,
+      "palign": 0
+    },
+    {
+      "word": "We ",
+      "success": true,
+      "startS": 230.15967,
+      "endS": 230.266,
+      "palign": 0
+    },
+    {
+      "word": "will ",
+      "success": true,
+      "startS": 230.36575,
+      "endS": 230.745,
+      "palign": 0
+    },
+    {
+      "word": "know. ",
+      "success": true,
+      "startS": 230.84475,
+      "endS": 232.141,
+      "palign": 0
+    },
+    {
+      "word": "The ",
+      "success": true,
+      "startS": 232.181,
+      "endS": 232.261,
+      "palign": 0
+    },
+    {
+      "word": "goal ",
+      "success": true,
+      "startS": 232.36075,
+      "endS": 232.899,
+      "palign": 0
+    },
+    {
+      "word": "is ",
+      "success": true,
+      "startS": 233.0185,
+      "endS": 233.138,
+      "palign": 0
+    },
+    {
+      "word": "to ",
+      "success": true,
+      "startS": 233.258,
+      "endS": 234.255,
+      "palign": 0
+    },
+    {
+      "word": "understand.\n\n",
+      "success": true,
+      "startS": 234.34092,
+      "endS": 235.372,
+      "palign": 0
+    }
+  ],
+  "waveformData": [
+    0.00275,
+    0.00549,
+    0.00931,
+    0.01105,
+    0.01443,
+    0.01802,
+    0.0217,
+    0.02505,
+    0.01786,
+    0.02903,
+    0.0295,
+    0.02994,
+    0.04063,
+    0.0433,
+    0.05059,
+    0.05603,
+    0.06439,
+    0.07075,
+    0.08378,
+    0.10832,
+    0.09849,
+    0.08319,
+    0.07502,
+    0.08105,
+    0.08254,
+    0.06959,
+    0.07116,
+    0.06072,
+    0.0594,
+    0.0531,
+    0.06856,
+    0.05676,
+    0.08023,
+    0.06769,
+    0.08645,
+    0.07706,
+    0.09848,
+    0.08372,
+    0.10212,
+    0.08472,
+    0.07708,
+    0.0787,
+    0.07696,
+    0.09101,
+    0.0971,
+    0.09734,
+    0.09422,
+    0.09033,
+    0.08234,
+    0.07816,
+    0.08278,
+    0.07439,
+    0.0892,
+    0.07682,
+    0.07744,
+    0.07507,
+    0.09017,
+    0.07853,
+    0.06688,
+    0.07057,
+    0.06886,
+    0.07247,
+    0.08237,
+    0.08525,
+    0.10251,
+    0.10351,
+    0.11001,
+    0.08587,
+    0.06936,
+    0.06927,
+    0.08423,
+    0.05704,
+    0.04394,
+    0.03303,
+    0.05583,
+    0.0548,
+    0.08699,
+    0.07676,
+    0.08025,
+    0.07776,
+    0.06843,
+    0.06784,
+    0.05352,
+    0.04118,
+    0.06422,
+    0.05697,
+    0.06898,
+    0.06762,
+    0.06241,
+    0.06781,
+    0.08644,
+    0.05278,
+    0.05382,
+    0.04098,
+    0.06416,
+    0.08823,
+    0.07411,
+    0.06569,
+    0.09023,
+    0.07936,
+    0.04932,
+    0.0684,
+    0.07097,
+    0.0846,
+    0.08646,
+    0.08402,
+    0.07277,
+    0.06593,
+    0.07487,
+    0.09754,
+    0.06831,
+    0.04449,
+    0.07765,
+    0.08286,
+    0.07114,
+    0.07584,
+    0.06762,
+    0.07661,
+    0.08663,
+    0.0609,
+    0.04375,
+    0.0757,
+    0.07852,
+    0.0767,
+    0.05007,
+    0.04434,
+    0.08124,
+    0.06355,
+    0.06167,
+    0.07371,
+    0.05789,
+    0.08349,
+    0.07085,
+    0.05888,
+    0.08186,
+    0.10042,
+    0.09087,
+    0.07711,
+    0.07854,
+    0.09053,
+    0.06906,
+    0.09618,
+    0.05579,
+    0.05778,
+    0.06751,
+    0.09081,
+    0.05873,
+    0.05042,
+    0.05091,
+    0.07825,
+    0.07493,
+    0.06627,
+    0.07739,
+    0.0651,
+    0.09598,
+    0.08788,
+    0.05504,
+    0.05684,
+    0.04554,
+    0.07886,
+    0.0806,
+    0.06168,
+    0.0975,
+    0.0838,
+    0.07811,
+    0.07881,
+    0.0677,
+    0.06089,
+    0.0753,
+    0.0667,
+    0.08183,
+    0.09173,
+    0.06079,
+    0.07045,
+    0.09541,
+    0.08079,
+    0.10538,
+    0.08794,
+    0.09752,
+    0.09241,
+    0.09188,
+    0.09342,
+    0.09565,
+    0.09724,
+    0.10885,
+    0.1057,
+    0.10865,
+    0.10083,
+    0.08585,
+    0.07228,
+    0.10267,
+    0.06292,
+    0.11695,
+    0.09326,
+    0.07065,
+    0.07649,
+    0.08326,
+    0.06555,
+    0.08337,
+    0.08256,
+    0.09984,
+    0.04934,
+    0.10106,
+    0.08918,
+    0.10951,
+    0.1006,
+    0.10314,
+    0.06856,
+    0.09587,
+    0.05877,
+    0.09287,
+    0.09565,
+    0.06808,
+    0.07064,
+    0.1167,
+    0.10645,
+    0.06336,
+    0.10232,
+    0.06386,
+    0.11101,
+    0.10282,
+    0.10963,
+    0.09664,
+    0.10897,
+    0.09497,
+    0.06258,
+    0.09954,
+    0.07931,
+    0.10804,
+    0.11748,
+    0.08464,
+    0.06728,
+    0.07313,
+    0.09813,
+    0.08649,
+    0.09434,
+    0.10379,
+    0.12256,
+    0.10806,
+    0.07604,
+    0.05745,
+    0.08528,
+    0.09765,
+    0.08367,
+    0.08742,
+    0.08477,
+    0.08329,
+    0.10365,
+    0.09379,
+    0.10053,
+    0.0988,
+    0.10565,
+    0.10636,
+    0.09779,
+    0.09646,
+    0.08749,
+    0.10826,
+    0.11093,
+    0.11276,
+    0.10961,
+    0.09407,
+    0.10278,
+    0.10601,
+    0.08839,
+    0.0751,
+    0.1103,
+    0.11125,
+    0.10656,
+    0.10296,
+    0.1027,
+    0.10008,
+    0.10673,
+    0.11066,
+    0.10626,
+    0.10483,
+    0.10985,
+    0.10227,
+    0.09335,
+    0.09381,
+    0.08162,
+    0.07195,
+    0.0892,
+    0.08483,
+    0.13493,
+    0.10477,
+    0.1005,
+    0.08305,
+    0.0907,
+    0.09838,
+    0.06754,
+    0.05496,
+    0.09041,
+    0.08685,
+    0.09592,
+    0.09546,
+    0.06085,
+    0.08257,
+    0.08815,
+    0.08416,
+    0.06941,
+    0.11188,
+    0.08913,
+    0.08734,
+    0.09408,
+    0.09853,
+    0.08028,
+    0.07175,
+    0.09834,
+    0.08149,
+    0.07324,
+    0.08336,
+    0.0851,
+    0.10263,
+    0.09833,
+    0.10142,
+    0.10523,
+    0.08279,
+    0.0726,
+    0.07716,
+    0.1464,
+    0.09124,
+    0.09624,
+    0.07434,
+    0.10259,
+    0.08573,
+    0.09283,
+    0.0809,
+    0.08591,
+    0.08776,
+    0.10488,
+    0.06494,
+    0.11865,
+    0.11977,
+    0.10891,
+    0.08859,
+    0.08254,
+    0.11507,
+    0.11481,
+    0.10909,
+    0.07758,
+    0.08625,
+    0.12164,
+    0.09288,
+    0.10264,
+    0.09281,
+    0.07668,
+    0.11341,
+    0.10964,
+    0.10363,
+    0.12746,
+    0.12832,
+    0.11529,
+    0.12028,
+    0.11575,
+    0.11772,
+    0.1142,
+    0.11189,
+    0.11781,
+    0.10055,
+    0.10961,
+    0.0775,
+    0.09538,
+    0.10675,
+    0.12818,
+    0.15673,
+    0.11358,
+    0.1579,
+    0.12865,
+    0.17791,
+    0.12201,
+    0.17699,
+    0.12893,
+    0.16159,
+    0.15163,
+    0.1152,
+    0.17096,
+    0.1296,
+    0.1746,
+    0.11641,
+    0.17233,
+    0.14265,
+    0.14252,
+    0.15107,
+    0.13391,
+    0.15899,
+    0.13972,
+    0.17043,
+    0.13462,
+    0.16437,
+    0.12657,
+    0.15477,
+    0.14112,
+    0.14156,
+    0.15284,
+    0.14254,
+    0.15885,
+    0.11756,
+    0.1579,
+    0.12591,
+    0.14214,
+    0.14671,
+    0.14277,
+    0.15004,
+    0.14586,
+    0.16493,
+    0.14228,
+    0.16151,
+    0.13739,
+    0.15435,
+    0.13818,
+    0.14507,
+    0.14724,
+    0.14303,
+    0.15943,
+    0.12008,
+    0.15669,
+    0.11316,
+    0.1504,
+    0.13764,
+    0.1219,
+    0.11471,
+    0.13251,
+    0.13925,
+    0.10807,
+    0.14605,
+    0.09488,
+    0.14087,
+    0.12273,
+    0.15856,
+    0.11838,
+    0.13042,
+    0.14168,
+    0.1182,
+    0.14846,
+    0.09878,
+    0.1512,
+    0.13009,
+    0.13293,
+    0.12777,
+    0.12368,
+    0.13493,
+    0.1053,
+    0.14418,
+    0.10638,
+    0.16126,
+    0.12985,
+    0.1613,
+    0.13083,
+    0.15242,
+    0.1282,
+    0.14077,
+    0.15356,
+    0.12297,
+    0.15854,
+    0.11706,
+    0.15324,
+    0.12204,
+    0.14497,
+    0.13676,
+    0.12694,
+    0.15441,
+    0.12478,
+    0.15416,
+    0.11702,
+    0.15189,
+    0.13017,
+    0.14926,
+    0.1344,
+    0.11866,
+    0.15351,
+    0.11055,
+    0.15525,
+    0.11813,
+    0.15279,
+    0.12158,
+    0.14432,
+    0.14524,
+    0.1423,
+    0.13495,
+    0.1289,
+    0.16125,
+    0.12368,
+    0.15999,
+    0.12238,
+    0.16307,
+    0.15047,
+    0.13595,
+    0.15035,
+    0.14663,
+    0.16325,
+    0.12119,
+    0.15862,
+    0.12107,
+    0.14771,
+    0.1164,
+    0.14024,
+    0.1471,
+    0.13556,
+    0.16209,
+    0.1306,
+    0.15942,
+    0.13231,
+    0.14995,
+    0.14125,
+    0.15832,
+    0.13454,
+    0.12495,
+    0.18074,
+    0.13582,
+    0.15729,
+    0.13187,
+    0.16002,
+    0.14632,
+    0.17484,
+    0.13629,
+    0.14336,
+    0.15371,
+    0.14358,
+    0.16917,
+    0.13495,
+    0.15972,
+    0.14747,
+    0.16773,
+    0.14374,
+    0.13356,
+    0.15367,
+    0.11813,
+    0.16893,
+    0.12531,
+    0.16368,
+    0.13613,
+    0.13374,
+    0.13512,
+    0.11718,
+    0.13131,
+    0.10972,
+    0.15768,
+    0.1165,
+    0.15479,
+    0.09667,
+    0.13411,
+    0.12095,
+    0.13189,
+    0.13788,
+    0.12627,
+    0.15165,
+    0.11547,
+    0.16645,
+    0.11809,
+    0.13811,
+    0.13383,
+    0.13304,
+    0.11875,
+    0.1121,
+    0.13669,
+    0.091,
+    0.16215,
+    0.10851,
+    0.15435,
+    0.11788,
+    0.14341,
+    0.15835,
+    0.14311,
+    0.14999,
+    0.13046,
+    0.1637,
+    0.13643,
+    0.14857,
+    0.13817,
+    0.13491,
+    0.12931,
+    0.13619,
+    0.14576,
+    0.11396,
+    0.15538,
+    0.09274,
+    0.1509,
+    0.11771,
+    0.14475,
+    0.1358,
+    0.16286,
+    0.15795,
+    0.14647,
+    0.16453,
+    0.13771,
+    0.1773,
+    0.12378,
+    0.1642,
+    0.15117,
+    0.15698,
+    0.12405,
+    0.12688,
+    0.16879,
+    0.11073,
+    0.16899,
+    0.12701,
+    0.15395,
+    0.15606,
+    0.15868,
+    0.15275,
+    0.1517,
+    0.15832,
+    0.14643,
+    0.1629,
+    0.15651,
+    0.16548,
+    0.17427,
+    0.17103,
+    0.17229,
+    0.16767,
+    0.15663,
+    0.15406,
+    0.16478,
+    0.17207,
+    0.17189,
+    0.11476,
+    0.09849,
+    0.09689,
+    0.12102,
+    0.14223,
+    0.07233,
+    0.09096,
+    0.10815,
+    0.11101,
+    0.11223,
+    0.13242,
+    0.08298,
+    0.11652,
+    0.14924,
+    0.11808,
+    0.09986,
+    0.13942,
+    0.17253,
+    0.12053,
+    0.13104,
+    0.12824,
+    0.10471,
+    0.09455,
+    0.12967,
+    0.10024,
+    0.12096,
+    0.10799,
+    0.10786,
+    0.13464,
+    0.1301,
+    0.12592,
+    0.12526,
+    0.11534,
+    0.11467,
+    0.16105,
+    0.16371,
+    0.11173,
+    0.12816,
+    0.09569,
+    0.12138,
+    0.10773,
+    0.11996,
+    0.11665,
+    0.09927,
+    0.11553,
+    0.12646,
+    0.09185,
+    0.15122,
+    0.15786,
+    0.13102,
+    0.11398,
+    0.10565,
+    0.16195,
+    0.17321,
+    0.13366,
+    0.10841,
+    0.12656,
+    0.15536,
+    0.12234,
+    0.15357,
+    0.138,
+    0.12137,
+    0.1795,
+    0.16357,
+    0.16792,
+    0.16673,
+    0.17057,
+    0.16495,
+    0.16723,
+    0.16436,
+    0.17583,
+    0.16902,
+    0.16453,
+    0.16983,
+    0.16342,
+    0.10995,
+    0.0579,
+    0.12188,
+    0.1098,
+    0.1485,
+    0.17194,
+    0.15932,
+    0.16583,
+    0.12867,
+    0.19017,
+    0.13111,
+    0.18444,
+    0.14146,
+    0.17775,
+    0.15111,
+    0.16741,
+    0.17175,
+    0.14711,
+    0.18882,
+    0.14286,
+    0.19361,
+    0.15696,
+    0.17992,
+    0.14519,
+    0.12645,
+    0.13112,
+    0.08573,
+    0.12723,
+    0.08551,
+    0.06974,
+    0.09198,
+    0.10726,
+    0.09672,
+    0.10608,
+    0.11978,
+    0.0995,
+    0.13453,
+    0.10566,
+    0.09553,
+    0.08591,
+    0.12168,
+    0.0981,
+    0.11439,
+    0.10051,
+    0.09398,
+    0.10117,
+    0.10968,
+    0.1049,
+    0.10049,
+    0.11696,
+    0.10298,
+    0.11305,
+    0.12081,
+    0.11158,
+    0.11015,
+    0.09289,
+    0.10286,
+    0.13028,
+    0.18208,
+    0.14378,
+    0.1361,
+    0.12819,
+    0.13092,
+    0.12857,
+    0.1497,
+    0.1097,
+    0.09493,
+    0.13662,
+    0.10648,
+    0.13407,
+    0.11533,
+    0.12172,
+    0.12548,
+    0.11843,
+    0.12616,
+    0.15429,
+    0.18844,
+    0.15942,
+    0.14527,
+    0.13898,
+    0.14663,
+    0.14268,
+    0.1273,
+    0.14445,
+    0.12637,
+    0.12663,
+    0.12391,
+    0.15118,
+    0.12044,
+    0.1157,
+    0.14601,
+    0.12671,
+    0.13391,
+    0.14253,
+    0.19483,
+    0.15685,
+    0.16039,
+    0.15296,
+    0.17826,
+    0.14625,
+    0.14631,
+    0.13374,
+    0.14814,
+    0.15632,
+    0.16367,
+    0.15794,
+    0.16952,
+    0.15165,
+    0.14133,
+    0.14493,
+    0.15081,
+    0.14381,
+    0.16053,
+    0.15054,
+    0.17072,
+    0.15467,
+    0.17491,
+    0.15249,
+    0.1573,
+    0.15325,
+    0.17203,
+    0.16757,
+    0.15472,
+    0.16127,
+    0.16588,
+    0.1895,
+    0.14286,
+    0.18241,
+    0.1643,
+    0.16445,
+    0.18297,
+    0.17973,
+    0.17691,
+    0.17493,
+    0.17483,
+    0.17962,
+    0.1709,
+    0.17623,
+    0.16706,
+    0.17152,
+    0.17114,
+    0.1837,
+    0.17039,
+    0.18495,
+    0.15327,
+    0.16337,
+    0.16117,
+    0.19215,
+    0.13758,
+    0.12645,
+    0.0953,
+    0.10267,
+    0.11218,
+    0.12187,
+    0.1286,
+    0.08476,
+    0.09795,
+    0.13071,
+    0.15373,
+    0.13608,
+    0.1291,
+    0.16207,
+    0.15967,
+    0.17586,
+    0.16376,
+    0.18729,
+    0.11678,
+    0.13157,
+    0.14411,
+    0.10429,
+    0.08969,
+    0.09811,
+    0.1271,
+    0.1406,
+    0.14177,
+    0.09348,
+    0.12767,
+    0.10917,
+    0.14953,
+    0.14596,
+    0.15519,
+    0.15328,
+    0.16783,
+    0.18067,
+    0.11827,
+    0.16456,
+    0.09585,
+    0.17507,
+    0.12747,
+    0.15765,
+    0.12136,
+    0.13244,
+    0.14702,
+    0.15985,
+    0.17775,
+    0.16033,
+    0.15444,
+    0.102,
+    0.16552,
+    0.15406,
+    0.15699,
+    0.15584,
+    0.14851,
+    0.17552,
+    0.17777,
+    0.17472,
+    0.13017,
+    0.21021,
+    0.1484,
+    0.15352,
+    0.1417,
+    0.16522,
+    0.20206,
+    0.14876,
+    0.1816,
+    0.15291,
+    0.17457,
+    0.13704,
+    0.18571,
+    0.18423,
+    0.20349,
+    0.20083,
+    0.15833,
+    0.16989,
+    0.17087,
+    0.18567,
+    0.1633,
+    0.16166,
+    0.16102,
+    0.18674,
+    0.20241,
+    0.15805,
+    0.16865,
+    0.19352,
+    0.18636,
+    0.18145,
+    0.18822,
+    0.15217,
+    0.20979,
+    0.1895,
+    0.16074,
+    0.16884,
+    0.18296,
+    0.1941,
+    0.18138,
+    0.17931,
+    0.16701,
+    0.19743,
+    0.18201,
+    0.16709,
+    0.16584,
+    0.18827,
+    0.17832,
+    0.18651,
+    0.18541,
+    0.16198,
+    0.17843,
+    0.14434,
+    0.19305,
+    0.16012,
+    0.17684,
+    0.16087,
+    0.19039,
+    0.15137,
+    0.16254,
+    0.20614,
+    0.18284,
+    0.18304,
+    0.16604,
+    0.19708,
+    0.16363,
+    0.17042,
+    0.1814,
+    0.16791,
+    0.16722,
+    0.18424,
+    0.16212,
+    0.19721,
+    0.20911,
+    0.1801,
+    0.18817,
+    0.19126,
+    0.19186,
+    0.19459,
+    0.18881,
+    0.19013,
+    0.18589,
+    0.18957,
+    0.17551,
+    0.1935,
+    0.18723,
+    0.18899,
+    0.19137,
+    0.18558,
+    0.19014,
+    0.21495,
+    0.23786,
+    0.22161,
+    0.24157,
+    0.2148,
+    0.21462,
+    0.20654,
+    0.22494,
+    0.22336,
+    0.208,
+    0.20555,
+    0.20996,
+    0.21784,
+    0.19946,
+    0.19246,
+    0.17886,
+    0.1846,
+    0.18553,
+    0.21418,
+    0.16476,
+    0.14297,
+    0.13779,
+    0.13914,
+    0.18332,
+    0.09352,
+    0.08185,
+    0.12944,
+    0.1191,
+    0.13973,
+    0.14365,
+    0.10171,
+    0.13034,
+    0.13699,
+    0.12098,
+    0.15186,
+    0.0774,
+    0.11634,
+    0.10937,
+    0.12793,
+    0.10217,
+    0.0858,
+    0.09478,
+    0.17451,
+    0.14915,
+    0.10432,
+    0.14858,
+    0.14509,
+    0.1271,
+    0.15753,
+    0.14399,
+    0.14312,
+    0.14061,
+    0.12491,
+    0.16433,
+    0.19971,
+    0.15472,
+    0.09893,
+    0.13308,
+    0.15525,
+    0.13552,
+    0.1466,
+    0.12545,
+    0.12478,
+    0.11321,
+    0.14081,
+    0.10484,
+    0.13485,
+    0.15358,
+    0.08103,
+    0.13587,
+    0.15547,
+    0.16379,
+    0.16118,
+    0.14105,
+    0.12276,
+    0.18801,
+    0.19675,
+    0.13088,
+    0.19939,
+    0.11415,
+    0.18869,
+    0.18843,
+    0.17984,
+    0.18614,
+    0.18238,
+    0.1959,
+    0.18117,
+    0.20098,
+    0.17279,
+    0.20262,
+    0.19414,
+    0.1912,
+    0.19731,
+    0.19326,
+    0.19456,
+    0.20543,
+    0.2061,
+    0.20455,
+    0.17792,
+    0.19314,
+    0.19671,
+    0.19526,
+    0.15039,
+    0.08607,
+    0.14537,
+    0.14256,
+    0.14529,
+    0.22149,
+    0.19638,
+    0.20772,
+    0.21426,
+    0.23328,
+    0.18387,
+    0.21206,
+    0.19025,
+    0.20806,
+    0.20558,
+    0.21907,
+    0.22487,
+    0.21099,
+    0.21539,
+    0.19926,
+    0.22017,
+    0.21885,
+    0.21659,
+    0.21736,
+    0.21362,
+    0.21189,
+    0.21435,
+    0.22297,
+    0.19279,
+    0.2142,
+    0.19808,
+    0.21854,
+    0.2274,
+    0.25359,
+    0.23203,
+    0.23813,
+    0.22855,
+    0.2362,
+    0.23891,
+    0.24529,
+    0.24208,
+    0.22965,
+    0.23526,
+    0.24328,
+    0.24146,
+    0.23755,
+    0.23228,
+    0.24603,
+    0.219,
+    0.25778,
+    0.24771,
+    0.25682,
+    0.2399,
+    0.24613,
+    0.24492,
+    0.2237,
+    0.24254,
+    0.24078,
+    0.23882,
+    0.23698,
+    0.24281,
+    0.24131,
+    0.23788,
+    0.23921,
+    0.24384,
+    0.22958,
+    0.23704,
+    0.25562,
+    0.24839,
+    0.25858,
+    0.24466,
+    0.25709,
+    0.2434,
+    0.23038,
+    0.22896,
+    0.23426,
+    0.20775,
+    0.15506,
+    0.15321,
+    0.21434,
+    0.1794,
+    0.16774,
+    0.1948,
+    0.12477,
+    0.24501,
+    0.2279,
+    0.24571,
+    0.22549,
+    0.23983,
+    0.24277,
+    0.24032,
+    0.24006,
+    0.23207,
+    0.24435,
+    0.22718,
+    0.24392,
+    0.22554,
+    0.23738,
+    0.23496,
+    0.23183,
+    0.24022,
+    0.20629,
+    0.20364,
+    0.15579,
+    0.12245,
+    0.10396,
+    0.05295,
+    0.03308,
+    0.0228,
+    0.02014,
+    0.01558,
+    0.01524
+  ],
+  "hootCer": 0.16462281679672985,
+  "isStreamed": false
+}
