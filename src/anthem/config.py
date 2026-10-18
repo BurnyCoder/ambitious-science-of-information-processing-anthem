@@ -34,6 +34,7 @@ class Settings:
     timeout_s: int  # give up on a generation task after this many seconds
     callback_url: str  # schema-required callback URL (we poll instead)
     fps: int  # video frame rate used by the timeline + Remotion
+    render_concurrency: int  # parallel Chrome tabs used by `remotion render`
     root: Path  # project root; all paths below hang off it
 
     @property
@@ -63,7 +64,7 @@ def load_settings(env_file: Path | str = ".env", root: Path | str | None = None,
     require_key=False lets offline stages (timeline/render) run without a Suno key."""
     root = Path(root) if root is not None else Path.cwd()  # project root defaults to the working directory
     env = {k: v for k, v in dotenv_values(env_file).items() if v is not None}  # .env values (missing file -> {})
-    env.update({k: v for k, v in os.environ.items() if k.startswith(("SUNO_", "SONG_", "VIDEO_"))})  # env vars win
+    env.update({k: v for k, v in os.environ.items() if k.startswith(("SUNO_", "SONG_", "VIDEO_", "RENDER_"))})  # env vars win
     key = env.get("SUNO_API_KEY", "").strip()  # required for any Suno call
     if require_key and not key:  # fail before spending anything
         raise ConfigError("SUNO_API_KEY is missing: copy .env.example to .env and set your sunoapi.org key")
@@ -76,5 +77,6 @@ def load_settings(env_file: Path | str = ".env", root: Path | str | None = None,
         timeout_s=int(env.get("SUNO_TIMEOUT_S", "900")),  # 15 min ceiling per task
         callback_url=env.get("SUNO_CALLBACK_URL", "https://example.com/suno-callback"),  # placeholder
         fps=int(env.get("VIDEO_FPS", "30")),  # 30 fps -> 7200 frames for a 4 min song
+        render_concurrency=int(env.get("RENDER_CONCURRENCY", "8")),  # Remotion's default is half the CPU threads
         root=root,
     )

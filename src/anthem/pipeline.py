@@ -9,6 +9,7 @@ Sources: argparse https://docs.python.org/3/library/argparse.html
 """
 
 import argparse  # command-line flags
+import json  # read the timeline for verification
 import logging  # phase logging
 import time  # phase timings
 from contextlib import contextmanager  # timing context manager
@@ -17,10 +18,12 @@ from anthem.config import load_settings  # .env -> Settings
 from anthem.logging_setup import setup_logging  # timestamped terminal + file logs
 from anthem.song import produce_song  # phase 1: Suno takes on disk
 from anthem.timeline import produce_timeline  # phase 2: video/public/timeline.json
+from anthem.render import render_video  # phase 3: out/anthem.mp4
+from anthem.verify import verify_video  # phase 4: checks + stills
 
 log = logging.getLogger("anthem.pipeline")  # stable name in logs
 
-STAGES = ["song", "timeline"]  # ordered phases; later stages are appended as they land
+STAGES = ["song", "timeline", "render", "verify"]  # ordered phases
 
 
 @contextmanager
@@ -38,6 +41,7 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--stage", choices=STAGES + ["all"], default="all", help="run one stage or all (default)")
     p.add_argument("--regenerate-song", action="store_true", help="pay for a new Suno generation even if cached")
     p.add_argument("--take", default=None, help="force a take by (prefix of) its Suno audio id")
+    p.add_argument("--preview", action="store_true", help="render/verify only 30 s at half size")
     return p.parse_args(argv)
 
 
@@ -53,6 +57,16 @@ def run(args: argparse.Namespace) -> None:
     if "timeline" in wanted:
         with phase("timeline"):
             produce_timeline(settings, forced_take=args.take)  # data/song/ -> video/public/
+    video = settings.out_dir / ("anthem_preview.mp4" if args.preview else "anthem.mp4")  # render output
+    if "render" in wanted:
+        with phase("render"):
+            video = render_video(settings.video_dir, settings.out_dir, settings.render_concurrency, args.preview)
+    if "verify" in wanted and not args.preview:  # a 30 s preview cannot match the song length
+        with phase("verify"):
+            timeline = json.loads((settings.video_dir / "public" / "timeline.json").read_text(encoding="utf-8"))
+            report = verify_video(video, timeline, settings.out_dir / "stills")  # probe + stills
+            if not report["ok"]:
+                raise SystemExit(f"Verification failed: {report['problems']}")  # non-zero exit for CI/users
 
 
 def main(argv=None) -> None:
