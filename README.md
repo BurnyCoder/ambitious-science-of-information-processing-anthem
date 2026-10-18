@@ -6,7 +6,7 @@ An original song plus a music video in which **every frame is drawn in code**. T
 - **Sync:** lyrics are highlighted word by word from Suno's word timings, and scene cuts land on beats tracked with librosa.
 - **Timing correction:** a pre-registered experiment found that Suno's word onsets are 0.137 s late on the take used. Every word is shifted by −0.137 s; see [experiment 5](reports/exp05_onset_offset.md).
 
-**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.0.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00, 218 MB) from [release v1.0.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.0.0). **Paper:** [reports/paper.pdf](reports/paper.pdf).
+**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.1.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00, 218 MB) from [release v1.1.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.1.0), with karaoke onsets corrected by [experiment 5](reports/exp05_onset_offset.md). The uncorrected first cut is in [release v1.0.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.0.0). **Paper:** [reports/paper.pdf](reports/paper.pdf).
 
 | Intro | Verse 1: layers | Pre-chorus: loss landscape | Chorus: circuits |
 |---|---|---|---|
