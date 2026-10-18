@@ -5,7 +5,7 @@ An original song plus a music video in which **every frame is drawn in code**. T
 - **Lyrics, pipeline and visuals:** written by Claude in this repository, with the visuals in Remotion + Three.js.
 - **Sync:** lyrics are highlighted word by word from Suno's word timings, and scene cuts land on beats tracked with librosa.
 
-**Video:** see the [GitHub Releases](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases) page (`anthem.mp4`, 1920×1080, 30 fps, 4:00).
+**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.0.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00, 218 MB) from [release v1.0.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.0.0). **Paper:** [reports/paper.pdf](reports/paper.pdf).
 
 | Intro | Verse 1: layers | Pre-chorus: loss landscape | Chorus: circuits |
 |---|---|---|---|
