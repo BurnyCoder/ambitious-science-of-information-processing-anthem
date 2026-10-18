@@ -19,7 +19,7 @@ from pathlib import Path  # paths
 
 log = logging.getLogger(__name__)  # module logger
 PROGRESS = re.compile(r"(Rendered|Encoded) (\d+)/(\d+)")  # e.g. "Rendered 755/7213, time remaining: 5m 12s"
-ANSI = re.compile(r"\[[0-9;]*m")  # terminal color codes Remotion emits (e.g. ESC[90m), unreadable in log files
+ANSI = re.compile(r"\x1b\[[0-9;]*m")  # terminal color codes Remotion emits (e.g. ESC[90m), unreadable in log files
 
 
 def keep_line(line: str) -> bool:
