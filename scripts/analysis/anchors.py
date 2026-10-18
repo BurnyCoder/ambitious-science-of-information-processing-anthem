@@ -18,8 +18,10 @@ from pathlib import Path  # paths
 
 import numpy as np  # arrays
 
-GAP_S = 0.8  # rest before the line, required in both timings
-MAX_ANCHORS = 20  # sample size cap
+GAP_S = 0.8  # rest before the line, required in both timings (pre-registered; see ALL_LINE_STARTS)
+MAX_ANCHORS = 20  # sample size cap (pre-registered)
+ALL_LINE_STARTS = {"gap_s": float("-inf"), "max_n": 10**6}  # exp05 amendment 1: Suno spans are contiguous, so no
+# rest criterion can be applied symmetrically; every lead line start is panelled and unclear ones are labelled ambiguous
 HALF_WINDOW_S = 0.8  # panel = 1.6 s
 JITTER_S = 0.25  # hidden shift of the window centre
 SR, HOP = 22050, 256  # exp02's validated onset resolution (11.6 ms)
@@ -70,7 +72,8 @@ def write_panels(vocals: Path, rec: list[dict], anchors: list[int], out_dir: Pat
         a2.set_xticks(np.arange(0, 2 * HALF_WINDOW_S + 1e-9, 0.1))
         a2.grid(alpha=0.3)
         a2.set_xlabel("time in window (s)")
-        a1.set_title(f"Anchor {n:02d}: first word of the line = '{rec[k]['text']}'  (vocal stem)")
+        line = " ".join(r["text"] for r in rec[k:k + 3] if r["line"] == rec[k]["line"])  # first words of the line
+        a1.set_title(f"Anchor {n:02d}: '{rec[k - 1]['text']}' | LINE START -> '{line} ...'  (vocal stem)", fontsize=10)
         fig.tight_layout()
         fig.savefig(out_dir / f"anchor_{n:02d}.png", dpi=90)
         plt.close(fig)

@@ -16,6 +16,7 @@ cd video && node scripts/stills.mjs 2084  # render single frames to out/stills/ 
 cd video && npm run studio                # interactive Remotion Studio (http://localhost:3000)
 uv run python scripts/validate_beats.py   # experiment 02 (beat tracker vs ground truth)
 uv run --group analysis python scripts/validate_alignment.py  # experiment 03 (needs the analysis group)
+uv run --group analysis python scripts/validate_onset_offset.py  # experiment 05 (Demucs + MMS_FA; run twice, see below)
 ```
 
 ## Invariants: do not break these
@@ -25,6 +26,8 @@ uv run --group analysis python scripts/validate_alignment.py  # experiment 03 (n
 - **`timeline.json` is a contract.** If you change its shape in `src/anthem/timeline.py`, update `video/src/lib/timeline.ts` and `docs/architecture.md` in the same change.
 - **Determinism.** Remotion renders frames in parallel tabs, so every visual must be a pure function of `useCurrentFrame()`. Use `random(seed)` from `remotion`, never `Math.random()`, and never R3F `useFrame`.
 - **Take selection is pre-specified** as max coverage, then min `hootCer`. Do not change the rule to pick a "nicer" take. Use `--take <id-prefix>` and document the override.
+- **Exp05 labels stay blind.** `scripts/validate_onset_offset.py` first writes blinded panels (`reports/figures/exp05_anchors/`) and a hidden key (`out/exp05/anchor_key.json`). Label the panels in `reports/data/exp05_anchor_labels.json` *before* opening the key or the comparison output, then run it again.
+- **Experiment helpers live in `scripts/analysis/`** (imported by exp03 and exp05; pytest finds them via `pythonpath = ["scripts"]`). Heavy imports (torch, demucs, faster-whisper) stay inside functions so the tests run without the `analysis` group.
 - **Logs are complete.** Suno requests and responses are logged untruncated via `log_json`. Keep it that way, because the reports cite them.
 
 ## Conventions

@@ -30,7 +30,7 @@ from anthem.config import load_settings  # paths
 from anthem.logging_setup import log_json, setup_logging  # terminal + file logs, full payloads
 from anthem.lyrics import parse_lyrics  # written words
 from anthem.song import load_cached_song, load_song_spec  # cached takes
-from analysis.anchors import resolve_labels, select_anchors, write_panels  # hand-labelled onsets
+from analysis.anchors import ALL_LINE_STARTS, resolve_labels, select_anchors, write_panels  # hand-labelled onsets
 from analysis.decision import decide_offset  # pre-registered rule
 from analysis.forced_alignment import mms_word_spans  # lyrics-aware reference
 from analysis.references import match_pairs, whisper_words  # exp03 reference
@@ -150,7 +150,9 @@ def main() -> None:
         rec, sep, vocals = take_records(take, sections)
         takes[take.id] = {"rec": rec, "separation": sep, "vocals": vocals, "mp3": take.audio_path}
     first = song.takes[0].id  # take 1, the one the video uses
-    anchors = select_anchors(takes[first]["rec"])  # phase 4: anchors
+    original = select_anchors(takes[first]["rec"])  # pre-registered rule (rest >= 0.8 s in both timings)
+    anchors = select_anchors(takes[first]["rec"], **ALL_LINE_STARTS)  # phase 4: amendment 1, every lead line start
+    log.info("Anchors: %d by the pre-registered rule, %d lead line starts panelled (amendment 1)", len(original), len(anchors))
     if not LABELS.exists():  # run 1: write blinded panels, compare nothing
         key = write_panels(takes[first]["vocals"], takes[first]["rec"], anchors, PANELS)
         KEY.write_text(json.dumps(key, indent=1), encoding="utf-8")  # hidden until labels exist
@@ -168,6 +170,7 @@ def main() -> None:
     timebase = {tid: {"mix_vs_stem_sum_lag_samples": t["separation"]["mix_vs_stem_sum_lag_samples"]} for tid, t in takes.items()}
     timebase[first].update(playback_lags(takes[first]["mp3"], settings.out_dir / "anthem.mp4"))
     summary = {"primary_take": first, "decision": decision, "hypotheses": hypotheses, "anchors": anc,
+               "anchors_by_original_rule": original,
                "timebase": timebase, "takes": results}
     log_json(log, "Exp05 results", summary)
     out = DATA / "exp05_onset_offset.json"

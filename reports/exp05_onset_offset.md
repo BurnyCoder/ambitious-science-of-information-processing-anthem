@@ -94,6 +94,23 @@ If an offset is applied, it is implemented as a `.env` setting (`VIDEO_WORD_OFFS
 - Lyrics-alignment benchmarks report word-onset errors on separated vocals in the 0.2–0.3 s (mean) range, e.g. Demirel, Ahlbäck & Dixon (2021), arXiv:2102.09202; Durand, Stoller & Ewert (2023), arXiv:2306.07744. *(Citation typo fixed after commit: first author names corrected.)*
 - librosa onset detection: <https://librosa.org/doc/latest/generated/librosa.onset.onset_detect.html>; bootstrap: <https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html>.
 
+## Amendment 1: anchor selection (decided blind, before any comparison)
+
+**What happened.** Run 1 computed all three references and applied the anchor selection rule. Only **1** of the 56 lead line starts of take 1 qualified, against the pre-registered target of about 20 and the D3 minimum of 10.
+
+**Why.** We diagnosed this from each system's own timings, without computing any Suno-vs-MMS, Whisper or anchor difference:
+
+| Gap before a lead line start (previous word's end → first word's start) | min | 25 % | median | 75 % | max | ≥ 0.8 s |
+|---|---|---|---|---|---|---|
+| Suno (repair v2) | 0.004 s | 0.040 s | 0.060 s | 0.073 s | 7.415 s | 1 |
+| MMS_FA | 0.000 s | 0.055 s | 0.220 s | 0.420 s | 7.100 s | 9 |
+
+Suno's word spans are nearly contiguous: a line-final word runs on until the next line starts (median duration 0.74 s). Suno's "gap" is therefore not a measure of a vocal rest, and the rule "≥ 0.8 s in both timings" could almost never hold. This was a design error in the selection rule, not a property of the singing.
+
+**Change.** The rest criterion and the subsampling are dropped. *All 56 lead line starts* of take 1 are panelled. The selection now uses only the lyric structure (a lead word that starts a line), so it depends on no system's timing at all. Lines whose start is not clearly visible (legato joins, vowel-after-vowel, choir masking) are marked `ambiguous` by the blind annotator, exactly as pre-registered. Panel titles also show the previous word and the first three words of the line, so the annotator can find the word boundary when there is no rest. Window, jitter, blinding, labels and all decision conditions are unchanged.
+
+**Status.** This amendment was committed before the comparison phase was run, and nothing was computed that compares two systems' onsets. Under the rule as originally written, D3 fails (1 < 10 anchors). The fallback also needs anchors, so the original rule would have produced "offset 0" for a purely mechanical reason. Both outcomes are reported below; the amended one is operative.
+
 ## Results
 
 *(appended after the run)*

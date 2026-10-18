@@ -12,7 +12,7 @@ Sources: numpy random Generator https://numpy.org/doc/stable/reference/random/ge
 import numpy as np  # synthetic data
 import pytest  # approx + raises
 
-from analysis.anchors import resolve_labels, select_anchors  # units under test
+from analysis.anchors import ALL_LINE_STARTS, resolve_labels, select_anchors  # units under test
 from analysis.decision import decide_offset  # unit under test
 from analysis.stats import cluster_median_ci  # unit under test
 from analysis.timebase import xcorr_lag  # unit under test
@@ -65,6 +65,7 @@ def test_select_anchors_requires_a_rest_in_both_timings():
     many = [_rec(k, 2.0 * k, 2.0 * k + 0.5) for k in range(40)]  # 39 qualifying line starts
     picked = select_anchors(many, gap_s=0.8, max_n=20, seed=0)
     assert len(picked) == 20 and picked == sorted(picked) and picked == select_anchors(many, 0.8, 20, 0)  # seeded sample
+    assert select_anchors(rec, **ALL_LINE_STARTS) == [1, 3]  # amendment 1: every lead line start, no timing used
 
 
 def test_resolve_labels_maps_letters_manual_times_and_ambiguous():
