@@ -91,8 +91,8 @@ def fig_onset_offset() -> None:
     the hand-labelled anchors of take 1 as a strip.  Global: shows which system carries the Suno-Whisper lag."""
     data = json.loads((DATA / "exp05_onset_offset.json").read_text(encoding="utf-8"))  # raw exp05 output
     bins = np.arange(-0.6, 0.8001, 0.02)  # 20 ms bins (one MMS frame)
-    fig, axes = plt.subplots(1, len(data["records"]), figsize=(11, 4), sharey=True)
-    for ax, (take_id, rec) in zip(axes, data["records"].items()):
+    fig, axes = plt.subplots(1, len(data["records"]), figsize=(11, 5.6), sharex=True, sharey=True)  # same scales
+    for k_take, (ax, (take_id, rec)) in enumerate(zip(axes, data["records"].items()), start=1):
         lead = [r for r in rec if not r["backing"]]  # primary population
         for a, label, color in [("suno", "Suno (repair v2) − MMS", "C0"), ("whisper", "Whisper − MMS", "C1")]:
             d = np.array([r[a] - r["mms"] for r in lead if r[a] is not None])  # signed differences
@@ -106,8 +106,10 @@ def fig_onset_offset() -> None:
                 d = [r[a] - r["anchor"] for r in rows if r[a] is not None]
                 ax.plot(d, np.full(len(d), -3 - 3 * k), "|", ms=9, color=color, label=f"{a} − hand-labelled onset (n={len(d)})")
         ax.axvline(0, color="grey", lw=0.8)
-        ax.set(xlabel="signed onset difference (s); > 0 = later than the reference", title=f"take {take_id[:4]}")
-        ax.legend(fontsize=6.5, loc="upper left")
+        video = " (used in the video)" if take_id == data["primary_take"] else ""
+        ax.set(xlabel="signed onset difference (s); > 0 = later than the reference", title=f"take {k_take}{video}",
+               xlim=(-1.0, 0.85))  # anchors reach -0.98 s
+        ax.legend(fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.16))  # below the axes, never over the data
     axes[0].set_ylabel("lead words per 20 ms bin (strips below 0: anchors)")
     fig.tight_layout()
     fig.savefig(FIG / "fig4_onset_offset.png", dpi=130)
