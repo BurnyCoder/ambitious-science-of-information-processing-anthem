@@ -13,7 +13,7 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
 
 | Module | Responsibility |
 |---|---|
-| `config.py` | Loads `.env` (environment variables take precedence) into a frozen `Settings` and derives every path from the project root. |
+| `config.py` | Loads `.env` (environment variables take precedence) into a frozen `Settings` and derives every path from the project root. Includes `VIDEO_WORD_OFFSET_S` (default 0), the exp05 word-time correction. |
 | `logging_setup.py` | Writes timestamped logs to the terminal and to `logs/run_<ts>.log`. `log_json` writes whole payloads, never truncated. |
 | `suno_client.py` | The only network boundary. Implements credit, generate, record-info polling, timestamped lyrics and a CDN download (the download carries no auth header). |
 | `song.py` | Loads and validates the song spec (V6 limits), then runs generate-or-reuse with the cache. |
@@ -21,7 +21,7 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
 | `alignment.py` | Aligns Suno `alignedWords` to the written words using difflib, interpolates missing words, and repairs grossly misplaced words. Repair v2 moves only mid-line words longer than 3 s, plus the chain of words before them; see reports/exp03. |
 | `take_selection.py` | Picks a take by a rule fixed before generation: highest coverage, then lowest `hootCer`. |
 | `audio_analysis.py` | Uses librosa for beats (hop 256), tempo from the median beat spacing, a 4/4 downbeat-phase heuristic, and RMS and onset strength sampled per video frame. |
-| `timeline.py` | Snaps section boundaries to beats and writes `timeline.json`. Also computes the cut-to-beat metric. |
+| `timeline.py` | Shifts every word by `VIDEO_WORD_OFFSET_S` (`shift_words`, clamped at 0), snaps section boundaries to beats and writes `timeline.json`. Also computes the cut-to-beat metric. |
 | `render.py` | Builds the `npx remotion render … --gl=angle` command and streams its output into the log. |
 | `verify.py` | Runs the ffprobe acceptance checks and extracts one still per section with ffmpeg. |
 
@@ -38,12 +38,13 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
              "words": [{"text": "A", "startS": 18.808, "endS": 18.968, "backing": false}]}],
   "beats": [4.946, …], "downbeats": […],
   "energy": [/* one 0..1 value per video frame */], "onset": [/* same */],
-  "meta": {"taskId": "…", "takeId": "…", "alignment": {"coverage": 1.0, "repaired": 2}, "hootCer": 0.1546, "cutToBeatErrorS": 0.0, "takeScores": […]}
+  "meta": {"taskId": "…", "takeId": "…", "alignment": {"coverage": 1.0, "repaired": 2}, "wordOffsetS": -0.137, "hootCer": 0.1546, "cutToBeatErrorS": 0.0, "takeScores": […]}
 }
 ```
 
 - **Section boundaries.** The first section starts at 0. Every later section starts at its first sung word minus 0.1 s, snapped to the nearest beat if one is within ±0.3 s. Each section ends where the next one starts, and the last one ends at the end of the song.
 - **Lines.** Each line runs from its first word's start to its last word's end.
+- **Word times** already include `meta.wordOffsetS` (−0.137 s for the shipped take 1; see reports/exp05). Section boundaries are computed from the shifted words.
 
 ## Remotion side (`video/`)
 
