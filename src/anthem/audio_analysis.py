@@ -34,7 +34,8 @@ class AudioAnalysis:
     """Local: rhythm + loudness summary.  Global: merged into timeline.json for the video."""
 
     duration_s: float  # exact audio length
-    tempo_bpm: float  # global tempo estimate
+    tempo_bpm: float  # tempo from the median beat spacing
+    tempogram_bpm: float  # librosa's raw (lag-quantized) tempo estimate, kept for comparison
     beat_times: list[float]  # seconds
     downbeats: list[float]  # seconds, every 4th beat
     energy: list[float]  # RMS per video frame, 0..1
@@ -47,19 +48,19 @@ def _normalize(x: np.ndarray) -> np.ndarray:
     return np.clip(x / ref, 0.0, 1.0) if ref > 0 else np.zeros_like(x)  # silence -> zeros
 
 
-def analyze_audio(path: Path, fps: int) -> AudioAnalysis:
+def analyze_audio(path: Path, fps: int, hop: int = HOP) -> AudioAnalysis:
     """Local: run the full analysis on one audio file.  Global: phase "timeline" calls this on the chosen take."""
     y, sr = librosa.load(path, sr=SR, mono=True)  # decode + resample to mono 22.05 kHz
     duration = len(y) / sr  # seconds, exact from sample count
-    onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=HOP)  # spectral flux novelty curve
-    tempo, beats = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr, hop_length=HOP, units="time")  # DP tracker
+    onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop)  # spectral flux novelty curve
+    tempo, beats = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr, hop_length=hop, units="time")  # DP tracker
     raw_tempo = float(np.atleast_1d(tempo)[0])  # librosa returns a 1-element array
     # The tempogram estimate is quantized to integer frame lags (e.g. hop 512 @ 22.05 kHz: 120 BPM sits between
     # lag 21 = 123.0 BPM and lag 22 = 117.45 BPM), so report the tracked beats' median spacing instead.
     tempo = 60.0 / float(np.median(np.diff(beats))) if len(beats) > 1 else raw_tempo  # sub-frame accurate
-    rms = librosa.feature.rms(y=y, hop_length=HOP)[0]  # frame-wise loudness
-    feat_t = librosa.frames_to_time(np.arange(len(rms)), sr=sr, hop_length=HOP)  # feature frame centers
-    onset_t = librosa.frames_to_time(np.arange(len(onset_env)), sr=sr, hop_length=HOP)  # onset frame centers
+    rms = librosa.feature.rms(y=y, hop_length=hop)[0]  # frame-wise loudness
+    feat_t = librosa.frames_to_time(np.arange(len(rms)), sr=sr, hop_length=hop)  # feature frame centers
+    onset_t = librosa.frames_to_time(np.arange(len(onset_env)), sr=sr, hop_length=hop)  # onset frame centers
     video_t = np.arange(int(round(duration * fps))) / fps  # one timestamp per video frame
     energy = _normalize(np.interp(video_t, feat_t, rms))  # RMS sampled at video frames
     onset = _normalize(np.interp(video_t, onset_t, onset_env))  # onset strength at video frames
@@ -68,5 +69,5 @@ def analyze_audio(path: Path, fps: int) -> AudioAnalysis:
     downbeats = beats[phase::4]  # every 4th beat from that phase
     log.info("Audio %s: %.2fs, tempo %.2f BPM (tempogram %.2f), %d beats, %d downbeats (phase %d)",
              Path(path).name, duration, tempo, raw_tempo, len(beats), len(downbeats), phase)
-    return AudioAnalysis(duration, tempo, [float(b) for b in beats], [float(b) for b in downbeats],
+    return AudioAnalysis(duration, tempo, raw_tempo, [float(b) for b in beats], [float(b) for b in downbeats],
                          [float(v) for v in energy], [float(v) for v in onset])
