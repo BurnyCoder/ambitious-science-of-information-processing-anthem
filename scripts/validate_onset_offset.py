@@ -114,15 +114,20 @@ def offset_stats(rec: list[dict], sections) -> dict:
     }
 
 
-def anchor_stats(rec: list[dict], key: list[dict], labels: dict) -> dict:
-    """Local: α_S, β, α_W over the usable hand-labelled anchors.  Global: validation of the MMS reference."""
+def anchor_stats(rec: list[dict], key: list[dict], labels: dict, high: list[int]) -> dict:
+    """Local: α_S, β, α_W over the usable hand-labelled anchors (and, post hoc, the high-confidence ones).
+    Global: validation of the MMS reference."""
     times = resolve_labels(labels, key)  # unblinding
     rows = [{"panel": k["panel"], "text": rec[k["word_index"]]["text"], "anchor": times[k["panel"]],
              **{s: rec[k["word_index"]][s] for s in ("suno", "mms", "whisper")}} for k in key if times[k["panel"]] is not None]
-    diff = lambda s: [r[s] - r["anchor"] for r in rows if r[s] is not None]  # noqa: E731  system - anchor
+    diff = lambda s, rs=rows: [r[s] - r["anchor"] for r in rs if r[s] is not None]  # noqa: E731  system - anchor
+    hi = [r for r in rows if r["panel"] in high]  # POST-HOC: labels marked high-confidence at labelling time
     return {"n_panels": len(key), "n_usable": len(rows), "rows": rows,
             "alpha_suno": median_ci(diff("suno"), N_BOOT), "beta_mms": median_ci(diff("mms"), N_BOOT),
-            "alpha_whisper": {"n": len(diff("whisper")), "ci": median_ci(diff("whisper"), N_BOOT)}}
+            "alpha_whisper": {"n": len(diff("whisper")), "ci": median_ci(diff("whisper"), N_BOOT)},
+            "post_hoc_high_confidence": {"n": len(hi), "alpha_suno": median_ci(diff("suno", hi), N_BOOT),
+                                         "beta_mms": median_ci(diff("mms", hi), N_BOOT),
+                                         "alpha_whisper": median_ci(diff("whisper", hi), N_BOOT)}}
 
 
 def playback_lags(take_mp3: Path, video: Path, sr: int = 22050, seconds: int = 60) -> dict:
@@ -160,9 +165,10 @@ def main() -> None:
         return
     key = json.loads(KEY.read_text(encoding="utf-8"))
     assert [k["word_index"] for k in key] == anchors, "anchor selection changed since the panels were made"
-    labels = json.loads(LABELS.read_text(encoding="utf-8"))["labels"]
+    labelled = json.loads(LABELS.read_text(encoding="utf-8"))  # committed before this phase ran
+    labels = labelled["labels"]
     results = {tid: offset_stats(t["rec"], sections) for tid, t in takes.items()}  # phase 5: compare
-    anc = anchor_stats(takes[first]["rec"], key, labels)
+    anc = anchor_stats(takes[first]["rec"], key, labels, labelled["confidence"]["high"])
     p = results[first]["delta_suno_minus_mms"]  # (median, lo, hi)
     decision = decide_offset(delta=p[0], delta_ci=p[1:], beta=anc["beta_mms"][0], n_anchors=anc["n_usable"],
                              alpha_s=anc["alpha_suno"][0], alpha_s_ci=anc["alpha_suno"][1:])  # phase 6: decide
