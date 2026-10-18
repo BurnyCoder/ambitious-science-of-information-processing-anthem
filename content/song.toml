@@ -1,0 +1,8 @@
+# Song metadata sent to Suno (custom mode) together with content/lyrics.txt.
+# Local: title/style/negative tags/vocal gender for one generation.
+# Global: read by anthem.song.load_song_spec(); limits per https://docs.sunoapi.org/suno-api/generate-music
+#   (title <= 80 chars, style <= 1000, negativeTags <= 1000 for the V6 series; vocalGender is "m" or "f").
+title = "We Will Know"
+style = "epic cinematic anthem, hybrid orchestral, massive choir, taiko and driving drums, soaring synth arpeggios, powerful male lead vocal with choir harmonies, triumphant, major key, 124 BPM, stadium singalong chorus, key change on final chorus, uplifting, awe, scientific wonder"
+negative_tags = "lo-fi, mumbled vocals, comedic, sad, acoustic ballad"
+vocal_gender = "m"
