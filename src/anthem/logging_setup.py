@@ -20,11 +20,12 @@ FORMAT = "%(asctime)s.%(msecs)03d | %(levelname)-7s | %(name)s | %(message)s"  #
 DATEFMT = "%Y-%m-%d %H:%M:%S"  # ISO-like date, msecs appended by FORMAT
 
 
-def setup_logging(logs_dir: Path, level: int = logging.INFO) -> Path:
+def setup_logging(logs_dir: Path, level: int = logging.INFO, prefix: str = "run") -> Path:
     """Local: attach a terminal handler and a new timestamped file handler to the root logger.
-    Global: called once at the start of pipeline.run(); returns the log path so it can be reported."""
+    Global: called once at the start of pipeline.run() (and by experiment scripts with their own prefix);
+    returns the log path so it can be reported."""
     logs_dir.mkdir(parents=True, exist_ok=True)  # create logs/ on first run
-    path = logs_dir / f"run_{datetime.now():%Y%m%d_%H%M%S}.log"  # one file per run
+    path = logs_dir / f"{prefix}_{datetime.now():%Y%m%d_%H%M%S}.log"  # one file per run, e.g. exp05_<ts>.log
     root = logging.getLogger()  # root logger collects every module's records
     root.setLevel(level)  # threshold for all handlers
     for handler in list(root.handlers):  # idempotent: re-running in one process does not duplicate lines

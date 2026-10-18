@@ -25,37 +25,19 @@ Usage: uv run --group analysis python scripts/validate_alignment.py [model_size]
 import json  # raw results
 import sys  # argv + import path
 import time  # timing
-from difflib import SequenceMatcher  # text matching
 from pathlib import Path  # paths
 
 import numpy as np  # stats
-from scipy import stats  # wilcoxon + bootstrap
+from scipy import stats  # wilcoxon
 
 ROOT = Path(__file__).resolve().parents[1]  # repo root
 sys.path.insert(0, str(ROOT / "src"))  # import the pipeline package
 from anthem.alignment import align_words  # the pipeline's own aligner
 from anthem.config import load_settings  # paths
-from anthem.lyrics import normalize_word, parse_lyrics  # written words
+from anthem.lyrics import parse_lyrics  # written words
 from anthem.song import load_cached_song, load_song_spec  # takes on disk
-
-
-def whisper_words(audio: Path, model_size: str) -> list[dict]:
-    """Local: recognized words with start/end from faster-whisper.  Global: the independent reference."""
-    from faster_whisper import WhisperModel  # heavy import only when used
-    import librosa  # decode ourselves: faster-whisper's PyAV decoder passes a kwarg the installed PyAV rejects
-    model = WhisperModel(model_size, device="cpu", compute_type="int8")  # CPU int8 inference
-    wave, _ = librosa.load(audio, sr=16000, mono=True)  # Whisper expects 16 kHz mono float32
-    segments, _ = model.transcribe(wave, language="en", word_timestamps=True, beam_size=5)  # ndarray input is supported
-    return [{"norm": normalize_word(w.word), "start": w.start, "end": w.end, "p": w.probability}
-            for seg in segments for w in (seg.words or []) if normalize_word(w.word)]  # flatten, drop punctuation
-
-
-def median_ci(x: np.ndarray) -> tuple[float, float, float]:
-    """Local: median with a 95% percentile-bootstrap CI.  Global: error bars for onset disagreement."""
-    if len(x) < 3:
-        return float(np.median(x)) if len(x) else float("nan"), float("nan"), float("nan")
-    res = stats.bootstrap((x,), np.median, confidence_level=0.95, n_resamples=5000, method="percentile", random_state=0)
-    return float(np.median(x)), float(res.confidence_interval.low), float(res.confidence_interval.high)
+from analysis.references import match_pairs, whisper_words  # Whisper reference + text matching (shared with exp05)
+from analysis.stats import median_ci  # bootstrap CI (shared with exp05)
 
 
 def main() -> None:
@@ -73,8 +55,7 @@ def main() -> None:
         t0 = time.time()
         ref = whisper_words(take.audio_path, model_size)  # reference
         secs = time.time() - t0
-        sm = SequenceMatcher(None, [w.norm for w in rep], [r["norm"] for r in ref], autojunk=False)  # text match
-        pairs = [(i1 + k, j1 + k) for tag, i1, i2, j1, j2 in sm.get_opcodes() if tag == "equal" for k in range(i2 - i1)]
+        pairs = match_pairs([w.norm for w in rep], [r["norm"] for r in ref])  # exact text-match blocks
         e_raw = np.array([abs(raw[i].start - ref[j]["start"]) for i, j in pairs])  # |raw - ref|
         e_rep = np.array([abs(rep[i].start - ref[j]["start"]) for i, j in pairs])  # |repaired - ref|
         e_ctl = np.array([abs(rep[i].start + rng.uniform(-1, 1) - ref[j]["start"]) for i, j in pairs])  # control
