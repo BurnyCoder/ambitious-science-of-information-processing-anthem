@@ -12,11 +12,24 @@ Sources:
 """
 
 import logging  # stream renderer output
+import re  # recognize per-frame progress lines
 import shutil  # locate npx (npx.cmd on Windows)
 import subprocess  # run the CLI
 from pathlib import Path  # paths
 
 log = logging.getLogger(__name__)  # module logger
+PROGRESS = re.compile(r"(Rendered|Encoded) (\d+)/(\d+)")  # e.g. "Rendered 755/7213, time remaining: 5m 12s"
+ANSI = re.compile(r"\[[0-9;]*m")  # terminal color codes Remotion emits (e.g. ESC[90m), unreadable in log files
+
+
+def keep_line(line: str) -> bool:
+    """Local: drop per-frame progress except every 5% and the last frame.
+    Global: keeps the run log readable (one render prints ~14k progress lines)."""
+    m = PROGRESS.search(line)  # progress line?
+    if not m:
+        return bool(line.strip())  # keep every other non-empty line (warnings, errors, summaries)
+    done, total = int(m[2]), int(m[3])  # frames done / total
+    return done == total or done % max(1, total // 20) == 0  # 5% steps
 
 
 def remotion_command(output: Path, concurrency: int, preview: bool) -> list[str]:
@@ -38,8 +51,8 @@ def render_video(video_dir: Path, out_dir: Path, concurrency: int = 8, preview: 
     proc = subprocess.Popen(cmd, cwd=video_dir, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                             text=True, encoding="utf-8", errors="replace", bufsize=1)  # line-buffered text stream
     for line in proc.stdout:  # realtime: one log record per renderer line
-        if line.strip():
-            log.info("[remotion] %s", line.rstrip())
+        if keep_line(line):  # throttle per-frame progress
+            log.info("[remotion] %s", ANSI.sub("", line).rstrip())  # plain text in the log
     if proc.wait() != 0:  # non-zero exit = failed render
         raise RuntimeError(f"Remotion render failed with exit code {proc.returncode}")
     log.info("Rendered %s (%.1f MB)", output, output.stat().st_size / 1e6)

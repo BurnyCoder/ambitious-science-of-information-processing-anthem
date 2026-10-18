@@ -54,3 +54,15 @@ def test_verify_video_on_tiny_real_mp4(tmp_path):
     report = verify_video(mp4, timeline, tmp_path / "stills", width=320, height=180)  # run the real checks
     assert report["ok"], report["problems"]  # passes
     assert (tmp_path / "stills" / "verify_s01_intro.png").exists()  # midpoint still extracted
+
+
+def test_keep_line_throttles_progress_only():
+    from anthem.render import keep_line  # unit under test
+    assert keep_line("Rendered 360/7200, time remaining: 4m") and keep_line("Rendered 7200/7200")  # 5% step + last
+    assert not keep_line("Rendered 361/7200, time remaining: 4m")  # dropped
+    assert keep_line("Warning: something odd") and not keep_line("   ")  # other lines kept, blanks dropped
+
+
+def test_ansi_codes_are_stripped():
+    from anthem.render import ANSI  # unit under test
+    assert ANSI.sub("", "\x1b[90mCodec                h264\x1b[39m") == "Codec                h264"  # colors removed
