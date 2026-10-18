@@ -7,6 +7,7 @@ Global context: last Python phase before rendering; video/src/lib/timeline.ts de
 the same shape in TypeScript and every scene reads only this file.
 Sources:
 - Remotion serves video/public/ via staticFile(): https://www.remotion.dev/docs/staticfile
+- dataclasses.replace: https://docs.python.org/3/library/dataclasses.html#dataclasses.replace
 - scene map in TOML (tomllib): https://docs.python.org/3/library/tomllib.html
 """
 
@@ -14,6 +15,7 @@ import json  # output format
 import logging  # summary
 import shutil  # copy the chosen MP3
 import tomllib  # content/scenes.toml
+from dataclasses import replace  # copy a TimedWord with new times
 from pathlib import Path  # paths
 
 from anthem.alignment import TimedWord  # karaoke words
@@ -32,6 +34,15 @@ def snap_to_beat(t: float, beats: list[float], window: float = SNAP_WINDOW_S) ->
         return t
     nearest = min(beats, key=lambda b: abs(b - t))  # O(n) is fine for ~500 beats
     return nearest if abs(nearest - t) <= window else t  # never move a cut far
+
+
+def shift_words(words: list[TimedWord], offset_s: float) -> list[TimedWord]:
+    """Local: add offset_s to every word's start and end, clamped at the song start.
+    Global: the global onset correction of reports/exp05 (VIDEO_WORD_OFFSET_S); section cuts follow the
+    shifted first words, so karaoke and cuts move together. Calibrated on take 1 only."""
+    if not offset_s:  # default: Suno's own timings
+        return words
+    return [replace(w, start=max(0.0, w.start + offset_s), end=max(0.0, w.end + offset_s)) for w in words]  # copy
 
 
 def load_scene_map(path: Path) -> dict[str, str]:
@@ -124,11 +135,13 @@ def produce_timeline(settings, forced_take: str | None = None) -> Path:
     take, scores = select_take(song, sections, forced_take)  # which audio to cut to
     raw = json.loads(take.aligned_path.read_text(encoding="utf-8"))  # Suno word timings of that take
     words, stats = align_words(sections, raw["alignedWords"])  # written words with repaired times
-    log.info("Alignment of take %s: %s", take.id, stats)
+    words = shift_words(words, settings.word_offset_s)  # exp05 onset correction (0 by default)
+    log.info("Alignment of take %s: %s; word offset %+.3f s", take.id, stats, settings.word_offset_s)
     audio = analyze_audio(take.audio_path, settings.fps)  # rhythm + loudness
     timeline = build_timeline(sections, words, audio, settings.fps, spec.title,
                               load_scene_map(settings.content_dir / "scenes.toml"),
                               meta={"taskId": song.task_id, "takeId": take.id, "alignment": stats,
+                                    "wordOffsetS": settings.word_offset_s,
                                     "hootCer": raw.get("hootCer"), "takeScores": scores})
     timeline["meta"]["cutToBeatErrorS"] = cut_to_beat_error(timeline)  # beat-sync metric
     log.info("Mean scene-cut distance to nearest beat: %s s", timeline["meta"]["cutToBeatErrorS"])

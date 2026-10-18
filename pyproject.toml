@@ -24,9 +24,15 @@ build-backend = "uv_build"
 
 [dependency-groups]
 analysis = [
+    "demucs>=4.0.1",
     "faster-whisper>=1.2.1",
     "matplotlib>=3.11.2",
+    "torch>=2.14.1",
+    "torchaudio>=2.11.0",
 ]
 dev = [
     "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["scripts"]  # experiment helpers in scripts/analysis/ are importable in tests (https://docs.pytest.org/en/stable/reference/reference.html#confval-pythonpath)

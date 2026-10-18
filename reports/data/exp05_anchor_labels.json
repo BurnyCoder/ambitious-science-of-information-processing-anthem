@@ -1,0 +1,30 @@
+{
+ "experiment": "exp05 anchor check (amendment 1: all 56 lead line starts of take 1)",
+ "annotator": "Claude (the agent running exp05). Blind to the Suno, MMS and Whisper positions: panels show none of them, the window centre carries a hidden U(-0.25, 0.25) s jitter, and out/exp05/anchor_key.json was not opened before these labels were committed.",
+ "date": "2026-10-18",
+ "panels": "reports/figures/exp05_anchors/anchor_NN.png",
+ "rule": "Label = the moment the line's first word becomes audible: the start of its first sound (consonant burst or fricative noise if any, otherwise the start of the energy rise after the previous word's decay). A letter if a detector onset sits there; 'manual:<seconds in window>' if the detector missed it (read off the 0.1 s grid, about +-0.02 s); 'ambiguous' when the boundary cannot be told from the panel (legato joins, vowel after vowel, choir masking, or two equally plausible syllables).",
+ "labels": {
+  "1": "A", "2": "A", "3": "manual:0.86", "4": "manual:0.73", "5": "B", "6": "B", "7": "C", "8": "B",
+  "9": "B", "10": "B", "11": "ambiguous", "12": "A", "13": "ambiguous", "14": "A", "15": "A", "16": "ambiguous",
+  "17": "manual:0.45", "18": "ambiguous", "19": "A", "20": "B", "21": "B", "22": "E", "23": "ambiguous", "24": "B",
+  "25": "A", "26": "ambiguous", "27": "ambiguous", "28": "A", "29": "ambiguous", "30": "A", "31": "A", "32": "ambiguous",
+  "33": "B", "34": "A", "35": "C", "36": "ambiguous", "37": "ambiguous", "38": "C", "39": "ambiguous", "40": "ambiguous",
+  "41": "ambiguous", "42": "ambiguous", "43": "C", "44": "ambiguous", "45": "D", "46": "ambiguous", "47": "ambiguous", "48": "A",
+  "49": "C", "50": "ambiguous", "51": "A", "52": "B", "53": "ambiguous", "54": "ambiguous", "55": "ambiguous", "56": "A"
+ },
+ "confidence": {
+  "high": [1, 5, 6, 7, 8, 9, 14, 15, 19, 20, 21, 24, 25, 31, 34, 38, 51, 56],
+  "moderate": [2, 3, 4, 10, 12, 17, 22, 28, 30, 33, 35, 43, 45, 48, 49, 52]
+ },
+ "notes": {
+  "3": "'Linear' starts with /l/: no detector onset at the start of the energy rise after 'high,' decays.",
+  "4": "Vowel-initial 'And': the detector onset C (0.81) sits ~80 ms after the energy starts rising from silence.",
+  "17": "'Start' begins with /s/: high-band noise from ~0.45 s precedes the voiced onset A (0.61).",
+  "11, 27, 32, 47": "'We will know!' after a held note: the first change of the note and the next strong onset after a dip are equally plausible starts.",
+  "12, 28, 48": "'We will understand!' after the backing echo has decayed: onset after the low-energy region.",
+  "15, 31, 51": "'The goal': a short syllable, a /g/ closure (deep dip), then the strong onset of 'goal'; 'The' is the short syllable.",
+  "16": "The window shows the stem decaying into silence with no new vocal onset."
+ },
+ "post_hoc_use_of_confidence": "Confidence was recorded at labelling time (blind). Any analysis restricted to 'high' is a sensitivity analysis that was not pre-registered."
+}

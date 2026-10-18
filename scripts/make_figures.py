@@ -5,6 +5,7 @@ and writes PNG figures to reports/figures/:
   fig1_stills.png     one frame from the middle of each of the 11 sections (from the final MP4)
   fig2_beats.png      exp02: beat F-measure and |tempo error| vs true tempo, hop 256 vs 512 (clean clicks)
   fig3_alignment.png  exp03: CDF of |onset(Suno, repaired v2) - onset(Whisper)| per take, with the random-shift control
+  fig4_onset_offset.png  exp05: signed onset differences vs the MMS forced aligner, plus hand-labelled anchors
 Global context: every number plotted is read from the committed raw data, so figures are reproducible.
 Design notes (avoiding misleading plots): shared, labelled axes; log scale only where errors span 3 decades and it
 is stated on the axis; half-tempo failures are marked explicitly instead of being clipped away.
@@ -85,9 +86,41 @@ def fig_alignment() -> None:
     plt.close(fig)
 
 
+def fig_onset_offset() -> None:
+    """Local: exp05 histograms of signed onset differences vs the MMS forced aligner, one panel per take, with
+    the hand-labelled anchors of take 1 as a strip.  Global: shows which system carries the Suno-Whisper lag."""
+    data = json.loads((DATA / "exp05_onset_offset.json").read_text(encoding="utf-8"))  # raw exp05 output
+    bins = np.arange(-0.6, 0.8001, 0.02)  # 20 ms bins (one MMS frame)
+    fig, axes = plt.subplots(1, len(data["records"]), figsize=(11, 5.6), sharex=True, sharey=True)  # same scales
+    for k_take, (ax, (take_id, rec)) in enumerate(zip(axes, data["records"].items()), start=1):
+        lead = [r for r in rec if not r["backing"]]  # primary population
+        for a, label, color in [("suno", "Suno (repair v2) − MMS", "C0"), ("whisper", "Whisper − MMS", "C1")]:
+            d = np.array([r[a] - r["mms"] for r in lead if r[a] is not None])  # signed differences
+            out = int(np.sum((d < bins[0]) | (d > bins[-1])))  # outside the plotted range, reported in the legend
+            ax.hist(np.clip(d, bins[0], bins[-1]), bins=bins, histtype="step", lw=1.5, color=color,
+                    label=f"{label}: median {np.median(d):+.3f} s (n={len(d)}, {out} clipped to the edge)")
+            ax.axvline(np.median(d), color=color, ls="--", lw=1)
+        if take_id == data["primary_take"]:  # anchors exist only for the video's take
+            rows = data["anchors"]["rows"]
+            for k, (a, color) in enumerate([("suno", "C0"), ("mms", "C2"), ("whisper", "C1")]):
+                d = [r[a] - r["anchor"] for r in rows if r[a] is not None]
+                ax.plot(d, np.full(len(d), -3 - 3 * k), "|", ms=9, color=color, label=f"{a} − hand-labelled onset (n={len(d)})")
+        ax.axvline(0, color="grey", lw=0.8)
+        video = " (used in the video)" if take_id == data["primary_take"] else ""
+        ax.set(xlabel="signed onset difference (s); > 0 = later than the reference", title=f"take {k_take}{video}",
+               xlim=(-1.0, 0.85))  # anchors reach -0.98 s
+        ax.legend(fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.16))  # below the axes, never over the data
+    axes[0].set_ylabel("lead words per 20 ms bin (strips below 0: anchors)")
+    fig.tight_layout()
+    fig.savefig(FIG / "fig4_onset_offset.png", dpi=130)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     FIG.mkdir(parents=True, exist_ok=True)  # reports/figures
     fig_stills()
     fig_beats()
     fig_alignment()
+    if (DATA / "exp05_onset_offset.json").exists():  # written by scripts/validate_onset_offset.py
+        fig_onset_offset()
     print("figures written to", FIG)

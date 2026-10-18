@@ -16,7 +16,7 @@ import soundfile as sf  # write the WAV fixture
 from anthem.alignment import align_words  # word timings for the timeline
 from anthem.audio_analysis import analyze_audio  # unit under test
 from anthem.lyrics import parse_lyrics  # sections for the timeline
-from anthem.timeline import build_timeline, snap_to_beat  # unit under test
+from anthem.timeline import build_timeline, shift_words, snap_to_beat  # units under test
 
 SR = 22050  # librosa's default sample rate
 
@@ -70,3 +70,13 @@ def test_build_timeline_contract(click_track):
     line = tl["lines"][2]  # "We will know"
     assert line["sectionIndex"] == 2 and [w["text"] for w in line["words"]] == ["We", "will", "know"]
     assert line["startS"] == pytest.approx(10.4) and line["endS"] == pytest.approx(12.0)  # line span from words
+
+
+def test_shift_words_moves_every_word_and_clamps_at_zero():
+    sections = parse_lyrics("[Verse 1]\nA matrix\n")
+    aligned = [{"word": w, "startS": s, "endS": e, "success": True} for w, s, e in [("A", 0.05, 0.4), ("matrix", 0.4, 1.0)]]
+    words, _ = align_words(sections, aligned)  # timed words
+    shifted = shift_words(words, -0.137)  # exp05: Suno onsets are 0.137 s late on take 1
+    assert [w.start for w in shifted] == pytest.approx([0.0, 0.263])  # 0.05 - 0.137 < 0 is clamped to the song start
+    assert [w.end for w in shifted] == pytest.approx([0.263, 0.863])  # ends move by the same amount
+    assert shift_words(words, 0.0) == words  # the default (0) leaves Suno's timings untouched
