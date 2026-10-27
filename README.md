@@ -5,9 +5,18 @@ An original song plus a music video in which **every frame is drawn in code**. T
 - **Lyrics, pipeline and visuals:** written by Claude in this repository, with the visuals in Remotion + Three.js.
 - **Sync:** lyrics are highlighted word by word from Suno's word timings, and scene cuts land on beats tracked with librosa.
 - **Timing correction:** a pre-registered experiment found that Suno's word onsets are late. The lag was 0.137 s on the original take and is 0.156 s on the edited take the video uses, so every word is shifted by −0.156 s. See [experiment 5](reports/exp05_onset_offset.md) and [experiment 6](reports/exp06_lyric_edit.md).
+- **Illustration track (v1.3.0):** 86 figure cards, at least one per sung line. Each card appears as its word is sung and carries a provenance badge and a citation.
+  - The concrete content comes from data released with the papers, and **no experiment was re-run**. Examples:
+    - Anthropic's Dallas → Austin, rabbit-rhyme and 36+59 attribution graphs, which also drive the chorus circuits;
+    - Nanda et al.'s grokking run and its Fourier key frequencies;
+    - ARENA's induction-head scores, Neuronpedia features, Arditi et al.'s refusal scores;
+    - Epoch AI's model and Chinchilla data, Nakkiran et al.'s double descent;
+    - Gurnee & Tegmark's places, Goodfire's block-sparse-featurizer figure.
+  - See [docs/vignettes.md](docs/vignettes.md) and [experiment 7](reports/exp07_provenance.md).
 - **One-line lyric edit:** the word "mind" was taken out of Verse 1 ("And out of it a **thing** that learns to answer why"). Only that part was re-sung, with Suno's replace-section. The line was fixed, but Suno regenerated about 30 s of audio rather than the requested 11.6 s window, and it shifted the file by 17 ms. See [experiment 6](reports/exp06_lyric_edit.md).
 
-**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.2.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.2.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.2.0): the edited lyric, with karaoke onsets corrected by experiments 5 and 6. Older cuts:
+**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.3.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.3.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.3.0): the maximalist cut with the illustration track. Older cuts:
+- [v1.2.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.2.0): the edited lyric with corrected onsets, no figure cards.
 - [v1.1.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.1.0): the original lyric, corrected onsets.
 - [v1.0.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.0.0): uncorrected.
 
@@ -18,6 +27,20 @@ An original song plus a music video in which **every frame is drawn in code**. T
 | ![intro](docs/img/s01_intro.jpg) | ![layers](docs/img/s02_layers.jpg) | ![landscape](docs/img/s03_landscape.jpg) | ![chorus](docs/img/s04_chorus.jpg) |
 | **Verse 2: ladder of abstraction** | **Verse 3: theory of deep learning** | **Bridge: atlas of the math** | **Final chorus: ideal solving** |
 | ![ladder](docs/img/s05_ladder.jpg) | ![theory](docs/img/s08_theory.jpg) | ![atlas](docs/img/s09_atlas.jpg) | ![finale](docs/img/s10_finale.jpg) |
+
+Twelve of the 86 figure cards, all drawn from released data:
+
+![Twelve figure cards drawn from released data: attribution graph, grokking curves and Fourier spectrum, induction scores, refusal scores, world places, model scale, double descent, block-sparse featurizers, superposition, weekday latents, a Neuronpedia feature](docs/img/cards.jpg)
+
+**Highlights of v1.3.0** ([experiment 7](reports/exp07_provenance.md)):
+- **Consistent with the papers.**
+  - The five largest Fourier frequencies of the released grokking embedding are exactly the paper's key frequencies {14, 35, 41, 42, 52}.
+  - ARENA's top induction heads include the IOI paper's 5.5 and 6.9.
+- **Coverage and density.** Every sung line has a card (56/56). Frames are more detailed than v1.2.0 at the same moments: median PNG size ×1.20 (log₂ +0.264, 95 % CI [+0.183, +0.422]).
+- **Negative findings.**
+  - The fact-check found three overclaims in our own plan (a Golden Gate quote, an ActAdd layer, a WeightWatcher "well trained" band), which were removed before release.
+  - Verse 1 gained no measurable detail (+0.002).
+  - Denser is not shown to be better: no viewer study was run.
 
 ## Methodology (how the song and the video are made)
 

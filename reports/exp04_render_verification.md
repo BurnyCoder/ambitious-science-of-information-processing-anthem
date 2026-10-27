@@ -27,7 +27,7 @@ Chorus, manifolds, theory and outro needed no layout fixes. The re-rendered stil
 
 Command (from `src/anthem/render.py`, logged in full): `npx remotion render src/index.ts Anthem out/anthem.mp4 --gl=angle --concurrency=8 --log=info`
 
-There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth was rendered before the fact-check corrections and was not released; the sixth is v1.3.0.
+There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections) and the sixth (before two label fixes found in its card stills) were not released; the seventh is v1.3.0.
 
 | Render | Frames | Wall time | File size | Streams (ffprobe) | Duration (video / song) | Verify |
 |---|---|---|---|---|---|---|
@@ -36,7 +36,8 @@ There were three full renders: the first with repair v1 timings, the second with
 | 3 (v2 + exp05 offset −0.137 s, v1.1.0) | 7213 | 485.0 s | 217.8 MB | h264 1920×1080 30/1 + aac | 240.448 s / 240.42 s | **ok** |
 | 4 (edited take `303ab1c3` + exp06 offset −0.156 s, v1.2.0) | 7212 | 467.8 s | 218.0 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 | 5 (illustration track, before the fact-check fixes; not released) | 7212 | 565.7 s | 244.4 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
-| 6 (illustration track, v1.3.0) | 7212 | 517.3 s | 244.6 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
+| 6 (illustration track, fact-checked; not released) | 7212 | 517.3 s | 244.6 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
+| 7 (illustration track, v1.3.0) | 7212 | 531.4 s | 244.4 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 
 - **Hardware.** A 16-thread Windows 11 desktop, Remotion 4.0.536, concurrency 8, ANGLE GL.
 - **Log volume.** Render 1 logged one line per frame (about 14k lines), and its Remotion lines contained ANSI colour codes. Both were fixed before render 2: progress is logged every 5 %, and the codes are stripped (`render.keep_line`, `render.ANSI`). Render 2's run log shows 64 Remotion lines with no escape codes.
@@ -60,7 +61,7 @@ Before the full render, `node scripts/stills.mjs --vignettes` rendered one still
 | Scene captions collided with the corner cards; old theory pillars showed through the pillar cards | Captions the cards replace were removed; the theory scene was rebuilt around the cards |
 | Equation dust was too strong near the lyrics in the finale | Opacity halved and kept above the lyric band |
 
-The 11 verification stills of render 6 show every scene in order, with the karaoke lit on the sung word and the cards in their slots. No error or warning lines appear in the run log of render 6.
+After render 6, its card stills showed two remaining defects: overlapping rabbit-graph labels and a clipped WeightWatcher legend. Both were fixed with one shared label shortener and a two-line legend, then rendered again. The 11 verification stills of render 7 show every scene in order, with the karaoke lit on the sung word and the cards in their slots. No error or warning lines appear in the run log of render 7.
 
 ## Learnings
 

@@ -80,7 +80,7 @@ The checks were fixed in the approved plan before the data phase ran:
 | 2 | ARENA top-5 induction heads include 5.5 and 6.9 | **pass**: 5.5 = 0.909, 6.9 = 0.898, 5.1 = 0.897, 7.10 = 0.891, 7.2 = 0.825 |
 | 3 | On-screen numbers match their sources | **pass after corrections** (table below) |
 | 4 | Card coverage of sung non-backing lines | **pass**: 56 / 56 lines (86 cards; the shortest is on screen 2.0 s) |
-| 5 | Visual density v1.3.0 vs v1.2.0 | **pass**: median log₂ ratio +0.262, section-bootstrap 95 % CI [+0.183, +0.424] ([details](#visual-density)) |
+| 5 | Visual density v1.3.0 vs v1.2.0 | **pass**: median log₂ ratio +0.264, section-bootstrap 95 % CI [+0.183, +0.422] ([details](#visual-density)) |
 
 **Descriptive numbers from the released data** (not pre-registered; one run each, so no error bars):
 - **Weight decay.** Test loss first drops below 1 at epoch 9,890 with weight decay 1.0, and at epoch 90,890 with 0.1.
@@ -120,17 +120,17 @@ The checks were fixed in the approved plan before the data phase ran:
 
 | Measure | Value |
 |---|---|
-| median PNG size per frame | 812 kB (v1.2.0) → 1,052 kB (v1.3.0) |
-| median log₂(v1.3.0 / v1.2.0) | **+0.262** (≈ 1.20×) |
-| 95 % CI, sections resampled (primary; frames within a section are autocorrelated) | [+0.183, +0.424] |
-| 95 % CI, frames resampled (secondary) | [+0.212, +0.351] |
-| frames where v1.3.0 is larger | 115 / 120 |
+| median PNG size per frame | 812 kB (v1.2.0) → 1,049 kB (v1.3.0) |
+| median log₂(v1.3.0 / v1.2.0) | **+0.264** (≈ 1.20×) |
+| 95 % CI, sections resampled (primary; frames within a section are autocorrelated) | [+0.183, +0.422] |
+| 95 % CI, frames resampled (secondary) | [+0.208, +0.343] |
+| frames where v1.3.0 is larger | 113 / 120 |
 | pre-specified check | **pass** |
 
 Per section (median log₂ ratio):
-- **Largest gains:** bridge +0.634, verse 2 (ladder) +0.577, final chorus +0.515.
-- **Middle:** outro +0.393, verse 3 +0.377, pre-chorus 2 +0.329, intro +0.211, the two choruses +0.184 and +0.215, pre-chorus 1 +0.139.
-- **Verse 1 (layers) is unchanged at +0.008.** Its 3D fly-through already filled the frame; the cards replaced the scene's own panels rather than adding to empty space.
+- **Largest gains:** bridge +0.635, verse 2 (ladder) +0.575, final chorus +0.517.
+- **Middle:** outro +0.382, verse 3 +0.379, pre-chorus 2 +0.326, intro +0.211, the two choruses +0.184 and +0.208, pre-chorus 1 +0.139.
+- **Verse 1 (layers) is unchanged at +0.002.** Its 3D fly-through already filled the frame; the cards replaced the scene's own panels rather than adding to empty space.
 
 **Limitations.** Compressed size measures detail, not quality, legibility or musical fit. It is also inflated by anything that adds texture, including the faint equation dust. No viewer study was run.
 
