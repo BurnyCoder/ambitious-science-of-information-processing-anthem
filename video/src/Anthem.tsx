@@ -1,7 +1,7 @@
 /**
  * The music video composition.
  * Local: stacks background -> spectrum ring -> one <Sequence> per song section (its scene) ->
- * karaoke overlay -> beat/cut flashes -> HUD, and plays the song.
+ * figure cards -> karaoke overlay -> beat/cut flashes -> HUD, and plays the song.
  * Global: rendered by `remotion render ... Anthem`; everything is derived from the
  * timeline prop that Root.tsx's calculateMetadata loads from public/timeline.json.
  * Sources: https://www.remotion.dev/docs/sequence , https://www.remotion.dev/docs/media/audio
@@ -13,6 +13,7 @@ import {lastIndexAtOrBefore, toFrame, type Timeline} from './lib/timeline'; // d
 import {COLORS} from './lib/theme'; // palette
 import {Background, BeatFlash, Hud, SpectrumRing} from './components/Overlays'; // shared layers
 import {KineticLyrics} from './components/KineticLyrics'; // karaoke
+import {VignetteLayer} from './components/VignetteLayer'; // figure cards
 import {SCENES} from './scenes'; // scene registry
 
 export type AnthemProps = {timelineFile: string; timeline: Timeline | null}; // composition props
@@ -39,6 +40,7 @@ export const Anthem: React.FC<AnthemProps> = ({timeline}) => {
 					</Sequence>
 				);
 			})}
+			<VignetteLayer tl={tl} t={t} />
 			{entry.bigLyrics ? null : <KineticLyrics tl={tl} t={t} />}
 			<BeatFlash tl={tl} t={t} section={section} />
 			<Hud tl={tl} t={t} section={section} caption={entry.caption} />

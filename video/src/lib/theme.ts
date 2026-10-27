@@ -23,6 +23,15 @@ export const COLORS = {
 	lime: '#9dff5c', // "understood" / success
 } as const;
 
+/** Local: provenance badge colors. Global: every figure card says where its content comes from (anthem/vignettes.py BADGES). */
+export const BADGE_COLORS: Record<string, string> = {
+	'released data': COLORS.lime, // numbers/figures read from the authors' or a third party's released files
+	'published numbers': COLORS.cyan, // values quoted from a paper's text or tables
+	'live math': COLORS.amber, // computed in the video from the formula
+	'from the paper': '#b79cff', // a formula or claim stated in the cited paper
+	schematic: '#c9d3e6', // drawn by us to illustrate the cited idea
+};
+
 export const FONTS = {
 	display: loadOrbitron('normal', {weights: ['700', '900'], subsets: ['latin']}).fontFamily, // bold futurist
 	body: loadGrotesk('normal', {weights: ['400', '600'], subsets: ['latin']}).fontFamily, // readable sans
