@@ -36,10 +36,10 @@ Twelve of the 86 figure cards, all drawn from released data:
 - **Consistent with the papers.**
   - The five largest Fourier frequencies of the released grokking embedding are exactly the paper's key frequencies {14, 35, 41, 42, 52}.
   - ARENA's top induction heads include the IOI paper's 5.5 and 6.9.
-- **Coverage and density.** Every sung line has a card (56/56). Frames are more detailed than v1.2.0 at the same moments: median PNG size ×1.20 (log₂ +0.264, 95 % CI [+0.183, +0.422]).
+- **Coverage and density.** Every sung line has a card (56/56). Frames are more detailed than v1.2.0 at the same moments: median PNG size ×1.20 (log₂ +0.263, 95 % CI [+0.177, +0.422]).
 - **Negative findings.**
   - The fact-check found three overclaims in our own plan (a Golden Gate quote, an ActAdd layer, a WeightWatcher "well trained" band), which were removed before release.
-  - Verse 1 gained no measurable detail (+0.002).
+  - Verse 1 gained no measurable detail (+0.003).
   - Denser is not shown to be better: no viewer study was run.
 
 ## Methodology (how the song and the video are made)

@@ -265,7 +265,7 @@ The derived card data comes from these sources:
 - The v1.2.0 render of the edited take (exp06) with the −0.156 s offset has 7212 frames and a container duration of 240.405 s for a 240.41 s song. It took 467.8 s (218.0 MB) and passed the same checks. Its audio track is 23.0 ms later than the analysed MP3 decoding.
 - The MP4's audio track is 11.0 ms later than the analysed MP3 decoding (cross-correlation, first 60 s), a third of a frame. It is reported, not corrected.
 - The automated check passed.
-- The v1.3.0 render with the illustration track has 7212 frames and a 240.405 s container duration. It took 531.4 s (244.4 MB) and passed the same checks. Before it, a still of every card (86) was inspected. That found ten layout defects, among them overlapping graph labels, a truncated bar axis and a schematic leaving its axis (exp04, iteration 3).
+- The v1.3.0 render with the illustration track has 7212 frames and a 240.405 s container duration. It took 441.3 s (244.4 MB) and passed the same checks. Before it, a still of every card (86) was inspected. That found ten layout defects, among them overlapping graph labels, a truncated bar axis and a schematic leaving its axis (exp04, iteration 3).
 
 ![Exp04. One frame from the middle of each section of the final video.](figures/fig1_stills.png){width=100%}
 
@@ -325,7 +325,7 @@ The fifth check uses a standard proxy for visual complexity (Machado et al., 201
 | 2 | **pass**: 5.5 = 0.909, 6.9 = 0.898, 5.1 = 0.897, 7.10 = 0.891, 7.2 = 0.825 |
 | 3 | **pass after corrections**: a Golden Gate quote and clamp value, an ActAdd layer and coefficient, and a "2–6 = well trained" band for WeightWatcher's α were in our plan but not in the cited sources, and were removed or corrected |
 | 4 | **pass**: 56/56 lines, 86 cards, the shortest on screen for 2.0 s |
-| 5 | **pass**: +0.264 [+0.183, +0.422]; frame bootstrap [+0.208, +0.343]; 113/120 frames larger; per section from +0.002 (verse 1) to +0.635 (bridge) |
+| 5 | **pass**: +0.263 [+0.177, +0.422]; frame bootstrap [+0.208, +0.343]; 114/120 frames larger; per section from +0.003 (verse 1) to +0.634 (bridge) |
 
 **Descriptive numbers from the released data** (not pre-registered):
 - **Weight decay.** With weight decay 1.0, test loss first drops below 1 at epoch 9,890; with 0.1, at epoch 90,890. The runs also differ in seed, and the 0.1 run's stored config is stale.
