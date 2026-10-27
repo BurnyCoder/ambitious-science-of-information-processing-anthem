@@ -10,6 +10,7 @@ Base URL: `https://api.sunoapi.org`. Every call sends `Authorization: Bearer <SU
 |---|---|---|
 | Credit balance | `GET /api/v1/generate/credit` | Returns `data` as a number, e.g. `1000.0` in our run. |
 | Generate | `POST /api/v1/generate` | See the payload below. Returns `data.taskId`. |
+| Replace section | `POST /api/v1/generate/replace-section` | Re-sings `infillStartS`–`infillEndS` (≥ 10 s, ≤ 50 % of the track) of an existing take (`taskId` + `audioId`) with `prompt`/`lyrics` for the segment and `fullLyrics` for the whole song; `tags`, `title` required. Polled with record-info. Used once by `--replace-lines` ([exp06](../reports/exp06_lyric_edit.md)); see <https://docs.sunoapi.org/suno-api/replace-section>. |
 | Poll | `GET /api/v1/generate/record-info?taskId=…` | Status goes `PENDING → TEXT_SUCCESS → FIRST_SUCCESS → SUCCESS`. Failures: `CREATE_TASK_FAILED`, `GENERATE_AUDIO_FAILED`, `CALLBACK_EXCEPTION`, `SENSITIVE_WORD_ERROR`. |
 | Word timings | `POST /api/v1/generate/get-timestamped-lyrics` with body `{taskId, audioId}` | Returns `alignedWords[{word, success, startS, endS, palign}]`, `waveformData`, `hootCer` and `isStreamed`. |
 
@@ -26,7 +27,7 @@ Base URL: `https://api.sunoapi.org`. Every call sends `Authorization: Bearer <SU
 - **`prompt` duplicates `lyrics`.** The docs say that in custom mode `prompt` "is used as lyrics" and that `lyrics` takes priority on V6. Sending both is a safe fallback.
 - **`duration` must be set.** The docs list it as 10–360 s with a default of 20 s.
 - **`callBackUrl` gets a placeholder.** The OpenAPI schema marks it as required, but we poll instead of using callbacks.
-- **Limits** enforced in `song.py`: title ≤ 80 characters; style, lyrics and negativeTags ≤ 1000 / 5000 / 1000 characters.
+- **Limits** enforced in `song.py`: title ≤ 80 characters; style, lyrics and negativeTags ≤ 1000 / 5000 / 1000 characters. Lyrics containing a word from `banned_words` in `song.toml` (currently "mind") are refused before any call.
 
 ## Behaviour observed in our run
 
@@ -41,6 +42,11 @@ All of this is in `logs/` and `data/song/`.
   - **Take 2** aligned the first lyric line twice: once compressed at 0.13–6.2 s and once at 13.3 s.
   - **Take 1** had intro backing vocals compressed into 10.7–11.4 s, and mid-line words with implausibly early starts, e.g. "matrix" spanning 7.74 s.
   - See [reports/exp03_alignment_repair.md](../reports/exp03_alignment_repair.md).
+- **Replace section** ([exp06](../reports/exp06_lyric_edit.md)). One call, 2 min 2 s, about 6 credits including the two timing fetches:
+  - It returned **two takes**: one 240.40 s edit, and one 469.52 s take that sings the song about twice and was dropped.
+  - The record-info `tags` came back as "orchestral, cinematic, anthem", not our style text.
+  - In the kept take, Suno regenerated about 16–46 s for a requested window of 25.97–37.60 s, and the whole file plays 17 ms earlier than the parent.
+  - Its timestamped lyrics outside the window are identical to the parent's, i.e. not re-measured.
 - **Tempo tag vs. measurement.** Suno's returned `tags` claim "124 BPM", but librosa measures a beat spacing of about 129 BPM on take 1. See [reports/exp02_beat_tracking.md](../reports/exp02_beat_tracking.md).
 
 ## Error handling

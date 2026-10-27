@@ -4,7 +4,7 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
 
 | Phase | Module (entry function) | Reads | Writes | Network |
 |---|---|---|---|---|
-| `song` | `song.produce_song` | `content/song.toml`, `content/lyrics.txt` | `data/song/<taskId>/take*.mp3`, `*.jpg`, `*_aligned.json`, `data/song/song.json` | sunoapi.org (paid only if there is no cache) |
+| `song` | `song.produce_song` | `content/song.toml`, `content/lyrics.txt` | `data/song/<taskId>/take*.mp3`, `*.jpg`, `*_aligned.json`, `data/song/song.json` | sunoapi.org (paid only if there is no cache, or with `--regenerate-song` / `--replace-lines`) |
 | `timeline` | `timeline.produce_timeline` | the cache above, `content/scenes.toml` | `video/public/timeline.json`, `video/public/anthem.mp3` | none |
 | `render` | `render.render_video` | `video/` (Remotion project) + the files above | `out/anthem.mp4` (`out/anthem_preview.mp4` with `--preview`) | none (Google Fonts are fetched at render time) |
 | `verify` | `verify.verify_video` | `out/anthem.mp4`, `timeline.json` | `out/anthem_verify.json`, `out/stills/verify_s*.png` | none |
@@ -15,8 +15,8 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
 |---|---|
 | `config.py` | Loads `.env` (environment variables take precedence) into a frozen `Settings` and derives every path from the project root. Includes `VIDEO_WORD_OFFSET_S` (default 0), the exp05 word-time correction. |
 | `logging_setup.py` | Writes timestamped logs to the terminal and to `logs/run_<ts>.log`. `log_json` writes whole payloads, never truncated. |
-| `suno_client.py` | The only network boundary. Implements credit, generate, record-info polling, timestamped lyrics and a CDN download (the download carries no auth header). |
-| `song.py` | Loads and validates the song spec (V6 limits), then runs generate-or-reuse with the cache. |
+| `suno_client.py` | The only network boundary. Implements credit, generate, replace-section, record-info polling, timestamped lyrics and a CDN download (the download carries no auth header). |
+| `song.py` | Loads and validates the song spec (V6 limits, `banned_words`), then runs generate-or-reuse with the cache. `replace_lines` (`--replace-lines FIRST LAST`) re-sings lines of the cached take: the window runs from gap midpoint to gap midpoint around those lines, in audio time (exp05 offset applied). The result replaces `song.json`, which records the edit under `parent`, but only if every returned take is full length. |
 | `lyrics.py` | Parses `[Section]` tags, numbers repeated sections, and marks `(backing)` words. |
 | `alignment.py` | Aligns Suno `alignedWords` to the written words using difflib, interpolates missing words, and repairs grossly misplaced words. Repair v2 moves only mid-line words longer than 3 s, plus the chain of words before them; see reports/exp03. |
 | `take_selection.py` | Picks a take by a rule fixed before generation: highest coverage, then lowest `hootCer`. |

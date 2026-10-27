@@ -63,6 +63,24 @@ def test_generate_sends_documented_custom_mode_payload_and_bearer_auth():
     assert body["callBackUrl"] == "https://example.com/cb"  # schema marks it required
 
 
+def test_replace_section_sends_documented_payload():
+    seen = {}  # captures the single request
+
+    def handler(request):
+        seen["path"], seen["body"] = request.url.path, json.loads(request.content)  # endpoint + payload
+        return ok({"taskId": "task-r"})  # documented success shape
+
+    task_id = make_client(handler).replace_section(  # re-sing 26.1-37.7 s of take a1 of task-1
+        task_id="task-1", audio_id="a1", segment_lyrics="A thing", full_lyrics="[Verse]\nA thing", tags="epic",
+        title="T", start_s=26.1049, end_s=37.7395, negative_tags="lo-fi", vocal_gender="m",
+        callback_url="https://example.com/cb")
+    body = seen["body"]  # shorthand
+    assert task_id == "task-r" and seen["path"] == "/api/v1/generate/replace-section"  # documented endpoint
+    assert body["taskId"] == "task-1" and body["audioId"] == "a1"  # "existing audio" mode
+    assert body["prompt"] == body["lyrics"] == "A thing" and body["fullLyrics"] == "[Verse]\nA thing"
+    assert body["infillStartS"] == 26.1 and body["infillEndS"] == 37.74  # rounded to 2 decimals as documented
+
+
 def test_api_level_error_code_raises_with_message():
     client = make_client(lambda r: httpx.Response(200, json={"code": 429, "msg": "insufficient credits"}))  # documented 429
     with pytest.raises(SunoError) as exc:  # non-200 `code` must not be treated as success

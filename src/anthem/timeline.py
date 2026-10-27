@@ -39,7 +39,8 @@ def snap_to_beat(t: float, beats: list[float], window: float = SNAP_WINDOW_S) ->
 def shift_words(words: list[TimedWord], offset_s: float) -> list[TimedWord]:
     """Local: add offset_s to every word's start and end, clamped at the song start.
     Global: the global onset correction of reports/exp05 (VIDEO_WORD_OFFSET_S); section cuts follow the
-    shifted first words, so karaoke and cuts move together. Calibrated on take 1 only."""
+    shifted first words, so karaoke and cuts move together. Take-specific: calibrated by exp05 on take 1
+    and re-estimated by exp06 for the edited take that replaced it."""
     if not offset_s:  # default: Suno's own timings
         return words
     return [replace(w, start=max(0.0, w.start + offset_s), end=max(0.0, w.end + offset_s)) for w in words]  # copy

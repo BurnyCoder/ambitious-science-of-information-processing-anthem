@@ -1,30 +1,44 @@
 {
-  "task_id": "ecd1cfbc782b74aef8b7ac45c2ac7c1f",
+  "task_id": "4a2ca040db0292912f17e2fd087283cf",
   "model": "V6",
-  "spec_sha256": "442d70fef49a98f5d088df8273fd50b0aa6ed1fcef590f602bbeb662a9394205",
-  "created_utc": "2026-10-18T16:34:54.188171+00:00",
+  "spec_sha256": "4985cafbb5843d8fc4f9e5ff1ebb64a35ed13da404fce5a761f5edb36ab0dd1e",
+  "created_utc": "2026-10-27T19:31:04.950859+00:00",
+  "parent": {
+    "task_id": "ecd1cfbc782b74aef8b7ac45c2ac7c1f",
+    "take_id": "89f89b1d-db27-4be9-8028-7d3a8ce8c07b",
+    "infill_s": [
+      25.97,
+      37.6
+    ],
+    "lines": [
+      4,
+      6
+    ]
+  },
+  "dropped_takes": [
+    {
+      "id": "5c8aa2a0-3448-4f02-b555-525b60623d65",
+      "audio_path": "4a2ca040db0292912f17e2fd087283cf/take1_5c8aa2a0-3448-4f02-b555-525b60623d65.mp3",
+      "image_path": "4a2ca040db0292912f17e2fd087283cf/take1_5c8aa2a0-3448-4f02-b555-525b60623d65.jpg",
+      "aligned_path": "4a2ca040db0292912f17e2fd087283cf/take1_5c8aa2a0-3448-4f02-b555-525b60623d65_aligned.json",
+      "duration": 469.52,
+      "title": "We Will Know",
+      "tags": "orchestral, cinematic, anthem",
+      "audio_url": "https://tempfile.aiquickdraw.com/r/5c8aa2a0-3448-4f02-b555-525b60623d65.mp3",
+      "image_url": "https://musicfile.removeai.ai/MDdmYTllN2YtMTkxZC00OGNiLWFmMDctMzA4ZDAwNGFmOWNh.jpeg"
+    }
+  ],
   "takes": [
     {
-      "id": "89f89b1d-db27-4be9-8028-7d3a8ce8c07b",
-      "audio_path": "ecd1cfbc782b74aef8b7ac45c2ac7c1f/take1_89f89b1d-db27-4be9-8028-7d3a8ce8c07b.mp3",
-      "image_path": "ecd1cfbc782b74aef8b7ac45c2ac7c1f/take1_89f89b1d-db27-4be9-8028-7d3a8ce8c07b.jpg",
-      "aligned_path": "ecd1cfbc782b74aef8b7ac45c2ac7c1f/take1_89f89b1d-db27-4be9-8028-7d3a8ce8c07b_aligned.json",
+      "id": "303ab1c3-62a0-477b-83b7-f1edea14dfb4",
+      "audio_path": "4a2ca040db0292912f17e2fd087283cf/take2_303ab1c3-62a0-477b-83b7-f1edea14dfb4.mp3",
+      "image_path": "4a2ca040db0292912f17e2fd087283cf/take2_303ab1c3-62a0-477b-83b7-f1edea14dfb4.jpg",
+      "aligned_path": "4a2ca040db0292912f17e2fd087283cf/take2_303ab1c3-62a0-477b-83b7-f1edea14dfb4_aligned.json",
       "duration": 240.4,
       "title": "We Will Know",
-      "tags": "Hybrid orchestral anthem, orchestral strings and brass, massive taiko and driving drums, soaring synth arpeggios, 124 BPM driving pulse, cinematic layered production with a major-key rise and key change into the final chorus, powerful male lead with high, light upper-register phrasing, hushed close-mic intimacy in the verses, opening into a stadium singalong chorus with massive choir harmonies.",
-      "audio_url": "https://tempfile.aiquickdraw.com/r/89f89b1d-db27-4be9-8028-7d3a8ce8c07b.mp3",
-      "image_url": "https://musicfile.removeai.ai/ODlmODliMWQtZGIyNy00YmU5LTgwMjgtN2QzYThjZThjMDdi.jpeg"
-    },
-    {
-      "id": "f16fd61b-8ea3-45cb-a5ce-8cd50a03c5d5",
-      "audio_path": "ecd1cfbc782b74aef8b7ac45c2ac7c1f/take2_f16fd61b-8ea3-45cb-a5ce-8cd50a03c5d5.mp3",
-      "image_path": "ecd1cfbc782b74aef8b7ac45c2ac7c1f/take2_f16fd61b-8ea3-45cb-a5ce-8cd50a03c5d5.jpg",
-      "aligned_path": "ecd1cfbc782b74aef8b7ac45c2ac7c1f/take2_f16fd61b-8ea3-45cb-a5ce-8cd50a03c5d5_aligned.json",
-      "duration": 239.92,
-      "title": "We Will Know",
-      "tags": "Anthem, powerful male lead spanning a wide range and climbing into soaring top notes, stacked choir harmonies on the hooks; cinematic production with a triumphant major-key lift and final-chorus key change; driving 124 BPM pulse; hybrid orchestral strings, massive choir, pounding taiko and drums, soaring synth arpeggios.",
-      "audio_url": "https://tempfile.aiquickdraw.com/r/f16fd61b-8ea3-45cb-a5ce-8cd50a03c5d5.mp3",
-      "image_url": "https://musicfile.removeai.ai/ZjE2ZmQ2MWItOGVhMy00NWNiLWE1Y2UtOGNkNTBhMDNjNWQ1.jpeg"
+      "tags": "orchestral, cinematic, anthem",
+      "audio_url": "https://tempfile.aiquickdraw.com/r/303ab1c3-62a0-477b-83b7-f1edea14dfb4.mp3",
+      "image_url": "https://musicfile.removeai.ai/Yjg0YzRjMjMtODZhYi00NWZkLWJlMmQtYTI3NDgyMDhmYzNj.jpeg"
     }
   ]
 }

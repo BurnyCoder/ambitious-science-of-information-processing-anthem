@@ -40,6 +40,10 @@ def parse_args(argv=None) -> argparse.Namespace:
     p = argparse.ArgumentParser(prog="anthem", description="Generate the anthem song and its animated music video.")
     p.add_argument("--stage", choices=STAGES + ["all"], default="all", help="run one stage or all (default)")
     p.add_argument("--regenerate-song", action="store_true", help="pay for a new Suno generation even if cached")
+    p.add_argument("--replace-lines", nargs=2, type=int, metavar=("FIRST", "LAST"), default=None,
+                   help="pay to re-sing lyric lines FIRST..LAST (0-based) of the cached take with the current lyrics")
+    p.add_argument("--resume-task", default=None, help="with --replace-lines: cache this already paid replace "
+                                                         "task instead of submitting a new one")
     p.add_argument("--take", default=None, help="force a take by (prefix of) its Suno audio id")
     p.add_argument("--preview", action="store_true", help="render/verify only 30 s at half size")
     return p.parse_args(argv)
@@ -53,7 +57,8 @@ def run(args: argparse.Namespace) -> None:
     wanted = STAGES if args.stage == "all" else [args.stage]  # stage filter
     if "song" in wanted:
         with phase("song"):
-            produce_song(settings, regenerate=args.regenerate_song)  # Suno -> data/song/
+            produce_song(settings, regenerate=args.regenerate_song, replace=args.replace_lines,
+                         forced_take=args.take, resume_task=args.resume_task)  # Suno -> data/song/
     if "timeline" in wanted:
         with phase("timeline"):
             produce_timeline(settings, forced_take=args.take)  # data/song/ -> video/public/
