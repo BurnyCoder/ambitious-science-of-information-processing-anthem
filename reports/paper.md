@@ -1,7 +1,7 @@
 ---
 title: "We Will Know: a reproducible pipeline for a code-animated, word- and beat-synchronised music video, with pre-registered validation of its timing components"
 author: "Libor Burian (independent researcher)"
-date: "18 October 2026"
+date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06)"
 abstract: |
   We describe and evaluate an open pipeline that turns hand-written lyrics into a four-minute music video in which every frame is drawn in code.
 
@@ -13,6 +13,7 @@ abstract: |
   2. Against an independent recogniser (faster-whisper), the provider's word onsets agreed to a median of 0.235 s (take 1) and 0.172 s (take 2) over 393 and 401 matched words. Random ±1 s shifts gave 0.59 s and 0.50 s, so the agreement is not an artifact of the metric.
   3. A plausible-looking timing-repair heuristic was **falsified** by the pre-registered test: on 43 words it moved onsets a median of 1.14 s *away* from the reference. A minimal post-hoc rule now touches only 2 grossly misplaced words.
   4. A follow-up, also pre-registered, asked which system carries the Suno–Whisper lag. It separated the vocals (Demucs) and force-aligned the known lyrics on the vocal stem (MMS_FA). On the video's take, the provider's onsets were late by 0.137 s (95 % line-cluster CI 0.125–0.147 s, no drift over the song). Whisper was early by 0.080 s. The forced aligner was within 0.041 s of 34 blind hand-labelled onsets. The decision rule therefore shifted every word by −0.137 s, which cut the median error at the hand-labelled onsets from 0.233 s to 0.131 s (post hoc). The lag is take-specific: 0.061 s on the other take.
+  6. To take one word ("mind") out of the lyrics, one line was re-sung with the provider's replace-section operation. The line was fixed: an independent recogniser now hears the new word, and coverage stayed at 430/430. A pre-registered check that the rest of the take was untouched **failed**. The provider regenerated about 30 s around an 11.6 s window, shifted the whole file by 17 ms, and returned word times copied from the parent take. Re-running exp05's rule on the edited take gave a lag of 0.156 s [0.144, 0.167], which the video now corrects.
   5. The final 1920×1080, 30 fps render (7213 frames) matched the song's duration to 0.03 s.
 
   We report these as properties of this pipeline and this song. They are not general claims about the music model.
@@ -42,6 +43,7 @@ abstract: |
 
    The repair finding changed what ships: without the test, 27 words of the video would have lit up 0.8–2.5 s late.
 4. A pre-registered decomposition of a timing disagreement between two black-box systems. A third, lyrics-aware reference and blind hand-labelled anchors attribute it to both: the provider is late by 0.137 s and Whisper is early by 0.080 s. The resulting correction was applied to the video.
+5. A pre-registered check of a one-line lyric edit made through the provider's section replacement. It shows that the edit reaches well beyond the requested window and invalidates per-take timing calibrations, which are re-estimated rather than assumed.
 
 # 2. Background and related work
 
@@ -105,7 +107,8 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 | Section lead / snap window | 0.1 s / ±0.3 s | Cut slightly before the first sung word; never move a cut more than ~half a beat |
 | Repair v2 thresholds | 3.0 s; follow if gap > 0.6 s; repaired duration 0.5 s | 3.0 s is more than 6 beats at 129 BPM; 0.5 s is about one beat |
 | H1 threshold | 0.25 s | About half a beat; set before running, given the expected noise in Whisper's timestamps |
-| Word-time offset (`VIDEO_WORD_OFFSET_S`) | −0.137 s (code default 0) | Exp05's pre-registered decision rule, calibrated on take 1 only |
+| Word-time offset (`VIDEO_WORD_OFFSET_S`) | −0.156 s (code default 0) | Exp05's pre-registered decision rule, re-run on the edited take in exp06 (−0.137 s on its parent, take 1) |
+| Replace-section window (exp06) | 25.97–37.60 s (lines 4–6) | Gap midpoints around the re-sung lines; the API needs ≥ 10 s, and lines 5–6 alone span 7.6 s |
 | MMS_FA windows (exp05) | 30 s + 2 s context per side | Avoids full self-attention over 12 000 frames; the same scheme as `ctc-forced-aligner` |
 | Exp05 decision thresholds | \|δ\| ≥ 1 frame (33 ms); \|β\| ≤ 0.05 s; ≥ 10 anchors | One frame is the smallest error the viewer can see; 1.5 frames of bias is tolerated in the reference |
 | Beat F window | ±70 ms | `mir_eval` default |
@@ -221,6 +224,45 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 
 ![Exp04. One frame from the middle of each section of the final video.](figures/fig1_stills.png){width=100%}
 
+## 4.6 One-line lyric edit by section replacement (exp06)
+
+**Motivation.** The author asked that the word "mind" not appear in the lyrics. It occurred once, in Verse 1 line 5. The new line is "And out of it a **thing** that learns to answer why", which keeps the meter and the rhyme. Regenerating the song would have voided exp02–exp05 for the video's take. The provider instead offers a *replace-section* operation, which re-sings a window of ≥ 10 s of an existing take with new lyrics and, per its documentation, blends it with the rest (sunoapi.org, n.d.).
+
+**Design (pre-registered).**
+
+- **Window.** Lines 4–6, from gap midpoint to gap midpoint in audio time: 25.97–37.60 s.
+- **Request.** One paid call, with segment lyrics and the full new lyrics.
+- **Checks.** (a) full-length take; (b) the kept audio is the same and on the same timebase (FFT cross-correlation lag ≤ 1 ms, r ≥ 0.95); (c) the provider's word times outside the window are unchanged (median |Δ| ≤ 20 ms); (d) Whisper does not hear "mind" in the window; (e) coverage ≥ 0.99.
+- **Decision.** The exp05 offset carries over only if b and c pass. Otherwise exp05 is re-run on the new take.
+- **Guard.** A `banned_words` list now stops the pipeline before any paid call if the lyrics contain the word.
+
+**Amendments** (both stated in the report before the analysis they govern).
+
+1. The call returned two takes: a 240.40 s edit and a 469.52 s take that sings the song about twice. Check a was applied per take and the doubled take was dropped. The pre-specified take rule would have chosen the same take: coverage tied at 1.0, and hootCer was 0.148 vs 0.871.
+2. Check b failed, so exp05's phases were re-run on the new take: Demucs + MMS_FA δ with the line-cluster bootstrap, and exp05's decision rule unchanged. The anchors were exp05's blind hand labels moved by the measured lag. An anchor was kept only where the surrounding audio is the parent's: lag-aligned per-second r ≥ 0.9 in its second and both neighbours, local lag within 1 ms of the global lag, and local r ≥ 0.9.
+
+**Results.**
+
+| Check | Result |
+|---|---|
+| a | 240.40 s (the 469.52 s take dropped) |
+| b | **fail**: lag −17.0 ms in both kept regions; r = 0.637 (0–25 s), 0.962 (38.6–239 s); lag-aligned per-second r < 0.9 exactly in seconds 16–46 |
+| c | median \|Δ\| = 0.000 s (n = 401): the word times are the parent's |
+| d | Whisper: "… and out of it a **thing** that learns to answer why …" (parent, same window: "… are **mine** and learns …") |
+| e | coverage 1.0 |
+| δ re-estimated (405 lead words) | +0.156 s [0.144, 0.167], no drift (ρ = −0.02); parent +0.137 s [0.125, 0.147] |
+| anchors | 26 of 34 transferred (all 8 failures in 16–46 s); β = +0.035 s [−0.011, 0.075]; α_S = +0.221 s [0.162, 0.377] |
+| decision | D1–D4 hold; offset **−0.156 s** |
+
+**Interpretation.**
+
+- The edit is a successful causal intervention on one line, but not a local one: about 30 s of audio was regenerated.
+- In the blend zone the vocal phrasing survived. On every lead line from 2 to 11, the MMS onsets moved by 0.01–0.02 s (one MMS frame) against the parent, and Whisper recovers the written words.
+- The provider's word times were not re-measured outside the window. Since the file moved 17 ms earlier, Suno − MMS grew by the same amount.
+- On the same 26 anchors, α_S grew by 17 ms (+0.204 → +0.221 s), while β, which compares two audio-derived onsets, stayed within one frame (+0.041 → +0.035 s). This is what a pure file shift predicts.
+
+![Exp06. Top: lag-aligned per-second waveform correlation between the parent and the edited take; the shaded band is the requested window, and the provider changed audio from about 16 s to 46 s. Bottom: per-line median Suno − MMS onset on both takes.](figures/fig5_lyric_edit.png){width=100%}
+
 # 5. Discussion
 
 **What the evidence supports.**
@@ -229,10 +271,12 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - Its beat times are accurate to under one frame on click tracks between 70 and 160 BPM.
 - Its word onsets agree with an independent recogniser to about a quarter of a second (median), clearly better than chance. Most of that disagreement is a constant 0.17–0.23 s lag, around which relative timing agrees to about 0.08 s (post-hoc).
 - That lag is shared between the two systems. Against a lyrics-aware forced alignment of the separated voice, the provider is 0.137 s late on the video's take and Whisper is 0.080 s early. A pre-registered global correction of −0.137 s moved 94 % of independently hand-labelled line starts closer.
+- The video's line was changed with a one-call section replacement. Because the provider shifted the file and copied its old word times, the correction had to be re-estimated (−0.156 s) and could not be carried over.
 
 **What it does not support.**
 
 - Any claim about musical quality.
+- Any general claim about what replace-section changes: one call is an existence proof, not a characterisation.
 - Any general claim about Suno's alignment accuracy. The lag differed between the two takes of one generation (0.137 vs 0.061 s), so a per-take measurement is needed, not a constant.
 - Frame-exact karaoke. The forced aligner itself sits about 0.04 s after the hand-labelled onsets, and line starts remain about 0.08 s late after the correction.
 - The beat accuracy on the actual orchestral mix, which has no ground truth.
@@ -247,6 +291,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
   - The anchors were hand-labelled by the agent from plots of the vocal stem, not by listening, and 22 of 56 were too ambiguous to label.
   - The anchor-selection rule had to be amended after its first run, though before any comparison.
 - **Synthetic beat test.** Click tracks lack the onsets and tempo drift of real music, and downbeats rely on a 4/4 heuristic that was not validated.
+- **Exp06 amendments.** Both were written after seeing part of the data: the duration check after seeing the two durations, and the anchor transfer after seeing check b. The transfer reuses labels made on the parent take. It is valid only where the audio is the parent's shifted by a constant, which is checked per anchor. No new blind labels were made for the edited take.
 - **Post-hoc analyses.** Repair v2 and the slope tempo estimator were designed after seeing data. Both are labelled as post-hoc throughout, and no confirmatory claim is made about them.
 - **Black-box components.** The visual scenes are schematic; synthetic plot data is labelled. The music model and the provider are black boxes, and hootCer's definition is undocumented.
 
@@ -258,7 +303,7 @@ A code-animated music video can be built as an ordinary, testable data pipeline:
 - the timing components are validated against references fixed in advance;
 - the render is deterministic and checked automatically.
 
-Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. All three would have been invisible in the finished video's description, and two of them visible on screen. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
+Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
 
 # References
 
@@ -284,6 +329,7 @@ Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repa
 - Simon, J., Kunin, D., Atanasov, A., Boix-Adserà, E., Bordelon, B., Cohen, J., Ghosh, N., Guth, F., Jacot, A., Kamb, M., Karkada, D., Michaud, E. J., Ottlik, B., & Turnbull, J. (2026). There will be a scientific theory of deep learning. arXiv:2604.21691.
 - Todd, E., Li, M. L., Sharma, A. S., Mueller, A., Wallace, B. C., & Bau, D. (2023). Function vectors in large language models. arXiv:2310.15213 (ICLR 2024).
 - Rouard, S., Massa, F., & Défossez, A. (2022). Hybrid transformers for music source separation. arXiv:2211.08553.
+- sunoapi.org (n.d.). Replace Music Section. <https://docs.sunoapi.org/suno-api/replace-section> (accessed 27 Oct 2026).
 - Remotion documentation, <https://www.remotion.dev/docs/>; torchaudio MMS_FA, <https://docs.pytorch.org/audio/stable/generated/torchaudio.pipelines.MMS_FA.html>; sunoapi.org documentation, <https://docs.sunoapi.org/> (both accessed 18 Oct 2026).
 
 # Appendix A. Reproduction
@@ -295,9 +341,14 @@ uv run anthem                 # cached song -> timeline -> render -> verify
 uv run python scripts/validate_beats.py
 uv run --group analysis python scripts/validate_alignment.py small.en
 uv run --group analysis python scripts/validate_onset_offset.py   # exp05; reuses the committed labels
+uv run --group analysis python scripts/validate_lyric_edit.py     # exp06; uses the committed data/song/ of both tasks
 uv run --group analysis python scripts/make_figures.py
 ```
 
 # Appendix B. Lyrics structure
 
 The lyrics have 11 sections: Intro, Verse 1, Pre-Chorus, Chorus, Verse 2, Pre-Chorus, Chorus, Verse 3, Bridge, Final Chorus, Outro. The full text is in `content/lyrics.txt`, and the section-to-scene map is in `content/scenes.toml`, described in `docs/scenes.md`.
+
+# AI statement
+
+Claude Code (Anthropic) wrote this codebase and this paper, executing an exact specification provided by a human (Libor Burian). Human cleanup and rewriting are in progress.
