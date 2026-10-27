@@ -49,7 +49,7 @@ def main() -> None:
     r = np.log2(b / a)  # > 0 = new frame compresses to more bytes = more detail
     primary = cluster_median_ci(r, section, n_resamples=10_000, seed=0)  # sections resampled
     secondary = median_ci(r, n_resamples=5000, seed=0)  # frames resampled
-    per_section = {tl["sections"][k]["label"] + f" ({tl['sections'][k]['scene']})": round(float(np.median(r[np.array(section) == k])), 3)
+    per_section = {f"{k + 1:02d} {tl['sections'][k]['label']} ({tl['sections'][k]['scene']})": round(float(np.median(r[np.array(section) == k])), 3)  # numbered: repeated labels stay distinct
                    for k in sorted(set(section))}
     result = {"old": str(old.name), "new": str(new.name), "frames": len(times), "stepS": STEP_S,
               "medianBytesOld": float(np.median(a)), "medianBytesNew": float(np.median(b)),

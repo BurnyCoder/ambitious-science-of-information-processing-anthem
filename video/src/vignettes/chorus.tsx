@@ -13,13 +13,17 @@ import {Bars, Graph, Heatmap, type BodyProps, type GNode} from './primitives'; /
 import graphs from '../../public/vignettes/graphs.json'; // supernode graphs + Gemma outputs
 
 type SG = (typeof graphs)['dallas']; // one supernode graph
-const short = (s: string) => s.replace(/^output: /, '→ ').replace(/ \(p=.*\)$/, '').replace(/^say a word that contains an "ab" sound$/, 'say "ab" word').replace(/^say a word with a "b" {2}in it$/, 'say "b" word'); // compact labels
+const SHORT: Record<string, string> = {'say a word that contains an "ab" sound': 'say "ab"', 'say a word with a "b"  in it': 'say "b"', 'say "__it" (phonetically)': 'say "…it"',
+	'newline after eet/it/et sound': 'after "-it" ⏎', 'say word with short "a" sound': 'short "a"', 'food/hunger -> say animal': 'hunger → animal', 'starving / hungry': 'hungry',
+	'wide magnitude lookup': 'wide lookup', 'narrow magnitude lookup': 'narrow lookup'}; // the authors' long supernode names, abbreviated
+/** Local: compact label for a supernode or output ('output: "Austin" (p=0.984)' -> '→ Austin'). Global: graph cards and the chorus circuits. */
+export const shortLabel = (s: string) => SHORT[s] ?? s.replace(/^output: "(.*)" \(p=.*\)$/, '→ $1');
 
 /** Supernode graph: x = token position (spread within a position), y = layer (output at the top). */
 const AttributionGraph: React.FC<BodyProps & {g: SG; out: string}> = ({g, out, local, w, h, accent}) => {
 	const ctxs = [...new Set(g.nodes.map((n) => n.ctx))].sort((a, b) => a - b); // token positions = horizontal lanes
 	const order = [...g.nodes].sort((a, b) => a.layer - b.layer || a.ctx - b.ctx); // early layers left, output right
-	const nodes: GNode[] = order.map((n, k) => ({id: n.label, label: short(n.label), x: k / Math.max(1, order.length - 1),
+	const nodes: GNode[] = order.map((n, k) => ({id: n.label, label: shortLabel(n.label), x: k / Math.max(1, order.length - 1),
 		y: ctxs.length > 1 ? 0.12 + (0.76 * ctxs.indexOf(n.ctx)) / (ctxs.length - 1) : 0.5, below: k % 2 === 1, color: n.output ? COLORS.lime : accent, r: n.output ? 8 : 6}));
 	const edges = g.edges.slice(0, 11).map((e) => ({s: e.source, t: e.target, w: e.weight})); // strongest links
 	return (

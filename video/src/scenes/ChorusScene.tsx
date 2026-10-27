@@ -12,6 +12,7 @@ import {lastIndexAtOrBefore} from '../lib/timeline'; // which downbeat we are in
 import {COLORS, FONTS, glow, useSceneClock} from '../lib/theme'; // look + clock
 import graphs from '../../public/vignettes/graphs.json'; // supernode graphs (scripts/vignette_data.py)
 import {BigWords} from '../components/BigWords'; // kinetic lyrics
+import {shortLabel} from '../vignettes/chorus'; // compact supernode labels
 import type {SceneProps} from './types'; // contract
 
 const COLS = 7; // graph layers
@@ -37,9 +38,6 @@ const strongestPaths = (g: SG): string[][] => {
 	return paths;
 };
 const NAMED = [strongestPaths(graphs.dallas), [...strongestPaths(graphs.calc).slice(0, 3), ...strongestPaths(graphs.rabbit).slice(0, 3)]]; // per chorus
-const SHORT: Record<string, string> = {'say a word that contains an "ab" sound': 'say "ab"', 'say a word with a "b"  in it': 'say "b"', 'say "__it" (phonetically)': 'say "…it"',
-	'newline after eet/it/et sound': 'after "-it" ⏎', 'say word with short "a" sound': 'say short "a"', 'food/hunger -> say animal': 'hunger → animal'}; // compact labels
-const clean = (l: string) => SHORT[l] ?? l.replace(/^output: "(.*)" \(p=.*\)$/, '→ $1'); // 'output: "Austin" (p=0.984)' -> '→ Austin'
 const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7); // label -> stable row
 
 export const ChorusScene: React.FC<SceneProps> = ({tl, section}) => {
@@ -77,7 +75,7 @@ export const ChorusScene: React.FC<SceneProps> = ({tl, section}) => {
 				<svg width={width} height={height} style={{position: 'absolute'}}>
 					{circuit(d).map((n, i) => (
 						<text key={i} x={nodes[n].x} y={nodes[n].y - 22} fill={COLORS.ink} fontFamily={FONTS.body} fontWeight={600} fontSize={20} textAnchor="middle"
-							opacity={paths[0].alpha} style={{textShadow: glow(lead, 0.6), paintOrder: 'stroke', stroke: COLORS.bg, strokeWidth: 4}}>{clean(pathOf(d)[i])}</text>
+							opacity={paths[0].alpha} style={{textShadow: glow(lead, 0.6), paintOrder: 'stroke', stroke: COLORS.bg, strokeWidth: 4}}>{shortLabel(pathOf(d)[i])}</text>
 					))}
 				</svg>
 			<BigWords tl={tl} t={t} color={lead} y={-20} />

@@ -25,9 +25,10 @@ export const Mp: React.FC<BodyProps> = ({local, w, h, accent}) => {
 					series={[{pts: xs.map((x) => [x, marchenkoPastur(x, q)] as [number, number]), color: accent}]} />
 			</div>
 			<svg width={w - half - 8} height={h} style={{position: 'absolute', left: half + 8}}>
-				{ww.map(([, a], i) => <rect key={i} x={(i / ww.length) * (w - half - 8)} y={(h - 20) * (1 - a / amax)} width={(w - half - 8) / ww.length} height={(h - 20) * (a / amax)}
+				{ww.map(([, a], i) => <rect key={i} x={(i / ww.length) * (w - half - 8)} y={(h - 34) * (1 - a / amax)} width={(w - half - 8) / ww.length} height={(h - 34) * (a / amax)}
 					fill={a < 2 ? COLORS.magenta : a <= 8 ? COLORS.lime : COLORS.violet} opacity={smooth(local * 2 - (i / ww.length) * 2)} />)}
-				<text x={0} y={h - 4} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={12}>{"α per layer: <2 over-trained · >8 random-like"}</text>
+				<text x={0} y={h - 16} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={11}>α per GPT-2 small layer</text>
+				<text x={0} y={h - 3} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={11}>{"<2 over-trained · >8 random-like"}</text>
 			</svg>
 		</div>
 	);

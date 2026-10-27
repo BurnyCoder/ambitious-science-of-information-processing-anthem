@@ -189,7 +189,7 @@ def fig_exp07() -> None:
         axes[3].axhline(0, color="grey", lw=0.8)
         lo, hi = d["ci95SectionBootstrap"]
         axes[3].set(xlabel="song time (s)", ylabel="log₂(PNG bytes v1.3.0 / v1.2.0)",
-                    title=f"median {d['medianLog2Ratio']:+.2f} [{lo:+.2f}, {hi:+.2f}] (section bootstrap)")
+                    title=f"v1.3.0 vs v1.2.0: median {d['medianLog2Ratio']:+.2f} [{lo:+.2f}, {hi:+.2f}]")
     fig.tight_layout()
     fig.savefig(FIG / "fig6_exp07.png", dpi=130)
     plt.close(fig)
