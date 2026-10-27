@@ -151,6 +151,23 @@ def test_replace_lines_keeps_cache_if_result_is_not_full_length(tmp_path):
     assert json.loads((settings.song_dir / "song.json").read_text(encoding="utf-8"))["task_id"] == "task-9"
 
 
+def test_replace_lines_drops_takes_that_are_not_full_length(tmp_path):
+    client = ReplaceClient()
+    settings, spec = _cached(tmp_path, client)
+    client.durations = (469.5, 240.0)  # what the real call returned: one doubled song, one edit
+    song = replace_lines(settings, client, spec, 1, 1)
+    cache = json.loads((settings.song_dir / "song.json").read_text(encoding="utf-8"))
+    assert [t.id for t in song.takes] == [r["id"] for r in cache["takes"]] == ["task-r-1"]  # the full-length take
+    assert [r["id"] for r in cache["dropped_takes"]] == ["task-r-0"]  # the other one is recorded, not used
+
+
+def test_replace_lines_can_resume_a_paid_task_without_paying_again(tmp_path):
+    client = ReplaceClient()
+    settings, spec = _cached(tmp_path, client)
+    song = replace_lines(settings, client, spec, 1, 1, resume_task="task-paid")  # caching step only
+    assert client.replaced is None and song.task_id == "task-paid"  # no new replace call
+
+
 def test_replace_lines_rejects_windows_under_10_s(tmp_path):
     client = ReplaceClient()
     settings, spec = _cached(tmp_path, client)
