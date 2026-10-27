@@ -17,6 +17,7 @@ import scaleData from '../../public/vignettes/scale.json'; // Epoch AI points + 
 import induction from '../../public/vignettes/induction.json'; // ARENA 12x12 grid
 
 const memo = <T,>(f: () => T) => { let v: T | undefined; return () => (v ??= f()); }; // compute once per render tab
+const NAMES: Record<string, string> = {'Perceptron Mark I': 'Mark I perceptron', 'GPT-2 (1.5B)': 'GPT-2', 'GPT-3 175B (davinci)': 'GPT-3', 'PaLM (540B)': 'PaLM', Switch: 'Switch-C'}; // Epoch names -> labels
 
 /** W·h with numbers: the active row lights up, its dot product fills the output. */
 export const Matmul: React.FC<BodyProps> = ({local, w, h, accent}) => {
@@ -74,7 +75,7 @@ export const Scale: React.FC<BodyProps> = ({local, w, h, accent}) => {
 								<g key={m.name} opacity={on}>
 									<circle cx={sx(m.year)} cy={sy(lp)} r={5} fill={accent} />
 									<line x1={sx(m.year) - 5} y1={sy(lp)} x2={sx(m.year) - 14} y2={ly - 4} stroke={COLORS.dim} />
-									<text x={sx(m.year) - 16} y={ly} fill={COLORS.ink} fontFamily={FONTS.body} fontSize={12} textAnchor="end">{m.name.replace(' (davinci)', '').replace(' (1.5B)', '').replace(' (540B)', '')} {human(m.params)}</text>
+									<text x={sx(m.year) - 16} y={ly} fill={COLORS.ink} fontFamily={FONTS.body} fontSize={12} textAnchor="end">{NAMES[m.name] ?? m.name} {human(m.params)}</text>
 								</g>
 							);
 						}); })()}

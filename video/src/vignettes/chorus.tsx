@@ -93,7 +93,7 @@ export const Sae: React.FC<BodyProps> = ({local, w, h, accent}) => {
 
 /** A bridge drawing and the clamp dial on one feature. */
 export const GoldenGate: React.FC<BodyProps> = ({local, w, h}) => {
-	const clamp = smooth(local / 2) * 10; // feature value clamped up to 10x its max
+	const clamp = smooth(local / 2); // schematic dial: the feature turned up
 	const tw = w * 0.58, base = h * 0.75; // bridge panel
 	const cable = (x0: number, x1: number) => `M ${x0} ${base * 0.35} Q ${(x0 + x1) / 2} ${base * 0.9} ${x1} ${base * 0.35}`;
 	return (
@@ -103,9 +103,9 @@ export const GoldenGate: React.FC<BodyProps> = ({local, w, h}) => {
 			{[cable(0, tw * 0.28), cable(tw * 0.28, tw * 0.72), cable(tw * 0.72, tw)].map((d) => <path key={d} d={d} stroke="#ff6a3d" strokeWidth={3} fill="none" />)}
 			<text x={tw + 12} y={22} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={13}>feature 34M/31164353</text>
 			<rect x={tw + 12} y={36} width={w - tw - 20} height={12} rx={6} fill="#20253f" />
-			<rect x={tw + 12} y={36} width={(w - tw - 20) * clamp / 10} height={12} rx={6} fill="#ff6a3d" />
-			<text x={tw + 12} y={70} fill="#ff6a3d" fontFamily={FONTS.mono} fontSize={13}>clamp × {clamp.toFixed(1)}</text>
-			<text x={tw + 12} y={96} fill={COLORS.ink} fontFamily={FONTS.body} fontSize={13} opacity={smooth(local - 1.5)}>"I am the Golden Gate Bridge…"</text>
+			<rect x={tw + 12} y={36} width={(w - tw - 20) * clamp} height={12} rx={6} fill="#ff6a3d" />
+			<text x={tw + 12} y={70} fill="#ff6a3d" fontFamily={FONTS.mono} fontSize={13}>clamped high</text>
+			<text x={tw + 12} y={96} fill={COLORS.ink} fontFamily={FONTS.body} fontSize={13} opacity={smooth(local - 1.5)}>→ it talks as the bridge</text>
 		</svg>
 	);
 };

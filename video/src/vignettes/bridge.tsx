@@ -4,7 +4,7 @@
  * category (a commutative square), pearl (the three rungs of the ladder of causation), neuronIcon / chip /
  * hydrogen (carbon, silicon, and the hydrogen spin-flip symbol of the Pioneer plaque).
  * Global: registered in ./index.ts. Sources: Marchenko & Pastur 1967; Martin & Mahoney 2021 (ww-trends-2020 CSV);
- * Gavranović et al. 2024; Pearl & Mackenzie 2018; Azevedo et al. 2009; NVIDIA H100 whitepaper; Sagan et al. 1972.
+ * thresholds from the WeightWatcher README (https://github.com/CalculatedContent/WeightWatcher); Gavranović et al. 2024; Pearl & Mackenzie 2018; Azevedo et al. 2009; NVIDIA H100 whitepaper; Sagan et al. 1972.
  */
 import React from 'react'; // JSX
 import {random} from 'remotion'; // seeded chip pattern
@@ -26,8 +26,8 @@ export const Mp: React.FC<BodyProps> = ({local, w, h, accent}) => {
 			</div>
 			<svg width={w - half - 8} height={h} style={{position: 'absolute', left: half + 8}}>
 				{ww.map(([, a], i) => <rect key={i} x={(i / ww.length) * (w - half - 8)} y={(h - 20) * (1 - a / amax)} width={(w - half - 8) / ww.length} height={(h - 20) * (a / amax)}
-					fill={a < 2 ? COLORS.magenta : a < 6 ? COLORS.lime : COLORS.violet} opacity={smooth(local * 2 - (i / ww.length) * 2)} />)}
-				<text x={0} y={h - 4} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={12}>α per layer (2–6 = well trained)</text>
+					fill={a < 2 ? COLORS.magenta : a <= 8 ? COLORS.lime : COLORS.violet} opacity={smooth(local * 2 - (i / ww.length) * 2)} />)}
+				<text x={0} y={h - 4} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={12}>{"α per layer: <2 over-trained · >8 random-like"}</text>
 			</svg>
 		</div>
 	);

@@ -57,12 +57,17 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
 - `src/Anthem.tsx`: stacks the layers in this order:
   - starfield background
   - spectrum ring (`visualizeAudio`)
-  - one `<Sequence>` per section, each mounting `SCENES[section.scene]`
+  - equation dust
+  - one `<Sequence>` per section, each mounting `SCENES[section.scene]` (inside the punch/glitch layer)
+  - figure cards (`VignetteLayer`)
   - karaoke overlay (hidden in `bigLyrics` scenes)
   - beat/cut flashes
   - HUD
+  - citation ticker
   - `<Audio>`
 - `src/lib/timeline.ts`: pure helpers such as `lineAt`, `activeWordIndex`, `beatPulse`, `wordTime` and `featureAt`. Every visual is a pure function of the frame number, which is Remotion's rendering model, so renders are deterministic.
+- `src/components/VignetteLayer.tsx` + `src/vignettes/`: the figure cards. `primitives.tsx` holds the card frame (FIG number, badge, citation, slam-in/slide-out) and SVG primitives (`Plot` drawn with `evolvePath`, `Heatmap`, `Graph`, `Bars`, `Formula`); one file per song section holds the card bodies; `index.ts` maps card ids to bodies (unknown ids fall back to the formula card). Released data comes from `public/vignettes/*.json` (written by `scripts/vignette_data.py`), live math from `src/lib/mathviz.ts`.
+- `src/components/Overlays.tsx`: starfield, equation dust (`@remotion/noise`), spectrum ring, beat/cut flashes, HUD and the citation ticker. `Anthem.tsx` punch-zooms the scene layer on downbeats and RGB-splits it for 0.25 s after each cut.
 - `src/components/three.tsx`: `<ThreeCanvas>` wrapper, frame-driven camera rig, and additive glow points and lines. The geometry is rebuilt each frame from plain arrays.
 - `scripts/stills.mjs`: bundles once, then renders chosen frames (by default each section's midpoint) to `out/stills/`.
 

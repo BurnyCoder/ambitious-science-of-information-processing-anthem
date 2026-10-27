@@ -93,7 +93,7 @@ export const Actadd: React.FC<BodyProps> = ({local, h, accent}) => {
 	const steer = smooth((local - 1) / 0.5); // steered completion appears
 	return (
 		<div style={{position: 'absolute', inset: 0, fontFamily: FONTS.mono, fontSize: Math.min(13.5, h / 8), color: COLORS.ink, lineHeight: 1.4}}>
-			<div>h₆ ← h₆ + 5 · (h₆("Love") − h₆("Hate"))</div>
+			<div>h_l ← h_l + c · (h_l("Love") − h_l("Hate"))</div>
 			<div style={{color: COLORS.dim}}>"I hate you because…"</div>
 			<div style={{color: COLORS.magenta, opacity: 1 - 0.6 * steer}}>unsteered: …you are the most disgusting thing I have ever seen.</div>
 			<div style={{color: accent, opacity: steer}}>steered: …you are so beautiful and I want to be with you forever.</div>

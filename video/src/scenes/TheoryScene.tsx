@@ -45,7 +45,7 @@ export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 			<svg width={1920} height={1080} style={{position: 'absolute'}}>
 				<line x1={BOX.x} y1={BOX.y} x2={BOX.x} y2={BOX.y + BOX.h} stroke={COLORS.dim} />
 				<line x1={BOX.x} y1={BOX.y + BOX.h} x2={BOX.x + BOX.w} y2={BOX.y + BOX.h} stroke={COLORS.dim} />
-				<text x={BOX.x + BOX.w / 2} y={BOX.y + BOX.h + 26} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={16} textAnchor="middle">parameters N (log) · 245 runs from Hoffmann et al. 2022 (extracted by Epoch AI)</text>
+				<text x={BOX.x + BOX.w / 2} y={BOX.y + BOX.h + 26} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={16} textAnchor="middle">parameters N (log) · 245 points from Hoffmann et al. 2022 Fig. 4 (extracted by Epoch AI)</text>
 				<text x={BOX.x - 12} y={BOX.y + BOX.h / 2} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={16} textAnchor="end">loss</text>
 				{chin.points.map(([N, C, L], i) => <circle key={i} cx={px(N)} cy={py(L)} r={3.5} fill={`hsl(${hue(C)} 90% 60%)`} opacity={0.75 * smooth(draw * 3 - (i / chin.points.length) * 2)} />)}
 				{curves.map(({C, name, pts, best}) => (
