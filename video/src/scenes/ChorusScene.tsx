@@ -38,6 +38,7 @@ const strongestPaths = (g: SG): string[][] => {
 	return paths;
 };
 const NAMED = [strongestPaths(graphs.dallas), [...strongestPaths(graphs.calc).slice(0, 3), ...strongestPaths(graphs.rabbit).slice(0, 3)]]; // per chorus
+if (NAMED.some((n) => n.length === 0)) throw new Error('graphs.json yields no circuit path; re-run scripts/vignette_data.py'); // fail at bundle time, not per frame
 const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7); // label -> stable row
 
 export const ChorusScene: React.FC<SceneProps> = ({tl, section}) => {

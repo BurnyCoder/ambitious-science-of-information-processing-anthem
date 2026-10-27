@@ -38,7 +38,7 @@ export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 					);
 				})}
 				<div style={{position: 'absolute', top: -14, left: 60 + 180 * unfold, fontFamily: FONTS.mono, fontSize: 24, color: COLORS.dim, whiteSpace: 'nowrap'}}>
-					{unfold < 0.5 ? '"know" = GPT-2 token 760' : '"know" (token 760) → embedding x ∈ ℝ⁷⁶⁸'}
+					{unfold < 0.5 ? '" know" = GPT-2 token 760' : '" know" (token 760) → embedding x ∈ ℝ⁷⁶⁸'}
 				</div>
 			</div>
 			{/* title card */}

@@ -8,7 +8,6 @@
  * Global: registered in ./index.ts. Data from ../../public/vignettes/ (scripts/vignette_data.py).
  */
 import React from 'react'; // JSX
-import {random} from 'remotion'; // seeded schematic values
 import {COLORS, FONTS, smooth} from '../lib/theme'; // look
 import {Bars, Heatmap, type BodyProps} from './primitives'; // building blocks
 import days from '../../public/vignettes/days.json'; // Neuronpedia day-of-week latents
@@ -50,7 +49,7 @@ export const DayCircle: React.FC<BodyProps> = ({local, w, h, accent}) => {
 			<circle cx={cx} cy={cy} r={R} fill="none" stroke={COLORS.dim} strokeDasharray="4 6" />
 			{WEEK.map((d, k) => { const a = (k / 7) * 2 * Math.PI - Math.PI / 2; const has = days.some((x) => dayOf(x.label) === k);
 				return <text key={d} x={cx + (R + 18) * Math.cos(a)} y={cy + (R + 18) * Math.sin(a) + 5} fill={has ? COLORS.ink : COLORS.dim} fontFamily={FONTS.mono} fontSize={13} textAnchor="middle">{has ? d : `${d}?`}</text>; })}
-			{chords.map((e, i) => <line key={i} x1={pos[e.a].x} y1={pos[e.a].y} x2={pos[e.b].x} y2={pos[e.b].y} stroke={accent} strokeWidth={1 + 4 * (e.c - 0.55) / 0.25} opacity={0.25 + 0.6 * smooth(local - i * 0.1)} />)}
+			{chords.map((e, i) => <line key={i} x1={pos[e.a].x} y1={pos[e.a].y} x2={pos[e.b].x} y2={pos[e.b].y} stroke={accent} strokeWidth={Math.max(0.5, 1 + (4 * (e.c - 0.55)) / 0.25)} opacity={0.25 + 0.6 * smooth(local - i * 0.1)} />)}
 			{days.map((d) => <circle key={d.index} cx={pos[d.index].x} cy={pos[d.index].y} r={pos[d.index].k >= 0 ? 7 : 4} fill={pos[d.index].k >= 0 ? accent : COLORS.violet} />)}
 		</svg>
 	);
@@ -97,14 +96,14 @@ export const GrokClock: React.FC<BodyProps> = ({local, w, h, accent}) => {
 	);
 };
 
-/** Linear-probe accuracy for mine/theirs by layer (Nanda, Lee & Wattenberg 2023, Table 1) beside a board. */
+/** Linear-probe accuracy for mine/theirs by layer (Nanda, Lee & Wattenberg 2023, Table 1) beside the game's opening position. */
 export const Othello: React.FC<BodyProps> = ({local, w, h, accent}) => {
 	const acc = [90.9, 94.8, 97.2, 98.3, 99.0, 99.4, 99.6, 99.5]; // layers 0..7
 	const s = Math.min(h - 4, w * 0.4) / 8; // board cell
 	return (
 		<div style={{position: 'absolute', inset: 0}}>
 			<svg width={8 * s} height={8 * s} style={{position: 'absolute', left: 0, top: 2}}>
-				{Array.from({length: 64}, (_, i) => { const r = random(`oth${i}`); const piece = r < 0.3 ? COLORS.ink : r < 0.6 ? '#111' : null;
+				{Array.from({length: 64}, (_, i) => { const piece = i === 27 || i === 36 ? COLORS.ink : i === 28 || i === 35 ? '#111' : null; // the standard opening position
 					return <g key={i}><rect x={(i % 8) * s} y={Math.floor(i / 8) * s} width={s - 1} height={s - 1} fill="#0f6b3c" />
 						{piece ? <circle cx={(i % 8) * s + s / 2} cy={Math.floor(i / 8) * s + s / 2} r={s * 0.38} fill={piece} stroke={COLORS.dim} opacity={smooth(local * 3 - i / 20)} /> : null}</g>; })}
 			</svg>

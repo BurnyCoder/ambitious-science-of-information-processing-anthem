@@ -42,6 +42,8 @@ def load_vignettes(path: Path, banned=()) -> dict:
             raise VignetteError(f"vignette #{i} ({v.get('id')}) lacks {missing}")
         if v["slot"] not in slots:  # typo in the slot name
             raise VignetteError(f"vignette {v['id']}: unknown slot {v['slot']!r} (known: {sorted(slots)})")
+        if int(v.get("nth", 1)) < 1:  # 0 or negative would silently pick the last match
+            raise VignetteError(f"vignette {v['id']}: nth must be >= 1")
         if v["badge"] not in BADGES:  # every card must say where its content comes from
             raise VignetteError(f"vignette {v['id']}: badge {v['badge']!r} not in {BADGES}")
         if word := find_banned(" ".join(str(x) for x in v.values()), banned):  # on-screen text obeys the lyric rule

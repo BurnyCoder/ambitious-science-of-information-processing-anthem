@@ -113,7 +113,7 @@ def grokking(checks: dict) -> None:
                                           "paper": PAPER_KEY_FREQS, "top5": top5, "top6": top6, "pass": top5 == PAPER_KEY_FREQS}
     wd01 = torch.load(EXT / "pmp" / "wd_10-1_mod_addition_loss_curve.pth", weights_only=True, map_location="cpu")
     wd = wd01["optimizer"]["param_groups"][0]["weight_decay"]  # 0.1 (the stored config dict says 1, the optimizer says 0.1)
-    first_below = lambda curve, every: int(np.argmax(np.asarray(curve) < 1.0)) * every  # noqa: E731  first epoch with test loss < 1
+    first_below = lambda curve, every: int(np.argmax(np.asarray(curve) < 1.0)) * every if np.any(np.asarray(curve) < 1.0) else None  # noqa: E731  None = never
     write("grokking", {
         "config": run["config"], "phases": [1400, 9400, 14000],  # Nanda et al. §5.2: memorization / circuit formation / cleanup
         "train": log_downsample(run["train_losses"], 180, 1), "test": log_downsample(run["test_losses"], 180, 10),

@@ -49,11 +49,13 @@ def fetch(url: str, dest: Path) -> Path:
 
 
 def record(path: Path, url: str, licence: str, revision: str = "", root: Path | None = None) -> dict:
-    """Local: provenance of one file.  Global: rows of reports/data/exp07_sources.json."""
+    """Local: provenance of one file; "accessed" is the cached file's modification date (its download).
+    Global: rows of reports/data/exp07_sources.json."""
     digest = hashlib.sha256(path.read_bytes()).hexdigest()  # identifies the exact bytes used
+    downloaded = dt.date.fromtimestamp(path.stat().st_mtime).isoformat()  # when the cached copy was fetched, not when this ran
     name = str(path.relative_to(root)) if root else str(path)
     return {"file": name.replace("\\", "/"), "url": url, "revision": revision, "licence": licence,
-            "bytes": path.stat().st_size, "sha256": digest, "accessed": dt.date.today().isoformat()}
+            "bytes": path.stat().st_size, "sha256": digest, "accessed": downloaded}
 
 
 class _NumpyOnlyUnpickler(pickle.Unpickler):

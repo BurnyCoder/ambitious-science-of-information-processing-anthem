@@ -91,6 +91,9 @@ def test_load_vignettes_validates(tmp_path):
     with pytest.raises(VignetteError, match="mind"):  # banned words are refused on screen too
         load_vignettes(p, banned=["mind"])
     card = load_vignettes(p)["vignettes"][0]  # without a banned list it loads
+    p.write_text(p.read_text(encoding="utf-8") + "nth = 0\n", encoding="utf-8")
+    with pytest.raises(VignetteError, match="nth"):  # 0 would silently pick the last match
+        load_vignettes(p)
     assert card["hold"] == 6.0 and card["nth"] == 1 and card["text"] == ""  # defaults filled in
 
 
