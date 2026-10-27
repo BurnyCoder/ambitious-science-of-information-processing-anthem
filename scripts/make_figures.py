@@ -6,6 +6,7 @@ and writes PNG figures to reports/figures/:
   fig2_beats.png      exp02: beat F-measure and |tempo error| vs true tempo, hop 256 vs 512 (clean clicks)
   fig3_alignment.png  exp03: CDF of |onset(Suno, repaired v2) - onset(Whisper)| per take, with the random-shift control
   fig4_onset_offset.png  exp05: signed onset differences vs the MMS forced aligner, plus hand-labelled anchors
+  fig5_lyric_edit.png    exp06: where replace-section changed the audio, and per-line Suno - MMS on both takes
 Global context: every number plotted is read from the committed raw data, so figures are reproducible.
 Design notes (avoiding misleading plots): shared, labelled axes; log scale only where errors span 3 decades and it
 is stated on the axis; half-tempo failures are marked explicitly instead of being clipped away.
@@ -116,6 +117,37 @@ def fig_onset_offset() -> None:
     plt.close(fig)
 
 
+def fig_lyric_edit() -> None:
+    """Local: exp06, (top) lag-aligned per-second waveform r between the parent and the edited take, with the
+    requested window; (bottom) per-line median Suno - MMS onset on both takes.
+    Global: where Suno's replace-section changed the audio, and why the word offset moved from -0.137 to -0.156 s."""
+    e6 = json.loads((DATA / "exp06_lyric_edit.json").read_text(encoding="utf-8"))  # raw exp06 output
+    e5 = json.loads((DATA / "exp05_onset_offset.json").read_text(encoding="utf-8"))  # parent's exp05 records
+    fig, (top, bot) = plt.subplots(2, 1, figsize=(11, 6.4))
+    r = np.array([np.nan if v is None else v for v in e6["b_per_second_r"]])  # None at the file edges
+    top.plot(np.arange(len(r)) + 0.5, r, color="C0", lw=1)  # value at each second's centre
+    top.axvspan(*e6["window_s"], color="C3", alpha=0.2, label="requested window (lines 4–6)")
+    top.axhline(0.9, color="grey", ls="--", lw=0.8, label="r = 0.9 (anchor-transfer threshold)")
+    top.set(xlabel="song time (s)", ylabel="Pearson r, 1 s blocks", ylim=(-0.4, 1.02), xlim=(0, len(r)),
+            title=f"parent vs edited take, new file shifted by {e6['amendment2']['lag_samples'] / 16:.1f} ms")
+    top.legend(fontsize=8, loc="lower right")
+    for label, rec, color in [("parent take (exp05)", e5["records"][e5["primary_take"]], "C1"),
+                              ("edited take (exp06)", e6["records"], "C0")]:
+        lines = sorted({x["line"] for x in rec if not x["backing"]})  # lead lines
+        med = np.array([np.median([x["suno"] - x["mms"] for x in rec if x["line"] == ln and not x["backing"]])
+                        for ln in lines])  # per-line median
+        song = np.median([x["suno"] - x["mms"] for x in rec if not x["backing"]])  # exp05's δ for this take
+        bot.plot(lines, np.minimum(med, 0.48), "o-", ms=3, lw=1, color=color,  # clipped lines drawn at the edge
+                 label=f"{label}: song median {song:+.3f} s ({int(np.sum(med > 0.48))} line(s) > 0.48 s drawn at the top)")
+    first, last = e6["parent"]["lines"]
+    bot.axvspan(first - 0.5, last + 0.5, color="C3", alpha=0.2, label="re-sung lines")
+    bot.set(xlabel="lyric line (0-based)", ylabel="median Suno − MMS onset (s)", ylim=(-0.1, 0.5))
+    bot.legend(fontsize=8, loc="upper right")
+    fig.tight_layout()
+    fig.savefig(FIG / "fig5_lyric_edit.png", dpi=130)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     FIG.mkdir(parents=True, exist_ok=True)  # reports/figures
     fig_stills()
@@ -123,4 +155,6 @@ if __name__ == "__main__":
     fig_alignment()
     if (DATA / "exp05_onset_offset.json").exists():  # written by scripts/validate_onset_offset.py
         fig_onset_offset()
+    if (DATA / "exp06_lyric_edit.json").exists():  # written by scripts/validate_lyric_edit.py
+        fig_lyric_edit()
     print("figures written to", FIG)
