@@ -57,15 +57,15 @@ def cached_json(path: Path, compute, title: str):
     return value
 
 
-def take_records(take, sections) -> tuple[list[dict], dict, Path]:
+def take_records(take, sections, out: Path = OUT) -> tuple[list[dict], dict, Path]:
     """Local: per written word: Suno (repair v2), MMS and Whisper onsets.  Global: phases 1-3 for one take."""
     aligned = json.loads(take.aligned_path.read_text(encoding="utf-8"))["alignedWords"]  # Suno timings
     suno, _ = align_words(sections, aligned)  # exactly what the video uses
-    vocals, sep = separate_vocals(take.audio_path, OUT)  # phase 1: Demucs vocal stem
+    vocals, sep = separate_vocals(take.audio_path, out)  # phase 1: Demucs vocal stem
     stem = take.audio_path.stem
-    mms = cached_json(OUT / f"{stem}_mms.json", lambda: mms_word_spans(vocals, [w.norm for w in suno]),
+    mms = cached_json(out / f"{stem}_mms.json", lambda: mms_word_spans(vocals, [w.norm for w in suno]),
                       f"MMS_FA word spans ({take.id})")  # phase 2: forced alignment
-    ref = cached_json(OUT / f"{stem}_whisper.json", lambda: whisper_words(take.audio_path),
+    ref = cached_json(out / f"{stem}_whisper.json", lambda: whisper_words(take.audio_path),
                       f"Whisper words ({take.id})")  # phase 3: exp03's reference, re-run
     at = {i: ref[j]["start"] for i, j in match_pairs([w.norm for w in suno], [r["norm"] for r in ref])}  # matched
     rec = [{"i": i, "text": w.text, "norm": w.norm, "line": w.line_index, "section": w.section_index,
