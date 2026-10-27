@@ -9,6 +9,7 @@
 import React, {useMemo} from 'react'; // JSX + memo
 import {AbsoluteFill, random, staticFile, useCurrentFrame, useVideoConfig} from 'remotion'; // frame clock + seeded RNG
 import {useAudioData, visualizeAudio} from '@remotion/media-utils'; // spectrum of the song at a frame
+import {noise2D} from '@remotion/noise'; // deterministic smooth noise for drifting text
 import {beatPulse, featureAt, type Section, type Timeline} from '../lib/timeline'; // timing helpers
 import {COLORS, FONTS, glow, smooth} from '../lib/theme'; // look
 
@@ -79,6 +80,40 @@ export const Hud: React.FC<{tl: Timeline; t: number; section: Section; caption: 
 				{`  ·  §${String(pos).padStart(2, '0')}/${tl.sections.length}  ${section.label.toUpperCase()}  —  ${caption}`}
 			</div>
 			<div style={{...style, right: 48}}>{`t=${mm}:${ss}  ·  ${tl.tempoBpm.toFixed(0)} BPM`}</div>
+		</AbsoluteFill>
+	);
+};
+
+/** Local: the current section's card citations scrolling right to left along the bottom edge (~110 px/s).
+ * Global: every reference behind what is on screen, in order; content from timeline.json "vignettes". */
+export const Ticker: React.FC<{tl: Timeline; t: number; section: Section}> = ({tl, t, section}) => {
+	const cites = [...new Set(tl.vignettes.filter((v) => v.sectionIndex === section.index).map((v) => v.cite))]; // unique, in card order
+	if (!cites.length) return null;
+	const text = cites.join('   ◆   ') + '   ◆   '; // one loop
+	const loop = text.length * 9; // JetBrains Mono advance is 0.6 em -> 9 px per character at 15 px
+	const x = -(((t - section.startS) * 110) % loop); // scroll offset
+	return (
+		<div style={{position: 'absolute', left: 0, right: 0, bottom: 4, height: 22, overflow: 'hidden', opacity: 0.75}}>
+			<div style={{position: 'absolute', left: x, whiteSpace: 'nowrap', fontFamily: FONTS.mono, fontSize: 15, color: COLORS.dim}}>{text}{text}{text}</div>
+		</div>
+	);
+};
+
+/** Local: the section's card titles and formulas drifting faintly behind the scene (seeded Perlin-style noise).
+ * Global: dense background texture made only of the ideas this section illustrates. Source: https://www.remotion.dev/docs/noise/noise-2d */
+export const EquationDust: React.FC<{tl: Timeline; t: number; section: Section}> = ({tl, t, section}) => {
+	const {width, height} = useVideoConfig(); // frame size
+	const items = tl.vignettes.filter((v) => v.sectionIndex === section.index).map((v) => (v.id === 'formula' ? v.text.split('\n')[0] : v.title)); // this section's ideas
+	return (
+		<AbsoluteFill>
+			{items.map((txt, i) => {
+				const x = (random(`dx${section.index}-${i}`) * 0.9 + 0.05) * width + 120 * noise2D(`nx${i}`, t * 0.05, i); // drifting position
+				const y = (random(`dy${section.index}-${i}`) * 0.62 + 0.14) * height + 60 * noise2D(`ny${i}`, i, t * 0.05); // stays above the lyric band
+				return (
+					<div key={i} style={{position: 'absolute', left: x, top: y, transform: `translate(-50%, -50%) rotate(${(random(`dr${i}`) - 0.5) * 16}deg)`,
+						fontFamily: FONTS.mono, fontSize: 20 + 22 * random(`ds${i}`), color: COLORS.ink, opacity: 0.035 + 0.02 * (noise2D(`no${i}`, t * 0.3, 0) + 1), whiteSpace: 'nowrap'}}>{txt}</div>
+				);
+			})}
 		</AbsoluteFill>
 	);
 };

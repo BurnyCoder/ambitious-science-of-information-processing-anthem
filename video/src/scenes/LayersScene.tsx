@@ -2,16 +2,15 @@
  * Verse 1 — "a matrix and a bend, repeated without end".
  * Local: the camera flies through a stack of layers (grids of neurons) joined by sparse
  * weight lines; an activation wave travels forward layer by layer and pulses on beats.
- * A 2D panel shows h_{l+1} = σ(W_l h_l + b_l) with a ReLU plot and a growing parameter count.
+ * The layer equation, the bend and the parameter count are figure cards around it (content/vignettes.toml).
  * Global: introduces depth = composition of linear maps and nonlinearities, which the
  * landscape scene then trains.
  */
 import React, {useMemo} from 'react'; // JSX + memo
 import {AbsoluteFill, random} from 'remotion'; // layer + seeded RNG
 import {beatPulse, featureAt} from '../lib/timeline'; // audio reactivity
-import {COLORS, FONTS, smooth, useSceneClock} from '../lib/theme'; // look + clock
+import {COLORS, useSceneClock} from '../lib/theme'; // look + clock
 import {CameraRig, GlowLines, GlowPoints, Stage, rgb} from '../components/three'; // 3D blocks
-import {Caption} from '../components/Overlays'; // labels
 import type {SceneProps} from './types'; // contract
 
 const LAYERS = 16; // depth of the stack
@@ -64,7 +63,6 @@ export const LayersScene: React.FC<SceneProps> = ({tl, section}) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [frame]);
 	const camZ = 14 - progress * (LAYERS * GAP * 0.8); // fly forward through ~80% of the stack
-	const params = Math.min(12, 3 + progress * 11); // log10 of the parameter counter, 1e3 -> 1e12
 	return (
 		<AbsoluteFill>
 			<Stage>
@@ -72,17 +70,6 @@ export const LayersScene: React.FC<SceneProps> = ({tl, section}) => {
 				<GlowLines positions={lpos} colors={lcol} opacity={0.55} />
 				<GlowPoints positions={pos} colors={col} size={0.45 + 0.15 * pulse} />
 			</Stage>
-			<Caption local={local} at={1} x={70} y={110} title={<span style={{fontFamily: FONTS.mono}}>h<sub>l+1</sub> = σ(W<sub>l</sub> h<sub>l</sub> + b<sub>l</sub>)</span>} sub="the most general linear map, then one bend — composed ad infinitum" />
-			<svg width={460} height={150} style={{position: 'absolute', left: 74, top: 250, opacity: smooth((local - 2) / 0.6)}}>
-				<line x1={10} y1={120} x2={250} y2={120} stroke={COLORS.dim} /> {/* x axis */}
-				<line x1={130} y1={10} x2={130} y2={140} stroke={COLORS.dim} /> {/* y axis */}
-				<polyline points="10,120 130,120 240,20" fill="none" stroke={COLORS.cyan} strokeWidth={5} /> {/* ReLU */}
-				<text x={150} y={40} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={20}>ReLU(z)=max(0,z)</text>
-			</svg>
-			<div style={{position: 'absolute', right: 70, top: 110, fontFamily: FONTS.mono, fontSize: 30, color: COLORS.ink, textAlign: 'right', opacity: smooth((local - 3) / 0.6)}}>
-				parameters ≈ 10<sup>{params.toFixed(1)}</sup>
-				<div style={{fontSize: 20, color: COLORS.dim}}>layers stacked: {Math.floor(2 + progress * 118)}</div>
-			</div>
 		</AbsoluteFill>
 	);
 };

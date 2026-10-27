@@ -23,6 +23,17 @@ const FIELDS: [string, RegExp | null][] = [ // name, sung keyword (null = lit at
 	['mechanistic interpretability', null], ['statistical learning theory', null], ['information geometry', null],
 ];
 
+const FORMULAS: Record<string, string> = { // one iconic formula or object per lens, shown under its name when lit
+	'linear algebra': 'W = UΣVᵀ', calculus: '∂L/∂θ', probability: 'p(x | θ)', 'information theory': 'H = −Σ p log p',
+	optimization: 'θ ← θ − η∇L', 'dynamical systems': 'dθ/dt = −∇L', 'loss-landscape geometry': '∇²L', 'statistical mechanics': 'p ∝ e^(−E/T)',
+	'random matrix theory': 'ρ_MP(λ)', 'singular learning theory': 'λ log n', 'symmetry · group theory': 'f(gx) = g f(x)', 'category theory': 'h∘f = k∘g',
+	causality: 'P(y | do(x))', 'compression · AIT': 'K(x)', 'neural tangent kernel': 'Θ(x, x′)', 'tensor programs · μP': 'width-stable η',
+	'spline theory': 'max-affine splines', 'formal languages': 'Dyck-k', 'complexity theory': 'TC⁰', 'control theory': 'ẋ = Ax + Bu',
+	'game theory': 'Nash equilibrium', 'topology · TDA': 'β₀, β₁', 'free energy principle': 'F = E_q[log q − log p]', 'computational mechanics': 'ε-machine',
+	'causal abstraction': 'τ: low → high', 'Kolmogorov complexity': 'K(x) ≤ |x| + c', 'scaling laws': 'L ∝ N^−α', 'mechanistic interpretability': 'features → circuits',
+	'statistical learning theory': 'VC dimension', 'information geometry': 'F_ij = E[∂ᵢlog p ∂ⱼlog p]',
+};
+
 export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {t, local, length} = useSceneClock(section); // time
 	const pulse = beatPulse(tl.beats, t); // beat kick
@@ -60,9 +71,10 @@ export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 				<div key={i} style={{position: 'absolute', left: p.x + 14, top: p.y - 14, fontFamily: FONTS.body, fontWeight: 600, fontSize: 15 + 10 * p.s,
 					color: COLORS.ink, opacity: dimNet * lit[i] * (0.45 + 0.55 * (p.front + 1) / 2), whiteSpace: 'nowrap', textShadow: glow(COLORS.amber, 0.25)}}>
 					{FIELDS[i][0]}
+					<div style={{fontFamily: FONTS.mono, fontWeight: 400, fontSize: 11 + 5 * p.s, color: COLORS.amber}}>{FORMULAS[FIELDS[i][0]]}</div>
 				</div>
 			))}
-			<div style={{position: 'absolute', top: 110, width: '100%', textAlign: 'center', fontFamily: FONTS.mono, fontSize: 26, color: COLORS.dim, opacity: smooth((t - atlasAt) / 0.5)}}>
+			<div style={{position: 'absolute', top: 70, width: '100%', textAlign: 'center', fontFamily: FONTS.mono, fontSize: 18, color: COLORS.dim, opacity: smooth((t - atlasAt) / 0.5)}}>
 				an atlas of laws · invariants · bounds · effective theories · mechanisms — at every level, every scale
 			</div>
 			<div style={{position: 'absolute', top: 470, width: '100%', textAlign: 'center', fontFamily: FONTS.display, fontWeight: 900, fontSize: 84, color: COLORS.ink,
