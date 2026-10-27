@@ -52,3 +52,17 @@ Descriptive only (no decision): whether Whisper recognises "thing" in the window
 
 - No human listening test. Check d (an ASR model) is the only independent evidence about the sung word, and Whisper can mishear sung words. Hence the pass criterion is the absence of "mind", with "thing" only reported.
 - The exp05 offset was calibrated on the old take. Inside the re-sung window it is only checked descriptively.
+
+## Amendment 1 (written after the call, before checks b–e)
+
+**What was seen.** The call (task `4a2ca040…`, 2 min 2 s, 6 credits: 987 → 981) returned two takes:
+- `303ab1c3…`: 240.40 s. Its section tags sit at the original positions (Pre-Chorus 41.8 s), hootCer 0.148.
+- `5c8aa2a0…`: 469.52 s. Suno's alignment shows the song running to the Outro at 264 s, then repeating from the Pre-Chorus to a second Outro at 443 s. hootCer 0.871.
+
+Check a as written ("every returned take") therefore failed. The code refused to overwrite `song.json`, kept both files, and spent nothing more. Nothing other than these durations, the tag positions and the rule's scores below had been looked at.
+
+**Amendment.** Check a is applied per take:
+- A take that fails it is dropped and recorded under `dropped_takes` in `song.json`.
+- The edit counts as unusable only if no take passes.
+
+The intent of a was to catch a segment-only response, the ambiguity in the docs; a doubled song is a different failure that the rule did not anticipate. The amendment does not change which take is used: the pre-specified rule over both takes already picks `303ab1c3`, since coverage is 1.0 for both (the doubled take has 799 tokens) and hootCer is 0.148 vs 0.871. The already paid task was cached with `--resume-task`, which makes no new replace call.
