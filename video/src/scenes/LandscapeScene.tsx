@@ -12,7 +12,6 @@ import {AbsoluteFill, random} from 'remotion'; // layer + seeded RNG
 import {beatPulse} from '../lib/timeline'; // beat kick
 import {COLORS, useSceneClock} from '../lib/theme'; // look + clock
 import {CameraRig, GlowLines, GlowPoints, Stage, rgb} from '../components/three'; // 3D blocks
-import {Caption} from '../components/Overlays'; // labels
 import type {SceneProps} from './types'; // contract
 
 const N = 90; // lattice resolution per side
@@ -97,8 +96,6 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 				<GlowLines positions={tpos} colors={tcol} opacity={0.9} />
 				<GlowPoints positions={ppos} colors={pcol} size={0.9 + 0.3 * pulse} />
 			</Stage>
-			<Caption local={local} at={0.8} x={70} y={110} title="non-convex loss landscape" sub="noisy gradient descent: θ ← θ − η∇L(θ) + ξ" color={COLORS.amber} />
-			<Caption local={local} at={progress > 0 ? 6 : 99} x={1180} y={110} title="flat minima ↔ generalization?" sub="Hochreiter & Schmidhuber 1997 · Keskar et al. 2017 (toy surface)" color={COLORS.lime} size={30} />
 		</AbsoluteFill>
 	);
 };

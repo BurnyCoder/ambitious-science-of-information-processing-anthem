@@ -1,6 +1,7 @@
 /**
  * Intro: a single token glows, unfolds into an embedding vector, then the title card.
- * Local: 2D SVG/CSS; token -> 16-cell vector (cells slide out, bar lengths are seeded values)
+ * Local: 2D SVG/CSS; the GPT-2 token "know" (id 760, public/vignettes/tokens.json; GPT-2 small has d = 768) -> 16
+ * embedding cells (cells slide out; bar lengths are illustrative seeded values, not the real weights)
  * -> "WE WILL KNOW" letter-by-letter -> subtitle and credits.
  * Global: first scene; sets the "information processing starts from one token" motif that the outro reverses.
  */
@@ -37,7 +38,7 @@ export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 					);
 				})}
 				<div style={{position: 'absolute', top: -14, left: 60 + 180 * unfold, fontFamily: FONTS.mono, fontSize: 24, color: COLORS.dim, whiteSpace: 'nowrap'}}>
-					{unfold < 0.5 ? 'token' : 'token → embedding  x ∈ ℝ^d'}
+					{unfold < 0.5 ? '" know" = GPT-2 token 760' : '" know" (token 760) → embedding x ∈ ℝ⁷⁶⁸'}
 				</div>
 			</div>
 			{/* title card */}

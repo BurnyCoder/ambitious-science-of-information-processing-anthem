@@ -84,10 +84,15 @@ def load_song_spec(content_dir: Path) -> SongSpec:
     for field, limit in LIMITS.items():  # every limited field
         if len(getattr(spec, field)) > limit:  # too long -> the API would reject or truncate it
             raise SpecError(f"{field} is {len(getattr(spec, field))} chars; Suno V6 allows {limit}")
-    for word in meta.get("banned_words", []):  # words the author never wants sung (checked here, not sent)
-        if re.search(rf"\b{re.escape(word)}", spec.lyrics, re.IGNORECASE):  # word-start match: mind, Mind's, minds
-            raise SpecError(f"lyrics contain the banned word {word!r} (content/song.toml banned_words)")
+    if word := find_banned(spec.lyrics, meta.get("banned_words", [])):  # words the author never wants sung (checked here, not sent)
+        raise SpecError(f"lyrics contain the banned word {word!r} (content/song.toml banned_words)")
     return spec
+
+
+def find_banned(text: str, banned) -> str | None:
+    """Local: the first banned word that starts a word of text (any case: mind, Mind's, minds), else None.
+    Global: guards the sung lyrics here and the on-screen card text in anthem.vignettes."""
+    return next((w for w in banned if re.search(rf"\b{re.escape(w)}", text, re.IGNORECASE)), None)  # word-start match
 
 
 def _cache_path(settings: Settings) -> Path:

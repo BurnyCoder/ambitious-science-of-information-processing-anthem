@@ -26,7 +26,9 @@ build-backend = "uv_build"
 analysis = [
     "demucs>=4.0.1",
     "faster-whisper>=1.2.1",
+    "huggingface-hub>=2.2.0",
     "matplotlib>=3.11.2",
+    "tokenizers>=0.23.3",
     "torch>=2.14.1",
     "torchaudio>=2.11.0",
 ]

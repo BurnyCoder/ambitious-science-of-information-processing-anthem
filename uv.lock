@@ -23,7 +23,9 @@ analysis = [
     { name = "demucs", version = "4.0.1", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'" },
     { name = "demucs", version = "4.1.0", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine != 'x86_64' or sys_platform != 'darwin'" },
     { name = "faster-whisper" },
+    { name = "huggingface-hub" },
     { name = "matplotlib" },
+    { name = "tokenizers" },
     { name = "torch" },
     { name = "torchaudio" },
 ]
@@ -44,7 +46,9 @@ requires-dist = [
 analysis = [
     { name = "demucs", specifier = ">=4.0.1" },
     { name = "faster-whisper", specifier = ">=1.2.1" },
+    { name = "huggingface-hub", specifier = ">=2.2.0" },
     { name = "matplotlib", specifier = ">=3.11.2" },
+    { name = "tokenizers", specifier = ">=0.23.3" },
     { name = "torch", specifier = ">=2.14.1" },
     { name = "torchaudio", specifier = ">=2.11.0" },
 ]

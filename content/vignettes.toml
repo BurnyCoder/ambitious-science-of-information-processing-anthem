@@ -1,0 +1,999 @@
+# The illustration track: one figure card per idea, timed to the sung word it illustrates.
+# Local: [slots] are named boxes [x, y, w, h] on the 1920x1080 frame; each [[vignette]] is one card.
+#   id       component in video/src/vignettes/index.ts ("formula" = generic title + text card)
+#   section  same keys as scenes.toml: "<kind> <occurrence>" or "<kind>" (every occurrence)
+#   trigger  regex searched in each sung word's normalized key (lowercase letters/digits only)
+#   nth      which matching word of the section (1-based, backing echoes count too); default 1
+#   slot     a [slots] name; cards sharing a slot never overlap (the earlier one is trimmed)
+#   hold     seconds on screen (default 6), clipped at the section's end unless that leaves < 2 s
+#   badge    where the content comes from: released data | published numbers | live math | from the paper | schematic
+# Global: read by anthem.vignettes (placed in timeline.json), drawn by video/src/components/VignetteLayer.tsx;
+#   docs/vignettes.md lists the sources, reports/exp07_provenance.md checks every on-screen number.
+
+[slots]
+# scenes with karaoke at the bottom: four corner boxes between the HUD (y < 80) and the lyric band (y > 880)
+lt = [40, 100, 520, 370]
+lb = [40, 490, 520, 380]
+rt = [1360, 100, 520, 370]
+rb = [1360, 490, 520, 380]
+# chorus-type scenes (giant sung word in the middle band, no karaoke): boxes above and below the words
+clt = [40, 92, 560, 250]
+crt = [1320, 92, 560, 250]
+clb = [40, 752, 560, 290]
+crb = [1320, 752, 560, 290]
+# verse 3: the five pillars of a scientific theory of deep learning
+p1 = [56, 236, 184, 610]
+p2 = [256, 236, 184, 610]
+p3 = [456, 236, 184, 610]
+p4 = [656, 236, 184, 610]
+p5 = [856, 236, 184, 610]
+
+# ---------------------------------------------------------------- Intro
+[[vignette]]
+id = "tokens"
+section = "intro"
+trigger = "^know$"
+slot = "rt"
+hold = 7.5
+title = "Every answer starts as tokens"
+text = "the title, as GPT-2 byte-pair tokens and their ids"
+badge = "released data"
+cite = "Radford et al. 2019 · GPT-2 tokenizer (openai-community/gpt2)"
+url = "https://huggingface.co/openai-community/gpt2"
+
+# ---------------------------------------------------------------- Verse 1
+[[vignette]]
+id = "matmul"
+section = "verse 1"
+trigger = "^matrix$"
+slot = "lt"
+title = "A matrix: the most general linear map"
+text = "every output is a weighted sum of every input"
+badge = "live math"
+cite = "Strang 2016, Introduction to Linear Algebra, ch. 2"
+url = "https://math.mit.edu/~gs/linearalgebra/"
+
+[[vignette]]
+id = "activations"
+section = "verse 1"
+trigger = "^bend$"
+slot = "rt"
+title = "And a bend: one nonlinearity"
+text = "ReLU · GELU · SiLU. Why gated variants work best: 'divine benevolence' (Shazeer 2020)"
+badge = "live math"
+cite = "Nair & Hinton 2010 · Hendrycks & Gimpel 2016 · Shazeer 2020, GLU Variants"
+url = "https://arxiv.org/abs/2002.05202"
+
+[[vignette]]
+id = "scale"
+section = "verse 1"
+trigger = "^trillion$"
+slot = "lb"
+title = "Stacked a trillion high"
+text = "parameters of notable models, log scale"
+badge = "released data"
+cite = "Epoch AI, Notable AI Models (CC BY 4.0)"
+url = "https://epoch.ai/data/ai-models"
+
+[[vignette]]
+id = "regions"
+section = "verse 1"
+trigger = "^nonlinear$"
+slot = "rb"
+title = "Linear, then nonlinear, again"
+text = "a ReLU net cuts its input space into linear pieces; depth multiplies them"
+badge = "live math"
+cite = "Montúfar et al. 2014 · Balestriero & Baraniuk 2018, A Spline Theory of Deep Networks"
+url = "https://arxiv.org/abs/1402.1869"
+
+[[vignette]]
+id = "residual"
+section = "verse 1"
+trigger = "^answer$"
+slot = "lt"
+title = "How it answers: the residual stream"
+text = "x ← x + Attn(x) ← x + MLP(x) … → unembed → softmax → next token"
+badge = "schematic"
+cite = "Elhage et al. 2021, A Mathematical Framework for Transformer Circuits"
+url = "https://transformer-circuits.pub/2021/framework/index.html"
+
+[[vignette]]
+id = "induction"
+section = "verse 1"
+trigger = "^circuits$"
+slot = "rt"
+title = "Nobody wrote its circuits: induction heads"
+text = "[A][B] … [A] → predict [B]. Induction score per head, GPT-2 small"
+badge = "released data"
+cite = "Olsson et al. 2022 · scores: ARENA 3.0, repeated random tokens"
+url = "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html"
+
+[[vignette]]
+id = "formula"
+section = "verse 1"
+trigger = "^plan$"
+slot = "rb"
+title = "Nobody drew the plan"
+text = "general methods that scale with computation\nbeat hand-built knowledge, again and again"
+badge = "from the paper"
+cite = "Sutton 2019, The Bitter Lesson"
+url = "http://www.incompleteideas.net/IncIdeas/BitterLesson.html"
+
+[[vignette]]
+id = "backprop"
+section = "verse 1"
+trigger = "^gradient$"
+slot = "lb"
+title = "Gradient by gradient"
+text = "∂L/∂Wₗ = δₗ hₗ₋₁ᵀ,  δₗ = (Wₗ₊₁ᵀ δₗ₊₁) ⊙ σ′(zₗ)"
+badge = "from the paper"
+cite = "Rumelhart, Hinton & Williams 1986 · Loshchilov & Hutter 2019 (AdamW)"
+url = "https://www.nature.com/articles/323533a0"
+
+# ---------------------------------------------------------------- Pre-chorus 1
+[[vignette]]
+id = "concentration"
+section = "pre-chorus 1"
+trigger = "^billion"
+slot = "lt"
+title = "A billion-dimensional night"
+text = "random directions are almost orthogonal: cos θ ≈ N(0, 1/d)"
+badge = "live math"
+cite = "Vershynin 2018, High-Dimensional Probability, ch. 3"
+url = "https://www.math.uci.edu/~rvershyn/papers/HDP-book/HDP-book.html"
+
+[[vignette]]
+id = "saddle"
+section = "pre-chorus 1"
+trigger = "^saddle$"
+slot = "rt"
+title = "Past every saddle"
+text = "most critical points are saddles; the Hessian is a bulk near 0 plus a few outliers"
+badge = "schematic"
+cite = "Dauphin et al. 2014 · Sagun et al. 2017"
+url = "https://arxiv.org/abs/1406.2572"
+
+[[vignette]]
+id = "flat"
+section = "pre-chorus 1"
+trigger = "^flat$"
+slot = "lb"
+title = "To valleys flat and wide"
+text = "SAM: min_w max_{‖ε‖≤ρ} L(w + ε). Minima are joined by low-loss paths"
+badge = "schematic"
+cite = "Hochreiter & Schmidhuber 1997 · Keskar et al. 2017 · Foret et al. 2021 · Garipov et al. 2018"
+url = "https://arxiv.org/abs/2010.01412"
+
+[[vignette]]
+id = "doubleDescent"
+section = "pre-chorus 1"
+trigger = "^minima$"
+slot = "rb"
+title = "Bigger can generalize better: double descent"
+text = "ResNet18 width k on CIFAR-10, 15 % label noise: test error falls, peaks at k = 10, then falls again"
+badge = "released data"
+cite = "Nakkiran et al. 2019, Deep Double Descent (Fig. 1 data)"
+url = "https://arxiv.org/abs/1912.02292"
+
+[[vignette]]
+id = "grokking"
+section = "pre-chorus 1"
+trigger = "^generalize$"
+slot = "lt"
+title = "Minima that generalize: grokking"
+text = "a + b mod 113: train loss falls early, test loss only thousands of steps later"
+badge = "released data"
+cite = "Nanda et al. 2023, Progress Measures for Grokking (mainline run, via ARENA)"
+url = "https://arxiv.org/abs/2301.05217"
+
+[[vignette]]
+id = "curves"
+section = "pre-chorus 1"
+trigger = "^go$"
+slot = "rt"
+title = "So we go inside: curve detectors"
+text = "InceptionV1 mixed3b: a family of units, one per curve orientation"
+badge = "schematic"
+cite = "Cammarata et al. 2020, Curve Detectors (Distill)"
+url = "https://distill.pub/2020/circuits/curve-detectors/"
+
+# ---------------------------------------------------------------- Chorus 1
+[[vignette]]
+id = "formula"
+section = "chorus 1"
+trigger = "^know$"
+slot = "clt"
+title = "Ambitious mechanistic interpretability"
+text = "the goal: fully understand how neural networks work"
+badge = "from the paper"
+cite = "leogao 2025, An Ambitious Vision for Interpretability (LessWrong)"
+url = "https://www.lesswrong.com/posts/Hy6PX43HGgmfiTaKu/an-ambitious-vision-for-interpretability"
+
+[[vignette]]
+id = "sae"
+section = "chorus 1"
+trigger = "^understand$"
+slot = "crt"
+title = "Monosemantic features from a sparse dictionary"
+text = "A/1/3450 Arabic script · A/1/2937 DNA · A/1/2357 base64 · A/1/416 Hebrew"
+badge = "published numbers"
+cite = "Bricken et al. 2023, Towards Monosemanticity"
+url = "https://transformer-circuits.pub/2023/monosemantic-features/index.html"
+
+[[vignette]]
+id = "graphDallas"
+section = "chorus 1"
+trigger = "^cause$"
+slot = "clb"
+title = "Every cause: Dallas → Texas → Austin"
+text = "Fact: the capital of the state containing Dallas is → Austin"
+badge = "released data"
+cite = "Lindsey et al. 2025, On the Biology of a Large Language Model (Claude 3.5 Haiku)"
+url = "https://transformer-circuits.pub/2025/attribution-graphs/biology.html"
+
+[[vignette]]
+id = "patching"
+section = "chorus 1"
+trigger = "^black$"
+slot = "crb"
+title = "Open the black box: activation patching"
+text = "run clean, run corrupted, patch one site, measure the change"
+badge = "schematic"
+cite = "Vig et al. 2020 · Meng et al. 2022 · Heimersheim & Nanda 2024"
+url = "https://arxiv.org/abs/2404.15255"
+
+[[vignette]]
+id = "formula"
+section = "chorus 1"
+trigger = "^understand$"
+nth = 2
+slot = "clt"
+title = "The circuits program, in three claims"
+text = "features are the unit · features connect into circuits · the same circuits recur across models"
+badge = "from the paper"
+cite = "Olah et al. 2020, Zoom In: An Introduction to Circuits (Distill)"
+url = "https://distill.pub/2020/circuits/zoom-in/"
+
+[[vignette]]
+id = "ioi"
+section = "chorus 1"
+trigger = "^know$"
+nth = 3
+slot = "crt"
+title = "A whole circuit, mapped: IOI in GPT-2 small"
+text = "When Mary and John went to the store, John gave a drink to → Mary"
+badge = "published numbers"
+cite = "Wang et al. 2022, Interpretability in the Wild"
+url = "https://arxiv.org/abs/2211.00593"
+
+# ---------------------------------------------------------------- Chorus 2
+[[vignette]]
+id = "formula"
+section = "chorus 2"
+trigger = "^know$"
+slot = "clt"
+title = "Universality"
+text = "induction heads and curve detectors reappear in models trained separately"
+badge = "from the paper"
+cite = "Olah et al. 2020 · Olsson et al. 2022 · Chughtai et al. 2023"
+url = "https://arxiv.org/abs/2302.03025"
+
+[[vignette]]
+id = "graphCalc"
+section = "chorus 2"
+trigger = "^understand$"
+slot = "crt"
+title = "36 + 59: two paths at once"
+text = "calc: 36+59= → 95. One path estimates 'sum ~92', a parallel path computes '_6 + _9 → _5'"
+badge = "released data"
+cite = "Lindsey et al. 2025, On the Biology of a Large Language Model"
+url = "https://transformer-circuits.pub/2025/attribution-graphs/biology.html"
+
+[[vignette]]
+id = "goldenGate"
+section = "chorus 2"
+trigger = "^cause$"
+slot = "clb"
+title = "Turn one cause up: Golden Gate Claude"
+text = "turning feature 34M/31164353 up made Claude 3 Sonnet describe itself as the Golden Gate Bridge"
+badge = "published numbers"
+cite = "Templeton et al. 2024, Scaling Monosemanticity"
+url = "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html"
+
+[[vignette]]
+id = "formula"
+section = "chorus 2"
+trigger = "^black$"
+slot = "crb"
+title = "Simple probes catch sleeper agents"
+text = "a linear probe on the residual stream flags when a backdoored model will defect"
+badge = "from the paper"
+cite = "MacDiarmid et al. 2024, Simple probes can catch sleeper agents (Anthropic)"
+url = "https://www.anthropic.com/research/probes-catch-sleeper-agents"
+
+[[vignette]]
+id = "graphGemma"
+section = "chorus 2"
+trigger = "^understand$"
+nth = 2
+slot = "clt"
+title = "The same graph, on an open model"
+text = "Gemma-2-2B, transcoder features: what it says next"
+badge = "released data"
+cite = "circuit-tracer (Anthropic, 2025) · Neuronpedia graph gemma-fact-dallas-austin"
+url = "https://github.com/safety-research/circuit-tracer"
+
+[[vignette]]
+id = "formula"
+section = "chorus 2"
+trigger = "^know$"
+nth = 3
+slot = "crt"
+title = "Shared concepts across languages"
+text = "'the opposite of small' runs through the same language-independent features in English, French and Chinese"
+badge = "from the paper"
+cite = "Lindsey et al. 2025, On the Biology of a Large Language Model"
+url = "https://transformer-circuits.pub/2025/attribution-graphs/biology.html"
+
+# ---------------------------------------------------------------- Verse 2 (the ladder sits in the middle)
+[[vignette]]
+id = "neuronFeature"
+section = "verse 2"
+trigger = "^neurons$"
+slot = "rt"
+title = "Start with neurons and features"
+text = "one sparse-autoencoder latent of GPT-2 small and where it fires"
+badge = "released data"
+cite = "Bloom 2024, GPT-2 small residual SAEs · Neuronpedia"
+url = "https://www.neuronpedia.org/gpt2-small/7-res-jb/4733"
+
+[[vignette]]
+id = "formula"
+section = "verse 2"
+trigger = "^heads$"
+slot = "lt"
+title = "Heads: QK picks where, OV picks what"
+text = "A = softmax(x W_Q W_Kᵀ xᵀ / √d)\nhead(x) = A x W_V W_O"
+badge = "from the paper"
+cite = "Elhage et al. 2021, A Mathematical Framework for Transformer Circuits"
+url = "https://transformer-circuits.pub/2021/framework/index.html"
+
+[[vignette]]
+id = "dayCircle"
+section = "verse 2"
+trigger = "^manifolds$"
+slot = "rb"
+title = "Manifolds of meaning: the week is a circle"
+text = "GPT-2 small layer-7 SAE latents labelled Wed, Thu, Fri, Sat, Sun; chords = released decoder cosines"
+badge = "released data"
+cite = "Engels et al. 2024, Not All Language Model Features Are Linear · Neuronpedia"
+url = "https://arxiv.org/abs/2405.14860"
+
+[[vignette]]
+id = "paramDecomp"
+section = "verse 2"
+trigger = "^parameter$"
+slot = "rt"
+title = "Parameter components"
+text = "W = Σ_c P_c: rank-1 pieces, each used by few inputs"
+badge = "schematic"
+cite = "Braun et al. 2025 (APD) · Bushnaq et al. 2025 (SPD)"
+url = "https://arxiv.org/abs/2501.14926"
+
+[[vignette]]
+id = "grokClock"
+section = "verse 2"
+trigger = "^algorithms$"
+slot = "lt"
+title = "An algorithm, reverse-engineered"
+text = "a + b mod 113 by rotation: logit(c) ∝ cos(w(a + b − c)), w = 2πk/113"
+badge = "released data"
+cite = "Nanda et al. 2023 (mainline run, via ARENA)"
+url = "https://arxiv.org/abs/2301.05217"
+
+[[vignette]]
+id = "othello"
+section = "verse 2"
+trigger = "^decisions$"
+slot = "rb"
+title = "Decisions from a world model: Othello-GPT"
+text = "linear probe for mine / theirs, accuracy by layer"
+badge = "published numbers"
+cite = "Li et al. 2023 · Nanda, Lee & Wattenberg 2023, Table 1"
+url = "https://arxiv.org/abs/2309.00941"
+
+[[vignette]]
+id = "refusal"
+section = "verse 2"
+trigger = "^behaviors$"
+slot = "rt"
+title = "A behavior with one direction: refusal"
+text = "x ← x − r̂ r̂ᵀ x. Refusal score by layer × position, Llama-3-8B-Instruct"
+badge = "released data"
+cite = "Arditi et al. 2024, Refusal in Language Models Is Mediated by a Single Direction"
+url = "https://arxiv.org/abs/2406.11717"
+
+[[vignette]]
+id = "shoggoth"
+section = "verse 2"
+trigger = "^drives$"
+slot = "lt"
+title = "The drives behind the face"
+text = "persona vectors: directions for traits like sycophancy, read out and steered"
+badge = "schematic"
+cite = "Chen et al. 2025, Persona Vectors · the shoggoth-with-a-mask meme (2022)"
+url = "https://arxiv.org/abs/2507.21509"
+
+[[vignette]]
+id = "encyclopedia"
+section = "verse 2"
+trigger = "^encyclopedia$"
+slot = "lb"
+title = "The encyclopedia so far"
+text = "connect isolated discoveries into one picture of the internal machinery"
+badge = "from the paper"
+cite = "Goodfire, We can and must solve alignment"
+url = "https://www.goodfire.com/blog/we-can-and-must-solve-alignment"
+
+[[vignette]]
+id = "rome"
+section = "verse 2"
+trigger = "^recalls$"
+slot = "rb"
+title = "How it recalls a fact"
+text = "The Space Needle is in downtown → Seattle: mid-layer MLPs at the last subject token carry it"
+badge = "schematic"
+cite = "Meng et al. 2022, Locating and Editing Factual Associations in GPT (ROME)"
+url = "https://arxiv.org/abs/2202.05262"
+
+[[vignette]]
+id = "graphRabbit"
+section = "verse 2"
+trigger = "^reasoning$"
+slot = "rt"
+title = "Where the reasoning hides: planning a rhyme"
+text = "He saw a carrot and had to grab it, / His hunger was like a starving … rabbit"
+badge = "released data"
+cite = "Lindsey et al. 2025, On the Biology of a Large Language Model"
+url = "https://transformer-circuits.pub/2025/attribution-graphs/biology.html"
+
+# ---------------------------------------------------------------- Pre-chorus 2
+[[vignette]]
+id = "superposition"
+section = "pre-chorus 2"
+trigger = "^noise$"
+slot = "lt"
+title = "Not noise: superposition"
+text = "5 features, 2 dimensions: dense inputs keep 2 features, sparse inputs pack all 5 into a pentagon"
+badge = "released data"
+cite = "Elhage et al. 2022, Toy Models of Superposition (figure saved in the authors' notebook)"
+url = "https://transformer-circuits.pub/2022/toy_model/index.html"
+
+[[vignette]]
+id = "polysemantic"
+section = "pre-chorus 2"
+trigger = "^read$"
+slot = "rt"
+title = "Can't be read? Untangle it"
+text = "one neuron, many meanings → a sparse autoencoder splits it into single-meaning features"
+badge = "schematic"
+cite = "Elhage et al. 2022 · Cunningham et al. 2023 · Bricken et al. 2023"
+url = "https://arxiv.org/abs/2309.08600"
+
+[[vignette]]
+id = "bsf"
+section = "pre-chorus 2"
+trigger = "^structure$"
+slot = "lb"
+title = "Structure everywhere: concepts as regions"
+text = "block-sparse featurizers recover each concept as a small subspace, not a single direction"
+badge = "released data"
+cite = "Goodfire 2026, block-sparse-featurizer (MIT)"
+url = "https://github.com/goodfire-ai/block-sparse-featurizer"
+
+[[vignette]]
+id = "functionVector"
+section = "pre-chorus 2"
+trigger = "^function$"
+slot = "rb"
+title = "Function vectors"
+text = "a few heads compress the antonym task into one vector; add it and the model answers with opposites"
+badge = "released data"
+cite = "Todd et al. 2024, Function Vectors in Large Language Models"
+url = "https://arxiv.org/abs/2310.15213"
+
+[[vignette]]
+id = "truth"
+section = "pre-chorus 2"
+trigger = "^thought$"
+slot = "lt"
+title = "Shapes of thought: a direction for truth"
+text = "true and false statements fall on two sides of one direction"
+badge = "schematic"
+cite = "Marks & Tegmark 2024, The Geometry of Truth"
+url = "https://arxiv.org/abs/2310.06824"
+
+[[vignette]]
+id = "worldMap"
+section = "pre-chorus 2"
+trigger = "^world$"
+slot = "rt"
+title = "Geometry that mirrors the world"
+text = "real place coordinates; linear probes on Llama-2 recover them"
+badge = "released data"
+cite = "Gurnee & Tegmark 2024, Language Models Represent Space and Time"
+url = "https://arxiv.org/abs/2310.02207"
+
+[[vignette]]
+id = "formula"
+section = "pre-chorus 2"
+trigger = "^bigger$"
+slot = "lb"
+title = "The bigger they get, the more they agree"
+text = "as models scale, their representations converge, even across vision and language"
+badge = "from the paper"
+cite = "Huh et al. 2024, The Platonic Representation Hypothesis"
+url = "https://arxiv.org/abs/2405.07987"
+
+[[vignette]]
+id = "probeR2"
+section = "pre-chorus 2"
+trigger = "^crisper$"
+slot = "rb"
+title = "The crisper the concepts"
+text = "out-of-sample R² of a linear probe for world places"
+badge = "published numbers"
+cite = "Gurnee & Tegmark 2024, Table 2"
+url = "https://arxiv.org/abs/2310.02207"
+
+# ---------------------------------------------------------------- Verse 3 (pillars hold to the end of the verse)
+[[vignette]]
+id = "saxe"
+section = "verse 3"
+trigger = "^solve$"
+slot = "p1"
+hold = 30
+title = "Solvable settings"
+text = "deep linear nets learn one mode at a time, strongest first"
+badge = "live math"
+cite = "Saxe, McClelland & Ganguli 2014"
+url = "https://arxiv.org/abs/1312.6120"
+
+[[vignette]]
+id = "nngp"
+section = "verse 3"
+trigger = "^infinity$"
+slot = "p2"
+hold = 30
+title = "Tractable limits"
+text = "as width → ∞, a random net's output becomes Gaussian"
+badge = "live math"
+cite = "Neal 1996 · Lee et al. 2018 · Jacot et al. 2018 (NTK)"
+url = "https://arxiv.org/abs/1806.07572"
+
+[[vignette]]
+id = "formula"
+section = "verse 3"
+trigger = "^laws$"
+slot = "p3"
+hold = 30
+title = "Simple laws"
+text = "L(N) ∝ N^−0.076\nL(D) ∝ D^−0.095\nL(C) ∝ C^−0.050"
+badge = "published numbers"
+cite = "Kaplan et al. 2020, Scaling Laws for Neural Language Models"
+url = "https://arxiv.org/abs/2001.08361"
+
+[[vignette]]
+id = "weightDecay"
+section = "verse 3"
+trigger = "^hyperparameters$"
+slot = "p4"
+hold = 30
+title = "Theories of hyperparameters"
+text = "same task and data: weight decay 1.0 → test loss < 1 by epoch 9.9k; weight decay 0.1 → only by epoch 90.9k"
+badge = "released data"
+cite = "Nanda et al. 2023 (official saved runs) · Yang et al. 2022 (μTransfer)"
+url = "https://github.com/mechanistic-interpretability-grokking/progress-measures-paper"
+
+[[vignette]]
+id = "collapse"
+section = "verse 3"
+trigger = "^universals$"
+slot = "p5"
+hold = 30
+title = "Universal behaviors"
+text = "neural collapse: class means form a simplex. Edge of stability: sharpness rises to 2/η"
+badge = "schematic"
+cite = "Papyan, Han & Donoho 2020 · Cohen et al. 2021"
+url = "https://arxiv.org/abs/2008.08186"
+
+[[vignette]]
+id = "formula"
+section = "verse 3"
+trigger = "^mechanics$"
+slot = "rt"
+title = "Learning mechanics"
+text = "learning curves computed like thermodynamics: typical-case behavior from statistical mechanics"
+badge = "from the paper"
+cite = "Seung, Sompolinsky & Tishby 1992 · Simon, Kunin et al. 2026"
+url = "https://arxiv.org/abs/2604.21691"
+
+[[vignette]]
+id = "gpt4"
+section = "verse 3"
+trigger = "^predict$"
+slot = "rt"
+title = "Predict it before you train it"
+text = "GPT-4's final loss, predicted from runs with at most 1/10,000 of its compute"
+badge = "schematic"
+cite = "OpenAI 2023, GPT-4 Technical Report, Fig. 1"
+url = "https://arxiv.org/abs/2303.08774"
+
+# ---------------------------------------------------------------- Bridge (one card per lens of the atlas)
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^linear$"
+slot = "lt"
+title = "Linear algebra"
+text = "W = U Σ Vᵀ\nLoRA: W + B A,  rank r ≪ d"
+badge = "from the paper"
+cite = "Eckart & Young 1936 · Hu et al. 2021 (LoRA)"
+url = "https://arxiv.org/abs/2106.09685"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^calculus$"
+slot = "rt"
+title = "Calculus"
+text = "∂L/∂x = ∂L/∂y · ∂y/∂x\nrun backwards through the graph = backprop"
+badge = "from the paper"
+cite = "Linnainmaa 1970 (reverse-mode differentiation) · Rumelhart et al. 1986"
+url = "https://www.nature.com/articles/323533a0"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^probability$"
+slot = "lb"
+title = "Probability"
+text = "p(x₁ … x_T) = Π_t p(x_t | x_<t)\np(θ | D) ∝ p(D | θ) p(θ)"
+badge = "from the paper"
+cite = "Bengio et al. 2003, A Neural Probabilistic Language Model"
+url = "https://www.jmlr.org/papers/v3/bengio03a.html"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^information$"
+slot = "rb"
+title = "Information"
+text = "H(X) = −Σ p log₂ p\ncross-entropy loss = bits per token: prediction is compression"
+badge = "from the paper"
+cite = "Shannon 1948 · Delétang et al. 2024, Language Modeling Is Compression"
+url = "https://arxiv.org/abs/2309.10668"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^optimization$"
+slot = "lt"
+title = "Optimization"
+text = "m ← β₁m + (1−β₁)g,   v ← β₂v + (1−β₂)g²\nθ ← θ − η m̂ / (√v̂ + ε)"
+badge = "from the paper"
+cite = "Kingma & Ba 2015, Adam"
+url = "https://arxiv.org/abs/1412.6980"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^dynamics$"
+slot = "rt"
+title = "Dynamics"
+text = "gradient flow: dθ/dt = −∇L(θ)\nSGD ≈ a noisy, discretized flow"
+badge = "from the paper"
+cite = "Li, Tai & E 2017, Stochastic Modified Equations"
+url = "https://arxiv.org/abs/1511.06251"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^geometry$"
+slot = "lb"
+title = "The geometry of loss"
+text = "F = E[∇log p ∇log pᵀ]\nnatural gradient: θ ← θ − η F⁻¹ ∇L"
+badge = "from the paper"
+cite = "Amari 1998, Natural Gradient Works Efficiently in Learning"
+url = "https://doi.org/10.1162/089976698300017746"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^statistical$"
+slot = "rb"
+title = "Statistical mechanics"
+text = "a perceptron stores up to α_c = 2 random patterns per weight"
+badge = "published numbers"
+cite = "Gardner 1988, The space of interactions in neural network models"
+url = "https://doi.org/10.1088/0305-4470/21/1/030"
+
+[[vignette]]
+id = "mp"
+section = "bridge"
+trigger = "^random$"
+slot = "lt"
+title = "Random matrices"
+text = "Marchenko–Pastur bulk vs trained layers: heavy-tail exponent α per GPT-2 small layer"
+badge = "released data"
+cite = "Marchenko & Pastur 1967 · Martin & Mahoney 2021 (ww-trends-2020)"
+url = "https://github.com/CalculatedContent/ww-trends-2020"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^singular$"
+slot = "rt"
+title = "Singular learning theory"
+text = "F_n ≈ n L_n + λ log n\nλ, the learning coefficient, counts effective parameters"
+badge = "from the paper"
+cite = "Watanabe 2009 · Lau et al. 2023 (local learning coefficient)"
+url = "https://arxiv.org/abs/2308.12108"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^symmetry$"
+slot = "lb"
+title = "Symmetry"
+text = "f(g · x) = g · f(x)\ngrids · groups · graphs · geodesics · gauges"
+badge = "from the paper"
+cite = "Bronstein et al. 2021, Geometric Deep Learning"
+url = "https://arxiv.org/abs/2104.13478"
+
+[[vignette]]
+id = "category"
+section = "bridge"
+trigger = "^categories$"
+slot = "rb"
+title = "Categories"
+text = "architectures as algebras of monads: diagrams that commute"
+badge = "from the paper"
+cite = "Gavranović et al. 2024, Categorical Deep Learning"
+url = "https://arxiv.org/abs/2402.15332"
+
+[[vignette]]
+id = "pearl"
+section = "bridge"
+trigger = "^causality$"
+slot = "lt"
+title = "Causality"
+text = "seeing P(y|x) · doing P(y|do(x)) · imagining P(y_x | x′, y′)"
+badge = "from the paper"
+cite = "Pearl 2009, Causality · Pearl & Mackenzie 2018"
+url = "https://bayes.cs.ucla.edu/BOOK-2K/"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^compression$"
+slot = "rt"
+title = "Compression"
+text = "MDL: pick the H that minimizes L(H) + L(D | H)\nK(x) = min{ |p| : U(p) = x }"
+badge = "from the paper"
+cite = "Rissanen 1978 · Kolmogorov 1965 · Solomonoff 1964"
+url = "https://doi.org/10.1016/0005-1098(78)90005-5"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^invariants$"
+slot = "rb"
+title = "Invariants"
+text = "gradient flow conserves W₂ᵀW₂ − W₁W₁ᵀ in deep linear nets (balancedness)"
+badge = "from the paper"
+cite = "Du, Hu & Lee 2018 · Arora et al. 2018"
+url = "https://arxiv.org/abs/1806.00900"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^bounds$"
+slot = "lt"
+title = "Bounds"
+text = "erasing a bit costs ≥ kT ln 2 ≈ 2.87 × 10⁻²¹ J at 300 K\n1 kg of matter: ≤ 5.4 × 10⁵⁰ operations per second"
+badge = "published numbers"
+cite = "Landauer 1961 · Lloyd 2000, Ultimate physical limits to computation"
+url = "https://arxiv.org/abs/quant-ph/9908043"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^level$"
+slot = "rt"
+title = "Every level"
+text = "computational: what and why\nalgorithmic: which representation and process\nimplementational: which hardware"
+badge = "from the paper"
+cite = "Marr 1982, Vision"
+url = "https://mitpress.mit.edu/9780262514620/vision/"
+
+[[vignette]]
+id = "neuronIcon"
+section = "bridge"
+trigger = "^carbon$"
+slot = "lb"
+title = "In carbon"
+text = "about 86 billion neurons in a human brain"
+badge = "published numbers"
+cite = "Azevedo et al. 2009, J. Comp. Neurol."
+url = "https://doi.org/10.1002/cne.21974"
+
+[[vignette]]
+id = "chip"
+section = "bridge"
+trigger = "^silicon$"
+slot = "rb"
+title = "In silicon"
+text = "one H100 die: 80 billion transistors"
+badge = "published numbers"
+cite = "NVIDIA H100 Tensor Core GPU Architecture whitepaper (2022)"
+url = "https://resources.nvidia.com/en-us-tensor-core"
+
+[[vignette]]
+id = "hydrogen"
+section = "bridge"
+trigger = "^stars$"
+slot = "lt"
+title = "Or something from the stars"
+text = "the hydrogen line, 1420.405 MHz: the unit of time and length on the Pioneer plaque"
+badge = "published numbers"
+cite = "Sagan, Salzman Sagan & Drake 1972, A Message from Earth"
+url = "https://doi.org/10.1126/science.175.4024.881"
+
+[[vignette]]
+id = "formula"
+section = "bridge"
+trigger = "^science$"
+slot = "rt"
+title = "One science of information"
+text = "the same unit, the bit, for brains, chips, and anything that computes"
+badge = "from the paper"
+cite = "Shannon 1948, A Mathematical Theory of Communication"
+url = "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x"
+
+# ---------------------------------------------------------------- Final chorus (ideal solving)
+[[vignette]]
+id = "checklist"
+section = "final chorus"
+trigger = "^know$"
+slot = "clt"
+title = "Ideal solving"
+text = "predict any behavior · any activation · the result of any intervention · with the shortest theory"
+badge = "schematic"
+cite = "project brief (L. Burian)"
+url = "https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem"
+
+[[vignette]]
+id = "arc"
+section = "final chorus"
+trigger = "^understand$"
+slot = "crt"
+title = "Understanding = learning new skills efficiently"
+text = "an ARC-style puzzle: infer the rule from two examples"
+badge = "schematic"
+cite = "Chollet 2019, On the Measure of Intelligence (ARC)"
+url = "https://arxiv.org/abs/1911.01547"
+
+[[vignette]]
+id = "kProgram"
+section = "final chorus"
+trigger = "^shortest$"
+slot = "clb"
+title = "The shortest theory that predicts it all"
+text = "K(x) = min{ |p| : U(p) = x }"
+badge = "live math"
+cite = "Kolmogorov 1965 · Solomonoff 1964"
+url = "https://doi.org/10.1080/00207166808803030"
+
+[[vignette]]
+id = "formula"
+section = "final chorus"
+trigger = "^predicts$"
+slot = "clt"
+title = "Predicts it all: AIXI"
+text = "M(x) = Σ_{p : U(p) = x…} 2^−|p|\nact to maximize expected reward under M"
+badge = "from the paper"
+cite = "Solomonoff 1964 · Hutter 2000, A Theory of Universal Artificial Intelligence"
+url = "https://arxiv.org/abs/cs/0004001"
+
+[[vignette]]
+id = "dag"
+section = "final chorus"
+trigger = "^counterfactual$"
+slot = "crb"
+title = "Every counterfactual: do(circuit := c′)"
+text = "cut the arrows into the intervened node: P(behavior | do(c′)) ≠ P(behavior)"
+badge = "schematic"
+cite = "Pearl 2009, Causality"
+url = "https://bayes.cs.ucla.edu/BOOK-2K/"
+
+[[vignette]]
+id = "actadd"
+section = "final chorus"
+trigger = "^steer$"
+slot = "crt"
+title = "Every cause that we can steer"
+text = "ActAdd on GPT-2-XL: add the activation difference 'Love' − 'Hate' (Table 1)"
+badge = "published numbers"
+cite = "Turner et al. 2023, Activation Addition"
+url = "https://arxiv.org/abs/2308.10248"
+
+[[vignette]]
+id = "formula"
+section = "final chorus"
+trigger = "^understand$"
+nth = 2
+slot = "clt"
+title = "Compression as a test of understanding"
+text = "the Hutter Prize: compress 1 GB of Wikipedia (enwik9) losslessly, as small as possible"
+badge = "from the paper"
+cite = "Hutter Prize for Lossless Compression of Human Knowledge"
+url = "http://prize.hutter1.net/"
+
+[[vignette]]
+id = "formula"
+section = "final chorus"
+trigger = "^know$"
+nth = 3
+slot = "crb"
+title = "Intentional design"
+text = "use the understanding to steer what models learn in training"
+badge = "from the paper"
+cite = "Goodfire, We can and must solve alignment"
+url = "https://www.goodfire.com/blog/we-can-and-must-solve-alignment"
+
+# ---------------------------------------------------------------- Outro
+[[vignette]]
+id = "formula"
+section = "outro"
+trigger = "^ai$"
+slot = "lt"
+title = "The mathematics of AI"
+text = "Attention(Q, K, V) = softmax(Q Kᵀ / √d_k) V"
+badge = "from the paper"
+cite = "Vaswani et al. 2017, Attention Is All You Need"
+url = "https://arxiv.org/abs/1706.03762"
+
+[[vignette]]
+id = "formula"
+section = "outro"
+trigger = "^intelligence$"
+slot = "rt"
+title = "The mathematics of intelligence"
+text = "Υ(π) = Σ_μ 2^−K(μ) V_μ^π"
+badge = "from the paper"
+cite = "Legg & Hutter 2007, Universal Intelligence"
+url = "https://arxiv.org/abs/0712.3329"
+
+[[vignette]]
+id = "formula"
+section = "outro"
+trigger = "^information$"
+slot = "lb"
+title = "Of information itself"
+text = "H(X) = −Σ p log₂ p\nerasing one bit costs at least kT ln 2"
+badge = "from the paper"
+cite = "Shannon 1948 · Landauer 1961"
+url = "https://doi.org/10.1147/rd.53.0183"
+
+[[vignette]]
+id = "milestones"
+section = "outro"
+trigger = "^now$"
+slot = "rb"
+hold = 3.2
+title = "We must now"
+text = "1943 → 2026"
+badge = "published numbers"
+cite = "McCulloch & Pitts 1943 → Simon, Kunin et al. 2026"
+url = "https://arxiv.org/abs/2604.21691"

@@ -5,7 +5,8 @@
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "render": "remotion render src/index.ts Anthem ../out/anthem.mp4",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/mathviz.test.ts"
   },
   "dependencies": {
     "@react-three/fiber": "9.8.2",
@@ -14,6 +15,8 @@
     "@remotion/google-fonts": "4.0.536",
     "@remotion/media": "4.0.536",
     "@remotion/media-utils": "4.0.536",
+    "@remotion/noise": "4.0.536",
+    "@remotion/paths": "4.0.536",
     "@remotion/renderer": "4.0.536",
     "@remotion/three": "4.0.536",
     "react": "19.3.1",

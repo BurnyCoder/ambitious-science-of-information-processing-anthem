@@ -5,9 +5,18 @@ An original song plus a music video in which **every frame is drawn in code**. T
 - **Lyrics, pipeline and visuals:** written by Claude in this repository, with the visuals in Remotion + Three.js.
 - **Sync:** lyrics are highlighted word by word from Suno's word timings, and scene cuts land on beats tracked with librosa.
 - **Timing correction:** a pre-registered experiment found that Suno's word onsets are late. The lag was 0.137 s on the original take and is 0.156 s on the edited take the video uses, so every word is shifted by −0.156 s. See [experiment 5](reports/exp05_onset_offset.md) and [experiment 6](reports/exp06_lyric_edit.md).
+- **Illustration track (v1.3.0):** 86 figure cards, at least one per sung line. Each card appears as its word is sung and carries a provenance badge and a citation.
+  - The concrete content comes from data released with the papers, and **no experiment was re-run**. Examples:
+    - Anthropic's Dallas → Austin, rabbit-rhyme and 36+59 attribution graphs, which also drive the chorus circuits;
+    - Nanda et al.'s grokking run and its Fourier key frequencies;
+    - ARENA's induction-head scores, Neuronpedia features, Arditi et al.'s refusal scores;
+    - Epoch AI's model and Chinchilla data, Nakkiran et al.'s double descent;
+    - Gurnee & Tegmark's places, Goodfire's block-sparse-featurizer figure.
+  - See [docs/vignettes.md](docs/vignettes.md) and [experiment 7](reports/exp07_provenance.md).
 - **One-line lyric edit:** the word "mind" was taken out of Verse 1 ("And out of it a **thing** that learns to answer why"). Only that part was re-sung, with Suno's replace-section. The line was fixed, but Suno regenerated about 30 s of audio rather than the requested 11.6 s window, and it shifted the file by 17 ms. See [experiment 6](reports/exp06_lyric_edit.md).
 
-**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.2.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.2.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.2.0): the edited lyric, with karaoke onsets corrected by experiments 5 and 6. Older cuts:
+**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.3.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.3.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.3.0): the maximalist cut with the illustration track. Older cuts:
+- [v1.2.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.2.0): the edited lyric with corrected onsets, no figure cards.
 - [v1.1.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.1.0): the original lyric, corrected onsets.
 - [v1.0.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.0.0): uncorrected.
 
@@ -18,6 +27,20 @@ An original song plus a music video in which **every frame is drawn in code**. T
 | ![intro](docs/img/s01_intro.jpg) | ![layers](docs/img/s02_layers.jpg) | ![landscape](docs/img/s03_landscape.jpg) | ![chorus](docs/img/s04_chorus.jpg) |
 | **Verse 2: ladder of abstraction** | **Verse 3: theory of deep learning** | **Bridge: atlas of the math** | **Final chorus: ideal solving** |
 | ![ladder](docs/img/s05_ladder.jpg) | ![theory](docs/img/s08_theory.jpg) | ![atlas](docs/img/s09_atlas.jpg) | ![finale](docs/img/s10_finale.jpg) |
+
+Twelve of the 86 figure cards, all drawn from released data:
+
+![Twelve figure cards drawn from released data: attribution graph, grokking curves and Fourier spectrum, induction scores, refusal scores, world places, model scale, double descent, block-sparse featurizers, superposition, weekday latents, a Neuronpedia feature](docs/img/cards.jpg)
+
+**Highlights of v1.3.0** ([experiment 7](reports/exp07_provenance.md)):
+- **Consistent with the papers.**
+  - The five largest Fourier frequencies of the released grokking embedding are exactly the paper's key frequencies {14, 35, 41, 42, 52}.
+  - ARENA's top induction heads include the IOI paper's 5.5 and 6.9.
+- **Coverage and density.** Every sung line has a card (56/56). Frames are more detailed than v1.2.0 at the same moments: median PNG size ×1.20 (log₂ +0.263, 95 % CI [+0.177, +0.422]).
+- **Negative findings.**
+  - The fact-check found three overclaims in our own plan (a Golden Gate quote, an ActAdd layer, a WeightWatcher "well trained" band), which were removed before release.
+  - Verse 1 gained no measurable detail (+0.003).
+  - Denser is not shown to be better: no viewer study was run.
 
 ## Methodology (how the song and the video are made)
 
@@ -45,14 +68,21 @@ An original song plus a music video in which **every frame is drawn in code**. T
      - **After the lyric edit** ([experiment 6](reports/exp06_lyric_edit.md)), Suno returned word times copied from the parent take, but the audio played 17 ms earlier. exp05's rule, re-run on the edited take, gives δ = 0.156 s (95 % CI 0.144–0.167 s), so the video uses `VIDEO_WORD_OFFSET_S=-0.156`.
 5. **Audio analysis.** librosa tracks beats on the onset-strength envelope at hop 256, which is validated on synthetic click tracks in [experiment 2](reports/exp02_beat_tracking.md). It also computes downbeats (4/4 heuristic) and per-frame RMS energy and onset strength.
 6. **Timeline.** `video/public/timeline.json` contains the sections and their scenes, the lines and words with times, the beats, and the per-frame features. Each section boundary is the section's first sung word minus 0.1 s, snapped to a beat within ±0.3 s.
-7. **Rendering.** A Remotion composition stacks the following, all as pure functions of the frame number (deterministic, parallel rendering):
-   - a starfield;
+7. **Illustration track.** `content/vignettes.toml` declares 86 figure cards, at least one per sung line. Each card is placed 0.15 s before the sung word it illustrates, carries a provenance badge (released data, published numbers, live math, from the paper, schematic) and a citation. Catalog: [docs/vignettes.md](docs/vignettes.md).
+   - **No experiment is re-run.** `scripts/vignette_data.py` downloads pinned files released by the original authors or well-known third parties, including:
+     - Nanda et al.'s grokking run, Anthropic's attribution graphs and toy-model notebook;
+     - ARENA's induction scores, Neuronpedia features, Epoch AI's model and Chinchilla data;
+     - Nakkiran et al.'s double-descent runs, Gurnee & Tegmark's places, Todd et al.'s antonyms;
+     - Arditi et al.'s refusal scores, WeightWatcher, Goodfire's BSF figure, and the GPT-2 tokenizer.
+   - It derives small card files from them and records URL, revision, licence and sha256 ([experiment 7](reports/exp07_provenance.md)).
+8. **Rendering.** A Remotion composition stacks the following, all as pure functions of the frame number (deterministic, parallel rendering):
+   - a starfield and faint drifting "equation dust" (the section's card titles);
    - an audio spectrum ring;
-   - one scene per section (2D SVG or Three.js);
+   - one scene per section (2D SVG or Three.js), punch-zoomed on downbeats and RGB-split for 0.25 s after each cut;
+   - the figure cards;
    - a karaoke overlay, or giant kinetic words in the choruses;
-   - beat and cut flashes;
-   - a HUD.
-8. **Verification.** ffprobe checks resolution, fps, codecs and duration against the song. ffmpeg extracts one still per section for visual inspection.
+   - beat and cut flashes, a HUD and a scrolling citation ticker.
+9. **Verification.** ffprobe checks resolution, fps, codecs and duration against the song. ffmpeg extracts one still per section for visual inspection.
 
 ## Quickstart
 
@@ -76,7 +106,9 @@ uv run anthem --stage timeline --take f16f     # rebuild timeline from take 2 in
 uv run anthem --stage render --preview         # 30 s at 960x540 for a quick look
 cd video && npm run studio                     # scrub the video interactively in Remotion Studio
 cd video && node scripts/stills.mjs 2084 5419  # render specific frames to out/stills/
-uv run pytest -q                               # 48 offline tests (no credits spent)
+uv run pytest -q                               # 61 offline tests (no credits spent)
+uv run --group analysis python -I scripts/vignette_data.py  # exp07: fetch released artifacts -> card data (~524 MB, once)
+cd video && node scripts/stills.mjs --vignettes # one still per figure card
 uv run --group analysis python scripts/validate_onset_offset.py  # exp05: Demucs + MMS_FA onset reference (~6 min on CPU)
 uv run --group analysis python scripts/validate_lyric_edit.py    # exp06: checks of the lyric edit + offset re-estimate
 ```
@@ -99,8 +131,11 @@ flowchart LR
         B[librosa beats, energy]
         A & B --> J[timeline.json]
     end
+    subgraph ext["exp07 data phase (scripts/vignette_data.py, run once)"]
+        X[(released artifacts<br/>pinned URL + sha256)] --> Y[video/public/vignettes/*.json]
+    end
     subgraph rd["phase 3: render (Remotion, video/)"]
-        R[Root.tsx calculateMetadata] --> V[Anthem.tsx: scenes + karaoke + flashes + HUD + audio]
+        R[Root.tsx calculateMetadata] --> V[Anthem.tsx: scenes + figure cards + karaoke + flashes + HUD + ticker + audio]
     end
     subgraph vf["phase 4: verify"]
         F[ffprobe checks + section stills]
@@ -110,7 +145,9 @@ flowchart LR
     D --> B
     L --> P
     M --> J
+    W[content/vignettes.toml] --> J
     J --> R
+    Y --> V
     V --> O[(out/anthem.mp4)] --> F
 ```
 
@@ -124,7 +161,7 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
 2. **timeline**
    - Parses the lyrics into 11 sections and 58 lines, scores the cached takes, picks one, and aligns its 430 words.
    - Shifts every word by `VIDEO_WORD_OFFSET_S` (−0.156 s in `.env.example`).
-   - Analyzes the audio (about 10 s) and writes `video/public/timeline.json` plus a copy of the MP3.
+   - Analyzes the audio (about 10 s), places the 86 figure cards at their sung words (logging trims and coverage), and writes `video/public/timeline.json` plus a copy of the MP3.
 3. **render**
    - `npx remotion render … --gl=angle` bundles the project, runs `calculateMetadata` (video length = song length, 7212 frames), and renders the frames in 8 parallel headless-Chrome tabs.
    - It then encodes H.264 + AAC to `out/anthem.mp4`. This took about 6 minutes on a 16-thread desktop.
@@ -140,6 +177,12 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
 - **Word-level karaoke sync** from Suno's timestamped lyrics, with alignment, artifact repair, and an onset correction measured against a forced-aligned vocal stem.
 - **Beat-synced cuts and flashes** from librosa beat tracking, validated on ground-truth click tracks.
 - **Ten code-drawn scenes**, each tied to the lyric it illustrates; keyword reveals fire when the word is sung. See [docs/scenes.md](docs/scenes.md).
+- **86 figure cards**, at least one per sung line, each with a provenance badge and a citation. Released data is reused, never re-generated. Concrete examples include:
+  - Anthropic's Dallas → Austin, rabbit-rhyme and 36+59 attribution graphs, and the grokking run with its Fourier key frequencies;
+  - GPT-2's induction heads, the IOI circuit and the refusal direction;
+  - Chinchilla's 245 runs with two published fits, double descent, and Goodfire's block-sparse featurizer figure;
+  - superposition, the Pioneer plaque's hydrogen line, and more. See [docs/vignettes.md](docs/vignettes.md).
+- **Maximalist motion**: downbeat punch zoom, RGB-split cut glitch, drifting equation dust, and a citation ticker naming every source on screen.
 - **Deterministic rendering**: Remotion, with every frame a pure function of the frame number.
 - **Automated verification** of the output file, plus stills for visual review.
 - **Pre-specified, documented experiments** in [reports/](reports/), with a [technical report PDF](reports/paper.pdf).
@@ -151,27 +194,29 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
 | Music generation | Suno V6 via [sunoapi.org](https://docs.sunoapi.org/) (third party; Suno has no official public API) |
 | Pipeline | Python 3.12, [uv](https://docs.astral.sh/uv/), [httpx](https://www.python-httpx.org/), [python-dotenv](https://github.com/theskumar/python-dotenv) |
 | Audio analysis | [librosa](https://librosa.org/) 1.0 (beat tracking, onset strength, RMS), [soundfile](https://python-soundfile.readthedocs.io/) |
-| Video | [Remotion](https://www.remotion.dev/) 4.0.536 (React 19, TypeScript), [Three.js](https://threejs.org/) 0.186 via [@remotion/three](https://www.remotion.dev/docs/three) / React Three Fiber 9, `@remotion/media-utils` (spectrum), `@remotion/google-fonts` (Orbitron, Space Grotesk, JetBrains Mono) |
+| Video | [Remotion](https://www.remotion.dev/) 4.0.536 (React 19, TypeScript), [Three.js](https://threejs.org/) 0.186 via [@remotion/three](https://www.remotion.dev/docs/three) / React Three Fiber 9, `@remotion/media-utils` (spectrum), `@remotion/paths` (`evolvePath` line drawing), `@remotion/noise` (equation dust), `@remotion/google-fonts` (Orbitron, Space Grotesk, JetBrains Mono) |
 | Verification | ffmpeg / ffprobe |
+| Released data for the cards | [huggingface_hub](https://huggingface.co/docs/huggingface_hub) (pinned revisions), [tokenizers](https://github.com/huggingface/tokenizers) (GPT-2 BPE), Pillow; sources and licences in [reports/data/exp07_sources.json](reports/data/exp07_sources.json) |
 | Experiments | scipy (CIs, Wilcoxon, bootstrap), [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (independent word-timing reference), [Demucs](https://github.com/facebookresearch/demucs) `htdemucs` (vocal separation), [torchaudio](https://docs.pytorch.org/audio/) `MMS_FA` + PyTorch (CTC forced alignment), matplotlib (figures); installed with `uv sync --group analysis` |
-| Tests | pytest with `httpx.MockTransport` |
+| Tests | pytest with `httpx.MockTransport`; `node --test` for the video's math (`video/tests/`) |
 
 ## Repository layout
 
 ```
-content/            lyrics.txt, song.toml (Suno spec), scenes.toml (section -> scene)
+content/            lyrics.txt, song.toml (Suno spec), scenes.toml (section -> scene), vignettes.toml (figure cards)
 src/anthem/         pipeline.py (wrapper) + config, logging_setup, suno_client, song, lyrics,
-                    alignment, take_selection, audio_analysis, timeline, render, verify
-video/              Remotion project: src/Root.tsx, src/Anthem.tsx, src/lib, src/components, src/scenes, scripts/stills.mjs
+                    alignment, take_selection, audio_analysis, timeline, vignettes, render, verify
+video/              Remotion project: src/Root.tsx, src/Anthem.tsx, src/lib (incl. mathviz.ts), src/components,
+                    src/scenes, src/vignettes (card bodies), public/vignettes (card data), scripts/stills.mjs, tests/
 data/song/          generated takes, covers, raw Suno timing JSON, song.json (cache)
 tests/              pytest suite (offline)
-scripts/            experiment scripts (exp02, exp03, exp05, exp06, figures) + analysis/ (shared helpers: stats,
+scripts/            experiment scripts (exp02, exp03, exp05, exp06, exp07 data + density, figures, card docs) + analysis/ (shared helpers: stats, released-artifact helpers,
                     Whisper reference, Demucs separation, MMS_FA alignment, blinded anchors, decision rule)
 docs/               architecture, Suno API notes, scene guide, images
 reports/            per-experiment reports, summary, technical report (paper.md / paper.pdf)
 ```
 
-More detail: [docs/architecture.md](docs/architecture.md) (modules and the `timeline.json` contract), [docs/suno-api.md](docs/suno-api.md) (endpoints and observed quirks), [docs/scenes.md](docs/scenes.md) (what each scene shows and its sources), [AGENTS.md](AGENTS.md) (rules for agents and contributors), [reports/experiments.md](reports/experiments.md) (results).
+More detail: [docs/architecture.md](docs/architecture.md) (modules and the `timeline.json` contract), [docs/suno-api.md](docs/suno-api.md) (endpoints and observed quirks), [docs/scenes.md](docs/scenes.md) (what each scene shows and its sources), [docs/vignettes.md](docs/vignettes.md) (every figure card, its time and source), [AGENTS.md](AGENTS.md) (rules for agents and contributors), [reports/experiments.md](reports/experiments.md) (results).
 
 ## Notes and licenses
 

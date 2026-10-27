@@ -1,11 +1,11 @@
 ---
 title: "We Will Know: a reproducible pipeline for a code-animated, word- and beat-synchronised music video, with pre-registered validation of its timing components"
 author: "Libor Burian (independent researcher)"
-date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06)"
+date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06) and 28 October 2026 (illustration track, exp07)"
 abstract: |
   We describe and evaluate an open pipeline that turns hand-written lyrics into a four-minute music video in which every frame is drawn in code.
 
-  **Pipeline.** One Suno V6 generation, obtained through the third-party sunoapi.org API, yields two sung takes and per-word timings. A rule fixed before generation selects one take. The written lyrics are sequence-aligned to the provider's word timings. Beats are tracked with librosa. A Remotion/Three.js composition then renders ten scenes, which illustrate ambitious interpretability and a scientific theory of deep learning. All visuals are pure functions of the frame number.
+  **Pipeline.** One Suno V6 generation, obtained through the third-party sunoapi.org API, yields two sung takes and per-word timings. A rule fixed before generation selects one take. The written lyrics are sequence-aligned to the provider's word timings. Beats are tracked with librosa. A Remotion/Three.js composition then renders ten scenes, which illustrate ambitious interpretability and a scientific theory of deep learning. On top of the scenes, 86 figure cards are each timed to the sung word they illustrate and carry a provenance badge and a citation. All visuals are pure functions of the frame number.
 
   **What we tested.** Each component that decides *when* something happens on screen was tested against a criterion stated in advance.
 
@@ -15,6 +15,7 @@ abstract: |
   4. A follow-up, also pre-registered, asked which system carries the Suno–Whisper lag. It separated the vocals (Demucs) and force-aligned the known lyrics on the vocal stem (MMS_FA). On the take the video then used, the provider's onsets were late by 0.137 s (95 % line-cluster CI 0.125–0.147 s, no drift over the song). Whisper was early by 0.080 s. The forced aligner was within 0.041 s of 34 blind hand-labelled onsets. The decision rule therefore shifted every word by −0.137 s, which cut the median error at the hand-labelled onsets from 0.233 s to 0.131 s (post hoc). The lag is take-specific: 0.061 s on the other take.
   5. Every 1920×1080, 30 fps render matched the song's duration to within 0.03 s (7213 frames for the original take, 7212 for the edited one).
   6. To take one word ("mind") out of the lyrics, one line was re-sung with the provider's replace-section operation. The line was fixed: an independent recogniser now hears the new word, and coverage stayed at 430/430. A pre-registered check that the rest of the take was untouched **failed**. The provider regenerated about 30 s around an 11.6 s window, shifted the whole file by 17 ms, and returned word times copied from the parent take. Re-running exp05's rule on the edited take gave a lag of 0.156 s [0.144, 0.167], which the video now corrects.
+  7. The figure cards reuse data released by the original authors or well-known third parties: 31 pinned files, with no experiment re-run. Two pre-specified consistency checks passed. The five largest Fourier frequencies of the released grokking embedding equal the paper's key frequencies, and ARENA's top induction heads include the IOI paper's. Every sung line has a card (56/56). Paired frames carry more detail than v1.2.0: median log₂ PNG-size ratio +0.26, section-bootstrap 95 % CI [+0.18, +0.42]. A fact-check removed three overclaims from our own plan.
 
   We report these as properties of this pipeline and this song. They are not general claims about the music model.
 ---
@@ -44,6 +45,7 @@ abstract: |
    The repair finding changed what ships: without the test, 27 words of the video would have lit up 0.8–2.5 s late.
 4. A pre-registered decomposition of a timing disagreement between two black-box systems. A third, lyrics-aware reference and blind hand-labelled anchors attribute it to both: the provider is late by 0.137 s and Whisper is early by 0.080 s. The resulting correction was applied to the video.
 5. A pre-registered check of a one-line lyric edit made through the provider's section replacement. It shows that the edit reaches well beyond the requested window and invalidates per-take timing calibrations, which are re-estimated rather than assumed.
+6. An illustration track whose "released data" cards are derived from pinned, hashed artifacts published with the cited papers, rather than from re-run experiments or invented plots. Each card carries a provenance badge, and the derived numbers were checked against the papers before release.
 
 # 2. Background and related work
 
@@ -53,7 +55,7 @@ abstract: |
   - Lyrics-to-audio alignment on polyphonic music works better on a separated vocal stem. Demucs-based systems reach mean word-onset errors of about 0.3 s on JamendoLyrics (Demirel et al., 2021), and the best systems reach below 0.2 s (Durand et al., 2023).
   - We separate with Hybrid Transformer Demucs (Rouard et al., 2022).
 - **Programmatic video.** Remotion renders React components frame by frame in headless Chrome. A video is a pure function of the frame index, which allows parallel, deterministic rendering. Three.js scenes run via `@remotion/three` with the ANGLE GL backend.
-- **Scientific content shown in the video.** Flat minima and generalization (Hochreiter & Schmidhuber, 1997; Keskar et al., 2017); circular features for days and months (Engels et al., 2024); linear space and time representations that are more accurate in larger models (Gurnee & Tegmark, 2023, §3.1); function vectors (Todd et al., 2023); the five research directions of "learning mechanics" (Simon et al., 2026). These are illustrated schematically, and the plots in the video use synthetic data, labelled as such.
+- **Scientific content shown in the video.** Flat minima and generalization (Hochreiter & Schmidhuber, 1997; Keskar et al., 2017); circular features for days and months (Engels et al., 2024); linear space and time representations that are more accurate in larger models (Gurnee & Tegmark, 2023, §3.1); function vectors (Todd et al., 2023); the five research directions of "learning mechanics" (Simon et al., 2026). Since v1.3.0, each idea is shown on a figure card. The card uses released data where the authors or a well-known third party published it (§3.6), and is otherwise drawn as a labelled schematic or computed live from the formula.
 
 # 3. Method
 
@@ -72,7 +74,8 @@ A Python wrapper (`uv run anthem`) runs four phases. The phases communicate only
    - Writes `timeline.json`: sections and scenes, lines, words, beats, downbeats, and per-frame RMS and onset strength.
 3. **render.**
    - Remotion 4.0.536 reads the timeline in `calculateMetadata`, so the video length equals the song length.
-   - It stacks a starfield, a spectrum ring, one scene per section, a karaoke overlay (or giant kinetic words in the choruses), beat and cut flashes, and a HUD.
+   - It stacks a starfield, faint drifting card titles, a spectrum ring, one scene per section, the figure cards (§3.6), a karaoke overlay (or giant kinetic words in the choruses), beat and cut flashes, a HUD and a citation ticker.
+   - The scene layer punch-zooms on downbeats and is RGB-split for 0.25 s after each cut.
    - Render settings: `--gl=angle`, concurrency 8.
 4. **verify.**
    - ffprobe acceptance checks, plus one still per section extracted with ffmpeg.
@@ -113,6 +116,46 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 | Exp05 decision thresholds | \|δ\| ≥ 1 frame (33 ms); \|β\| ≤ 0.05 s; ≥ 10 anchors | One frame is the smallest error the viewer can see; 1.5 frames of bias is tolerated in the reference |
 | Beat F window | ±70 ms | `mir_eval` default |
 | Seeds (exp02) | 5 per cell | Enough to expose noise sensitivity; the observed between-seed SD was about 0 |
+
+## 3.6 Illustration track and released data (v1.3.0)
+
+**Placement.**
+- `content/vignettes.toml` declares 86 cards. Each has a trigger regex on a sung word (optionally its n-th match in the section), a named slot box, a hold time, a title, text, a provenance badge and a citation.
+- A card appears 0.15 s before its word.
+- It ends at its section's cut, unless that would leave it on screen for less than 2 s.
+- Of two cards in the same slot, the earlier ends where the later begins.
+- Placement fails loudly if a trigger is never sung.
+- Coverage is the share of sung non-backing lines with a card triggered by one of their words. Its pre-specified target was 1.0.
+
+**Badges.**
+- *released data*: read from files released by the authors or a well-known third party.
+- *published numbers*: quoted from a paper's text or tables.
+- *live math*: computed in the video.
+- *from the paper*: a formula or claim.
+- *schematic*: our illustration.
+
+**Data rule (set by the author).**
+- Never re-run an experiment whose models, results or data exist.
+- Prefer the original authors and well-known third parties.
+- Retrain only if nothing usable exists. Nothing had to be retrained.
+
+`scripts/vignette_data.py` downloads 31 pinned files (523.8 MB) and records URL, revision, licence, size and sha256 for each. Downloaded `.pth` files load with `weights_only=True`. A pickle loads only through an unpickler that refuses every global except numpy reconstruction.
+
+The derived card data comes from these sources:
+- the Nanda et al. (2023) mainline grokking run: loss curves, and the Fourier spectrum of the embedding every 1,000 epochs;
+- the three attribution graphs behind Lindsey et al. (2025), collapsed to the authors' supernodes (also used to drive the chorus circuits);
+- ARENA's per-head induction scores for GPT-2 small;
+- Neuronpedia SAE latents for the days of the week (Engels et al., 2024);
+- Epoch AI's model dataset;
+- Epoch's 245 points extracted from Hoffmann et al. (2022), drawn with both published parametric fits (Hoffmann et al.; Besiroglu et al., 2024);
+- Nakkiran et al.'s (2019) double-descent runs;
+- Gurnee & Tegmark's place coordinates;
+- Todd et al.'s antonym pairs;
+- Arditi et al.'s refusal scores;
+- WeightWatcher's per-layer exponents (Martin & Mahoney, 2021);
+- the saved toy-superposition figure in Elhage et al.'s (2022) notebook;
+- Goodfire's block-sparse-featurizer figure;
+- the GPT-2 tokenizer.
 
 # 4. Experiments and results
 
@@ -222,6 +265,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - The v1.2.0 render of the edited take (exp06) with the −0.156 s offset has 7212 frames and a container duration of 240.405 s for a 240.41 s song. It took 467.8 s (218.0 MB) and passed the same checks. Its audio track is 23.0 ms later than the analysed MP3 decoding.
 - The MP4's audio track is 11.0 ms later than the analysed MP3 decoding (cross-correlation, first 60 s), a third of a frame. It is reported, not corrected.
 - The automated check passed.
+- The v1.3.0 render with the illustration track has 7212 frames and a 240.405 s container duration. It took 441.3 s (244.4 MB) and passed the same checks. Before it, a still of every card (86) was inspected. That found ten layout defects, among them overlapping graph labels, a truncated bar axis and a schematic leaving its axis (exp04, iteration 3).
 
 ![Exp04. One frame from the middle of each section of the final video.](figures/fig1_stills.png){width=100%}
 
@@ -264,6 +308,32 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 
 ![Exp06. Top: lag-aligned per-second waveform correlation between the parent and the edited take; the shaded band is the requested window, and the provider changed audio from about 16 s to 46 s. Bottom: per-line median Suno − MMS onset on both takes.](figures/fig5_lyric_edit.png){width=100%}
 
+## 4.7 Figure cards from released data (exp07)
+
+**Pre-specified checks** (fixed in the plan before the data phase ran):
+1. The five largest Fourier frequencies of the released epoch-40k embedding equal the paper's key frequencies.
+2. ARENA's five highest induction scores include IOI's induction heads 5.5 and 6.9 (Wang et al., 2022).
+3. Every on-screen number matches its source.
+4. Coverage is 1.0.
+5. Paired frames of v1.3.0 compress to more PNG bytes than v1.2.0 frames at the same timestamps: median log₂ ratio > 0, with a section-bootstrap 95 % CI excluding 0.
+
+The fifth check uses a standard proxy for visual complexity (Machado et al., 2015).
+
+| Check | Result |
+|---|---|
+| 1 | **pass**: {14, 35, 41, 42, 52}; the 6th largest is 31 |
+| 2 | **pass**: 5.5 = 0.909, 6.9 = 0.898, 5.1 = 0.897, 7.10 = 0.891, 7.2 = 0.825 |
+| 3 | **pass after corrections**: a Golden Gate quote and clamp value, an ActAdd layer and coefficient, and a "2–6 = well trained" band for WeightWatcher's α were in our plan but not in the cited sources, and were removed or corrected |
+| 4 | **pass**: 56/56 lines, 86 cards, the shortest on screen for 2.0 s |
+| 5 | **pass**: +0.263 [+0.177, +0.422]; frame bootstrap [+0.208, +0.343]; 114/120 frames larger; per section from +0.003 (verse 1) to +0.634 (bridge) |
+
+**Descriptive numbers from the released data** (not pre-registered):
+- **Weight decay.** With weight decay 1.0, test loss first drops below 1 at epoch 9,890; with 0.1, at epoch 90,890. The runs also differ in seed, and the 0.1 run's stored config is stale.
+- **Double descent.** Test error falls to 0.219 at width 4, peaks at 0.303 at width 10, and reaches 0.163 at width 64 (5 trials).
+- **Refusal.** Ablating the refusal direction raises JailbreakBench answers without a refusal phrase from 5 % to 100 % (LlamaGuard-2 judge: 3 % to 82 %).
+
+![Exp07. (a) Train and test loss of the released grokking run with the paper's three phases. (b) Fourier norms of its epoch-40k embedding; green bars are the paper's key frequencies. (c) ARENA's induction scores for GPT-2 small; ringed are the top five. (d) Per-frame log₂ PNG-size ratio v1.3.0 / v1.2.0 with sections shaded.](figures/fig6_exp07.png){width=100%}
+
 # 5. Discussion
 
 **What the evidence supports.**
@@ -272,6 +342,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - Its beat times are accurate to under one frame on click tracks between 70 and 160 BPM.
 - Its word onsets agree with an independent recogniser to about a quarter of a second (median), clearly better than chance. Most of that disagreement is a constant 0.17–0.23 s lag, around which relative timing agrees to about 0.08 s (post-hoc).
 - That lag is shared between the two systems. Against a lyrics-aware forced alignment of the separated voice, the provider is 0.137 s late on the original video take and Whisper is 0.080 s early. A pre-registered global correction of −0.137 s moved 94 % of independently hand-labelled line starts closer.
+- Concrete content can be added without re-running anyone's experiment. Released artifacts covered every "real data" card, and the two checks that could fail against the papers passed.
 - The video's line was changed with a one-call section replacement. Because the provider shifted the file and copied its old word times, the correction had to be re-estimated (−0.156 s) and could not be carried over.
 
 **What it does not support.**
@@ -281,6 +352,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - Any general claim about Suno's alignment accuracy. The lag differed between the two takes of one generation (0.137 vs 0.061 s), so a per-take measurement is needed, not a constant.
 - Frame-exact karaoke. The forced aligner itself sits about 0.04 s after the hand-labelled onsets, and line starts remain about 0.08 s late after the correction.
 - The beat accuracy on the actual orchestral mix, which has no ground truth.
+- Any claim that the denser video is better or easier to follow: compressed size measures detail, not quality, and no viewer study was run.
 
 **The most useful outcome was negative.** A reasonable-looking heuristic, written to fix visible artifacts, made things worse on 43 words. Only an independent reference and a pre-stated test revealed this. The general lesson for code-animated music videos is to treat every timing transformation as an intervention and to measure it against something independent, not against the same signal it was designed from.
 
@@ -294,7 +366,11 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - **Synthetic beat test.** Click tracks lack the onsets and tempo drift of real music, and downbeats rely on a 4/4 heuristic that was not validated.
 - **Exp06 amendments.** Both were written after seeing part of the data: the duration check after seeing the two durations, and the anchor transfer after seeing check b. The transfer reuses labels made on the parent take. It is valid only where the audio is the parent's shifted by a constant, which is checked per anchor. No new blind labels were made for the edited take.
 - **Post-hoc analyses.** Repair v2 and the slope tempo estimator were designed after seeing data. Both are labelled as post-hoc throughout, and no confirmatory claim is made about them.
-- **Black-box components.** The visual scenes are schematic; synthetic plot data is labelled. The music model and the provider are black boxes, and hootCer's definition is undocumented.
+- **Illustration track.** Several released files state no licence. Only small derived numbers are committed, with attribution on screen.
+  - Schematic cards illustrate ideas; they are not data.
+  - The weight-decay comparison rests on one run per setting, with different seeds.
+  - Legibility of 2–6 s cards was judged by the agent from stills, not by viewers.
+- **Black-box components.** Schematic content is labelled per card. The music model and the provider are black boxes, and hootCer's definition is undocumented.
 
 # 7. Conclusion
 
@@ -304,31 +380,51 @@ A code-animated music video can be built as an ordinary, testable data pipeline:
 - the timing components are validated against references fixed in advance;
 - the render is deterministic and checked automatically.
 
-Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
+Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Adding concrete, cited content showed the same pattern: a fact-check of our own plan against the cited sources removed three overclaims before release. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
 
 # References
 
+- Arditi, A., Obeso, O., Syed, A., Paleka, D., Panickssery, N., Gurnee, W., & Nanda, N. (2024). Refusal in language models is mediated by a single direction. arXiv:2406.11717. Data: <https://github.com/andyrdt/refusal_direction>.
+- ARENA (2024). Induction-head scores for GPT-2 small. <https://info-arena.github.io/ARENA_img/misc/media-12/1206-A.html> (accessed 27 Oct 2026).
 - Bain, M., Huh, J., Han, T., & Zisserman, A. (2023). WhisperX: Time-accurate speech transcription of long-form audio. *INTERSPEECH 2023*. arXiv:2303.00747.
 - Ashraf, M. (2024). ctc-forced-aligner. <https://github.com/MahmoudAshraf97/ctc-forced-aligner> (accessed 18 Oct 2026).
+- Besiroglu, T., Erdil, E., Barnett, M., & You, J. (2024). Chinchilla scaling: A replication attempt. arXiv:2404.10102. Data: <https://github.com/epoch-research/analyzing-chinchilla>.
+- Bricken, T., et al. (2023). Towards monosemanticity: Decomposing language models with dictionary learning. *Transformer Circuits Thread*.
 - Demirel, E., Ahlbäck, S., & Dixon, S. (2021). Low resource audio-to-lyrics alignment from polyphonic music recordings. arXiv:2102.09202.
 - Durand, S., Stoller, D., & Ewert, S. (2023). Contrastive learning-based audio to lyrics alignment for multiple languages. arXiv:2306.07744.
+- Elhage, N., et al. (2022). Toy models of superposition. *Transformer Circuits Thread*. arXiv:2209.10652. Notebook: <https://github.com/anthropics/toy-models-of-superposition>.
 - Ellis, D. P. W. (2007). Beat tracking by dynamic programming. *Journal of New Music Research*, 36(1), 51–60.
 - Field, C. A., & Welsh, A. H. (2007). Bootstrapping clustered data. *Journal of the Royal Statistical Society: Series B*, 69(3), 369–390.
 - Engels, J., Michaud, E. J., Liao, I., Gurnee, W., & Tegmark, M. (2024). Not all language model features are one-dimensionally linear. arXiv:2405.14860.
+- Epoch AI (2026). Notable AI Models dataset. <https://epoch.ai/data/ai-models> (CC BY 4.0; accessed 27 Oct 2026).
+- Goodfire (2026). block-sparse-featurizer. <https://github.com/goodfire-ai/block-sparse-featurizer> (MIT).
 - Goodfire (n.d.). We can and must solve alignment. <https://www.goodfire.com/blog/we-can-and-must-solve-alignment> (accessed 18 Oct 2026).
 - Gurnee, W., & Tegmark, M. (2023). Language models represent space and time. arXiv:2310.02207.
+- Hoffmann, J., et al. (2022). Training compute-optimal large language models. arXiv:2203.15556.
 - Hochreiter, S., & Schmidhuber, J. (1997). Flat minima. *Neural Computation*, 9(1), 1–42.
 - Huang, R., Zhang, X., Ni, Z., Sun, L., Hira, M., Hwang, J., Manohar, V., Pratap, V., Wiesner, M., Watanabe, S., Povey, D., & Khudanpur, S. (2024). Less peaky and more accurate CTC forced alignment by label priors. *ICASSP 2024*. arXiv:2406.02560.
 - Keskar, N. S., Mudigere, D., Nocedal, J., Smelyanskiy, M., & Tang, P. T. P. (2017). On large-batch training for deep learning: Generalization gap and sharp minima. *ICLR 2017*. arXiv:1609.04836.
+- Kaplan, J., et al. (2020). Scaling laws for neural language models. arXiv:2001.08361.
 - Kolmogorov, A. N. (1965). Three approaches to the quantitative definition of information. *Problems of Information Transmission*, 1(1), 1–7.
 - leogao (2025, December 5). An ambitious vision for interpretability. *LessWrong*. <https://www.lesswrong.com/posts/Hy6PX43HGgmfiTaKu/an-ambitious-vision-for-interpretability>.
+- Lindsey, J., et al. (2025). On the biology of a large language model. *Transformer Circuits Thread*. <https://transformer-circuits.pub/2025/attribution-graphs/biology.html>.
+- Machado, P., Romero, J., Nadal, M., Santos, A., Correia, J., & Carballal, A. (2015). Computerized measures of visual complexity. *Acta Psychologica*, 160, 43–57.
+- Martin, C. H., & Mahoney, M. W. (2021). Implicit self-regularization in deep neural networks. *JMLR*, 22(165). Data: <https://github.com/CalculatedContent/ww-trends-2020>.
 - McFee, B., Raffel, C., Liang, D., Ellis, D. P. W., McVicar, M., Battenberg, E., & Nieto, O. (2015). librosa: Audio and music signal analysis in Python. *Proc. 14th Python in Science Conference*.
+- Nakkiran, P., Kaplun, G., Bansal, Y., Yang, T., Barak, B., & Sutskever, I. (2019). Deep double descent. arXiv:1912.02292. Data: <https://gitlab.com/harvard-machine-learning/double-descent>.
+- Nanda, N., Chan, L., Lieberum, T., Smith, J., & Steinhardt, J. (2023). Progress measures for grokking via mechanistic interpretability. *ICLR 2023*. arXiv:2301.05217. Run: <https://huggingface.co/callummcdougall/grokking_full_run_data>.
+- Nanda, N., Lee, A., & Wattenberg, M. (2023). Emergent linear representations in world models of self-supervised sequence models. arXiv:2309.00941.
+- Olsson, C., et al. (2022). In-context learning and induction heads. *Transformer Circuits Thread*. arXiv:2209.11895.
 - Pearl, J. (2009). *Causality: Models, reasoning, and inference* (2nd ed.). Cambridge University Press.
 - Pratap, V., et al. (2023). Scaling speech technology to 1,000+ languages. arXiv:2305.13516.
 - Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. (2023). Robust speech recognition via large-scale weak supervision. *ICML 2023*. arXiv:2212.04356.
+- Power, A., Burda, Y., Edwards, H., Babuschkin, I., & Misra, V. (2022). Grokking: Generalization beyond overfitting on small algorithmic datasets. arXiv:2201.02177.
 - Raffel, C., McFee, B., Humphrey, E. J., Salamon, J., Nieto, O., Liang, D., & Ellis, D. P. W. (2014). mir_eval: A transparent implementation of common MIR metrics. *ISMIR 2014*.
 - Simon, J., Kunin, D., Atanasov, A., Boix-Adserà, E., Bordelon, B., Cohen, J., Ghosh, N., Guth, F., Jacot, A., Kamb, M., Karkada, D., Michaud, E. J., Ottlik, B., & Turnbull, J. (2026). There will be a scientific theory of deep learning. arXiv:2604.21691.
+- Templeton, A., et al. (2024). Scaling monosemanticity: Extracting interpretable features from Claude 3 Sonnet. *Transformer Circuits Thread*.
 - Todd, E., Li, M. L., Sharma, A. S., Mueller, A., Wallace, B. C., & Bau, D. (2023). Function vectors in large language models. arXiv:2310.15213 (ICLR 2024).
+- Turner, A. M., et al. (2023). Steering language models with activation engineering. arXiv:2308.10248.
+- Wang, K., Variengien, A., Conmy, A., Shlegeris, B., & Steinhardt, J. (2022). Interpretability in the wild: A circuit for indirect object identification in GPT-2 small. arXiv:2211.00593.
 - Rouard, S., Massa, F., & Défossez, A. (2022). Hybrid transformers for music source separation. arXiv:2211.08553.
 - sunoapi.org (n.d.). Replace Music Section. <https://docs.sunoapi.org/suno-api/replace-section> (accessed 27 Oct 2026).
 - Remotion documentation, <https://www.remotion.dev/docs/>; torchaudio MMS_FA, <https://docs.pytorch.org/audio/stable/generated/torchaudio.pipelines.MMS_FA.html>; sunoapi.org documentation, <https://docs.sunoapi.org/> (both accessed 18 Oct 2026).
@@ -343,8 +439,13 @@ uv run python scripts/validate_beats.py
 uv run --group analysis python scripts/validate_alignment.py small.en
 uv run --group analysis python scripts/validate_onset_offset.py   # exp05; reuses the committed labels
 uv run --group analysis python scripts/validate_lyric_edit.py     # exp06; uses the committed data/song/ of both tasks
+uv run --group analysis python -I scripts/vignette_data.py       # exp07 data phase (downloads 31 pinned files once)
+uv run python -I scripts/validate_density.py                     # exp07 density (needs the v1.2.0 MP4 in out/v1.2.0/)
+uv run python -I scripts/make_vignette_docs.py                   # docs/vignettes.md, the card catalog
 uv run --group analysis python scripts/make_figures.py
 ```
+
+The full list of the 86 cards with times, triggers, badges and sources is in `docs/vignettes.md`.
 
 # Appendix B. Lyrics structure
 

@@ -1,0 +1,281 @@
+[
+  {
+    "file": "circuits/capital-state-dallas.json",
+    "url": "https://transformer-circuits.pub/2025/attribution-graphs/graph_data/capital-state-dallas.json",
+    "revision": "accessed copy",
+    "licence": "none stated",
+    "bytes": 202110,
+    "sha256": "b1c765e4e8aa8b097491b43cc3f72ea40216be5babb8aae4231130cdda4a4c74",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "circuits/rabbit-poem.json",
+    "url": "https://transformer-circuits.pub/2025/attribution-graphs/graph_data/rabbit-poem.json",
+    "revision": "accessed copy",
+    "licence": "none stated",
+    "bytes": 110233,
+    "sha256": "e4d495301605e1fc51b71fe2dc40081bf9badcdf26de0d5ef0f51da9f9f4abdb",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "circuits/calc-36-plus-59.json",
+    "url": "https://transformer-circuits.pub/2025/attribution-graphs/graph_data/calc-36-plus-59.json",
+    "revision": "accessed copy",
+    "licence": "none stated",
+    "bytes": 188225,
+    "sha256": "77ec7962e5179ac5a1dee8e3c79e792754c541242bd4cb087334566034179fa7",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gemma-fact-dallas-austin.json",
+    "url": "https://neuronpedia-attrib.s3.us-east-1.amazonaws.com/user-graphs/cmao6p1xd0000ypedw0qhlhob/gemma-fact-dallas-austin.json",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; Gemma Scope weights CC-BY-4.0)",
+    "bytes": 2750651,
+    "sha256": "0a6ddc39ec89417144ee86250a799b1c7ea8885861a72efa28b67127c65de2b0",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_2592.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/2592",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 103196,
+    "sha256": "b527cf2b8882049e63d779d83e2f770a1d0a9dda8b1287eb91c09d9930352fd4",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_4445.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/4445",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 113817,
+    "sha256": "fe59ec85b622086c00d7d13d7bc3385d80baf146c55caf70fe9685ce5e47c5ce",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_4663.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/4663",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 107327,
+    "sha256": "89f3b7c85ad023f3093740223e99fab241eb5b1431421de3675ce3ced563e3d9",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_4733.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/4733",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 108214,
+    "sha256": "b810e8a9057b04b6aa3dd1de897b7aa53ec7dd72a081c9185180d8e45d05b5c1",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_6531.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/6531",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 112858,
+    "sha256": "d88838550f1f235a8890e42ffe8129f754f6e450eff1114464d4f6f88452d775",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_8179.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/8179",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 109427,
+    "sha256": "def12e0b5d03b3b55fef2e4aaa8c0df2b7df0e2b73dc00b2820d27f9ffada80a",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_9566.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/9566",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 80817,
+    "sha256": "6a3be1f730b7e709a28d38e4ffa3cd2ffee04510861986813f999caf1b173a22",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_20927.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/20927",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 94414,
+    "sha256": "011545585ffee2ead892aab6e724517b52206b9389a922bb271d6b26690b850e",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "neuronpedia/gpt2-small_7-res-jb_24185.json",
+    "url": "https://www.neuronpedia.org/api/feature/gpt2-small/7-res-jb/24185",
+    "revision": "accessed copy",
+    "licence": "none stated (Neuronpedia; SAE weights MIT)",
+    "bytes": 95481,
+    "sha256": "60946d3f702ad27887bec8a0fffc0d663462f5978890c51dbece37d8f1c05804",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "arena/1206-A.html",
+    "url": "https://info-arena.github.io/ARENA_img/misc/media-12/1206-A.html",
+    "revision": "7eb0b60b77110e46b00c914d730fe8a9f517922e",
+    "licence": "none stated",
+    "bytes": 10369,
+    "sha256": "37aab91c0962a4c6f1c77d808d35e4d53bb1ade75a418f585f708f2f3b88fb92",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "epoch/notable_ai_models.csv",
+    "url": "https://epoch.ai/data/notable_ai_models.csv",
+    "revision": "accessed copy",
+    "licence": "CC BY 4.0",
+    "bytes": 2267812,
+    "sha256": "e10d54d34f317c6fd80a54e7b02bbc6df41c169f185d8fcb094d78718db7f243",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "epoch/svg_extracted_data.csv",
+    "url": "https://raw.githubusercontent.com/epoch-research/analyzing-chinchilla/92258837425e1b5f2851d624287f0120583a3d0e/data/svg_extracted_data.csv",
+    "revision": "92258837425e1b5f2851d624287f0120583a3d0e",
+    "licence": "none stated",
+    "bytes": 23224,
+    "sha256": "193478df4e90f040016431996c45682659306840ecdadf83cfb9cd5ca0aa1b30",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "dd/Mlist",
+    "url": "https://storage.googleapis.com/hml-public/dd/cifar10-resnet18k-p15-adam-reps/Mlist",
+    "revision": "accessed copy",
+    "licence": "none stated",
+    "bytes": 40950849,
+    "sha256": "22cc20b6e8a0a66c1f356fc1edefa77611926851ea60d999049dded75ef95b94",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "dd/ks",
+    "url": "https://storage.googleapis.com/hml-public/dd/cifar10-resnet18k-p15-adam-reps/ks",
+    "revision": "accessed copy",
+    "licence": "none stated",
+    "bytes": 1508,
+    "sha256": "f282d0739c8afc952996923dd89024cb2fd83392db2cc7f22a6eddb0f519d81c",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "worldmodels/world_place.csv",
+    "url": "https://raw.githubusercontent.com/wesg52/world-models/a572f162948ee185e9c842eb5fa15e23aad3d218/data/entity_datasets/world_place.csv",
+    "revision": "a572f162948ee185e9c842eb5fa15e23aad3d218",
+    "licence": "MIT",
+    "bytes": 3894740,
+    "sha256": "b1608f9410b48fe4ca71836d81baa5aa20d34d319cd7f98a725fd8545bdce040",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "fv/antonym.json",
+    "url": "https://raw.githubusercontent.com/ericwtodd/function_vectors/fb9eac7b6dc707ea1475a717379916007fe448d5/dataset_files/abstractive/antonym.json",
+    "revision": "fb9eac7b6dc707ea1475a717379916007fe448d5",
+    "licence": "MIT",
+    "bytes": 166684,
+    "sha256": "ba66e8e399944b557251b11a37b11f9ba7a50f0a57286f7021a8a7b26b469e8d",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "refusal/direction_evaluations.json",
+    "url": "https://raw.githubusercontent.com/andyrdt/refusal_direction/9d852fae1a9121c78b29142de733cb1340770cc3/pipeline/runs/meta-llama-3-8b-instruct/select_direction/direction_evaluations.json",
+    "revision": "9d852fae1a9121c78b29142de733cb1340770cc3",
+    "licence": "Apache-2.0",
+    "bytes": 30736,
+    "sha256": "257f881e6045e497628957822667f02e0c8aca342469c72e9b70a835bed0bfda",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "refusal/direction_metadata.json",
+    "url": "https://raw.githubusercontent.com/andyrdt/refusal_direction/9d852fae1a9121c78b29142de733cb1340770cc3/pipeline/runs/meta-llama-3-8b-instruct/direction_metadata.json",
+    "revision": "9d852fae1a9121c78b29142de733cb1340770cc3",
+    "licence": "Apache-2.0",
+    "bytes": 34,
+    "sha256": "d130c5240eceabe4dc0135e373f7fac51fe85082e74cc03eca87800842c7128e",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "refusal/jailbreakbench_baseline_evaluations.json",
+    "url": "https://raw.githubusercontent.com/andyrdt/refusal_direction/9d852fae1a9121c78b29142de733cb1340770cc3/pipeline/runs/meta-llama-3-8b-instruct/completions/jailbreakbench_baseline_evaluations.json",
+    "revision": "9d852fae1a9121c78b29142de733cb1340770cc3",
+    "licence": "Apache-2.0",
+    "bytes": 278590,
+    "sha256": "924f49b7eafd6e49ed78d4f9811e5c94f378010570e1ec702d1f1dff2b10b69f",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "refusal/jailbreakbench_ablation_evaluations.json",
+    "url": "https://raw.githubusercontent.com/andyrdt/refusal_direction/9d852fae1a9121c78b29142de733cb1340770cc3/pipeline/runs/meta-llama-3-8b-instruct/completions/jailbreakbench_ablation_evaluations.json",
+    "revision": "9d852fae1a9121c78b29142de733cb1340770cc3",
+    "licence": "Apache-2.0",
+    "bytes": 276297,
+    "sha256": "396e3459e603b17f08c7e99466f1e10f8c3c863d49cda05e4b21ac19d0be2c32",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "refusal/harmless_actadd_evaluations.json",
+    "url": "https://raw.githubusercontent.com/andyrdt/refusal_direction/9d852fae1a9121c78b29142de733cb1340770cc3/pipeline/runs/meta-llama-3-8b-instruct/completions/harmless_actadd_evaluations.json",
+    "revision": "9d852fae1a9121c78b29142de733cb1340770cc3",
+    "licence": "Apache-2.0",
+    "bytes": 265290,
+    "sha256": "5b562df8763823610fae33d658b05001226b0fcbfa47cb835b37bb446776c79a",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "ww/gpt2_small.csv",
+    "url": "https://raw.githubusercontent.com/CalculatedContent/ww-trends-2020/efe472321357d1257d3bc731e94646923d733480/data/gpt2%20small.csv",
+    "revision": "efe472321357d1257d3bc731e94646923d733480",
+    "licence": "none stated",
+    "bytes": 34941,
+    "sha256": "ad9d4025cfcc8b50961dbe1b43b2e2eaf522b81266da97383c984b78de399d53",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "pmp/wd_10-1_mod_addition_loss_curve.pth",
+    "url": "https://raw.githubusercontent.com/mechanistic-interpretability-grokking/progress-measures-paper/23d2c64dd1f8a5ca65efaf27e15c2b2cd47dedf1/saved_runs/wd_10-1_mod_addition_loss_curve.pth",
+    "revision": "23d2c64dd1f8a5ca65efaf27e15c2b2cd47dedf1",
+    "licence": "none stated",
+    "bytes": 3800889,
+    "sha256": "328b8e923d8c9b8c3e8727525c8154b8da39df47dd374dc88cca1f82eaf4be00",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "tms/toy_models.ipynb",
+    "url": "https://raw.githubusercontent.com/anthropics/toy-models-of-superposition/562710e079704b84a132b640db134d4cebe22466/toy_models.ipynb",
+    "revision": "562710e079704b84a132b640db134d4cebe22466",
+    "licence": "MIT",
+    "bytes": 4448596,
+    "sha256": "9231576b82ada2e47fdc26de064674c1ab88cbf558569364f84fa483af2864e0",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "goodfire/figure_1.png",
+    "url": "https://raw.githubusercontent.com/goodfire-ai/block-sparse-featurizer/219f121ea82d2b19200d1dac918396e6058d7eb9/assets/figure_1.png",
+    "revision": "219f121ea82d2b19200d1dac918396e6058d7eb9",
+    "licence": "MIT",
+    "bytes": 5346229,
+    "sha256": "88a122cdb794845b96e9caec864d400a19dc041af3dec4626e0d4d6f85e4a2ed",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "grokking_full_run_data/full_run_data.pth",
+    "url": "https://huggingface.co/callummcdougall/grokking_full_run_data",
+    "revision": "80e5dbb5744dd3e958e45e56f7562a4d50c7400c",
+    "licence": "none stated",
+    "bytes": 456428905,
+    "sha256": "a151f02125a33d6647d7b27fce99ae145ff3b83abc0586a883acc73e8318d828",
+    "accessed": "2026-10-27"
+  },
+  {
+    "file": "gpt2/tokenizer.json",
+    "url": "https://huggingface.co/openai-community/gpt2",
+    "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "licence": "MIT",
+    "bytes": 1355256,
+    "sha256": "8414cab924d8b9b33013f0d221c5862f365ee9be39c5c2bfae8a5a9e970478a6",
+    "accessed": "2026-10-27"
+  }
+]

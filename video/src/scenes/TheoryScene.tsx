@@ -1,70 +1,67 @@
 /**
  * Verse 3 — "There will be a theory!"
- * Local: five pillars rise as their keywords are sung (the five research directions of
- * Simon, Kunin et al. 2026, "There Will Be a Scientific Theory of Deep Learning", arXiv:2604.21691),
- * next to a log-log scaling-law plot L(N) = L∞ + A·N^(−α) that draws itself with synthetic points.
- * Global: the "science" half of the song: falsifiable, quantitative predictions.
- * Plot data are synthetic (illustrative), not fitted to any real model.
+ * Local: the title of Simon, Kunin et al. 2026 (arXiv:2604.21691), five pillar cards (drawn by the illustration
+ * track in slots p1..p5), and a real scaling-law plot: Epoch AI's 245 runs extracted from Hoffmann et al. 2022
+ * (loss vs parameters, colored by training compute) with the iso-FLOP curves L(N, C/6N) of two published
+ * parametric fits (Hoffmann et al. solid, Epoch's re-fit dashed) and their compute-optimal minima, the last one
+ * marked "predicted before training". A FALSIFIABLE stamp lands on "falsifiable".
+ * Global: the "science" half of the song; numbers from public/vignettes/chinchilla.json (scripts/vignette_data.py).
+ * Sources: Hoffmann et al. 2022 (arXiv:2203.15556) Eq. 2 and D = C / 6N; Besiroglu et al. 2024 (arXiv:2404.10102) Table 1.
  */
 import React from 'react'; // JSX
-import {AbsoluteFill, random} from 'remotion'; // layer + RNG
-import {beatPulse, wordTime} from '../lib/timeline'; // keyword timing
+import {AbsoluteFill} from 'remotion'; // layer
+import {wordTime} from '../lib/timeline'; // keyword timing
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
+import {chinchillaLoss} from '../lib/mathviz'; // L(N, D)
+import chin from '../../public/vignettes/chinchilla.json'; // points + both fits
 import type {SceneProps} from './types'; // contract
 
-const PILLARS: [string, RegExp][] = [ // label, triggering keyword in the verse
-	['solvable idealized settings', /solve/i],
-	['tractable limits (width → ∞)', /limits|infinity/i],
-	['simple laws for macroscopic observables', /laws|scaling/i],
-	['theories of hyperparameters', /hyperparameter/i],
-	['universal behaviors', /universal/i],
-];
-const LAW = (x: number) => 0.25 + 2.2 * Math.pow(10, -0.35 * x); // L(N) with log10 N = x in [0, 6]
+const BUDGETS = [1e19, 1e20, 1e21]; // iso-FLOP budgets drawn (FLOPs)
+const BOX = {x: 1110, y: 520, w: 760, h: 330}; // plot area (right half, below the top-right card slot)
+const Ns = Array.from({length: 80}, (_, i) => 10 ** (7.7 + i * (10.3 - 7.7) / 79)); // 5e7 .. 2e10 parameters
+const px = (N: number) => BOX.x + ((Math.log10(N) - 7.7) / 2.6) * BOX.w; // log N -> screen x
+const py = (L: number) => BOX.y + BOX.h - ((L - 2) / 3) * BOX.h; // loss 2..5 -> screen y
+const hue = (C: number) => 280 - ((Math.log10(C) - 18) / 4) * 240; // compute -> color (violet .. lime)
 
 export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {t, local, length} = useSceneClock(section); // time
-	const pulse = beatPulse(tl.beats, t); // beat kick
-	const times = PILLARS.map(([, re], i) => wordTime(tl, section, re) ?? section.startS + (i + 1) * length / 7); // reveal times
 	const falsAt = wordTime(tl, section, /falsifiable/i) ?? section.startS + 0.75 * length; // stamp
 	const predAt = wordTime(tl, section, /predict/i) ?? section.startS + 0.85 * length; // prediction marker
-	const draw = smooth((local - 1) / (length * 0.7)); // curve drawing progress
-	const px = (x: number) => 1080 + (x / 6) * 700; // plot x (log10 N) -> screen
-	const py = (L: number) => 820 - (Math.log10(L) + 0.7) / 1.2 * 520; // plot y (log10 L) -> screen
-	const curve = Array.from({length: 61}, (_, i) => i / 10).filter((x) => x <= 6 * draw).map((x) => `${px(x)},${py(LAW(x))}`).join(' ');
+	const draw = smooth((local - 1) / (length * 0.5)); // points + curves appear
+	const fits = Object.entries(chin.fits) as [string, {E: number; A: number; B: number; alpha: number; beta: number}][];
+	const curves = BUDGETS.flatMap((C) => fits.map(([name, f]) => {
+		const pts = Ns.filter((N) => C / (6 * N) > N).map((N) => [N, chinchillaLoss(N, C / (6 * N), f)] as const).filter(([, L]) => L < 5); // D = C/6N, keep D > N
+		return {C, name, pts, best: pts.reduce((a, b) => (b[1] < a[1] ? b : a))}; // best = compute-optimal N for this budget
+	}));
+	const target = curves.find((c) => c.C === 1e21 && c.name === 'hoffmann')!.best; // the largest budget's optimum
 	return (
 		<AbsoluteFill>
-			<div style={{position: 'absolute', left: 70, top: 100, fontFamily: FONTS.display, fontWeight: 900, fontSize: 46, color: COLORS.ink, textShadow: glow(COLORS.cyan, 0.6), opacity: smooth(local / 0.6)}}>
+			<div style={{position: 'absolute', left: 60, top: 92, fontFamily: FONTS.display, fontWeight: 900, fontSize: 34, color: COLORS.ink, textShadow: glow(COLORS.cyan, 0.6), opacity: smooth(local / 0.6)}}>
 				THERE WILL BE A SCIENTIFIC THEORY OF DEEP LEARNING
-				<div style={{fontFamily: FONTS.mono, fontWeight: 400, fontSize: 20, color: COLORS.dim, marginTop: 8, textShadow: 'none'}}>
-					five directions — Simon, Kunin et al. 2026 · arXiv:2604.21691 · “learning mechanics”
+				<div style={{fontFamily: FONTS.mono, fontWeight: 400, fontSize: 18, color: COLORS.dim, marginTop: 6, textShadow: 'none'}}>
+					five directions: Simon, Kunin et al. 2026 · arXiv:2604.21691 · “learning mechanics”
 				</div>
 			</div>
-			{PILLARS.map(([label], i) => {
-				const a = smooth((t - times[i]) / 0.5); // rise
-				const h = 420 * a; // pillar height
-				return (
-					<div key={i} style={{position: 'absolute', left: 90 + i * 185, top: 860 - h, width: 120, height: h,
-						background: `linear-gradient(0deg, rgba(34,228,255,0.05), ${COLORS.cyan})`, boxShadow: `0 0 ${20 + 20 * pulse * a}px ${COLORS.cyan}`, borderRadius: 6}}>
-						<div style={{position: 'absolute', bottom: h + 14, width: 170, left: -25, textAlign: 'center', fontFamily: FONTS.body, fontWeight: 600, fontSize: 21, color: COLORS.ink, opacity: a}}>{label}</div>
-					</div>
-				);
-			})}
 			<svg width={1920} height={1080} style={{position: 'absolute'}}>
-				<line x1={px(0)} y1={py(3.2)} x2={px(0)} y2={830} stroke={COLORS.dim} /> {/* y axis */}
-				<line x1={px(0) - 10} y1={830} x2={px(6)} y2={830} stroke={COLORS.dim} /> {/* x axis */}
-				<text x={px(3)} y={875} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={20} textAnchor="middle">log N (parameters · data · compute)</text>
-				<text x={px(0) - 20} y={py(1)} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={20} textAnchor="end">log L</text>
-				{Array.from({length: 13}, (_, i) => { const x = i / 2; const show = x <= 6 * draw; // synthetic measurements
-					return <circle key={i} cx={px(x)} cy={py(LAW(x) * (1 + (random(`d${i}`) - 0.5) * 0.12))} r={7} fill={COLORS.magenta} opacity={show ? 0.9 : 0} />; })}
-				<polyline points={curve} fill="none" stroke={COLORS.amber} strokeWidth={5} style={{filter: `drop-shadow(0 0 8px ${COLORS.amber})`}} />
-				<text x={px(3.4)} y={py(LAW(1.2))} fill={COLORS.amber} fontFamily={FONTS.mono} fontSize={30} opacity={draw}>L(N) = L∞ + A·N^(−α)</text>
+				<line x1={BOX.x} y1={BOX.y} x2={BOX.x} y2={BOX.y + BOX.h} stroke={COLORS.dim} />
+				<line x1={BOX.x} y1={BOX.y + BOX.h} x2={BOX.x + BOX.w} y2={BOX.y + BOX.h} stroke={COLORS.dim} />
+				<text x={BOX.x + BOX.w / 2} y={BOX.y + BOX.h + 26} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={16} textAnchor="middle">parameters N (log) · 245 points from Hoffmann et al. 2022 Fig. 4 (extracted by Epoch AI)</text>
+				<text x={BOX.x - 12} y={BOX.y + BOX.h / 2} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={16} textAnchor="end">loss</text>
+				{chin.points.map(([N, C, L], i) => <circle key={i} cx={px(N)} cy={py(L)} r={3.5} fill={`hsl(${hue(C)} 90% 60%)`} opacity={0.75 * smooth(draw * 3 - (i / chin.points.length) * 2)} />)}
+				{curves.map(({C, name, pts, best}) => (
+					<g key={`${C}${name}`} opacity={smooth(draw * 2 - 1)}>
+						<polyline points={pts.map(([N, L]) => `${px(N)},${py(L)}`).join(' ')} fill="none" stroke={`hsl(${hue(C)} 90% 65%)`} strokeWidth={3} strokeDasharray={name === 'epoch' ? '8 6' : undefined} />
+						<circle cx={px(best[0])} cy={py(best[1])} r={6} fill={COLORS.lime} />
+					</g>
+				))}
+				<text x={BOX.x + BOX.w - 4} y={BOX.y + 18} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={15} textAnchor="end" opacity={draw}>L = E + A/N^α + B/D^β · solid: Hoffmann · dashed: Epoch re-fit</text>
 				<g opacity={smooth((t - predAt) / 0.4)}>
-					<circle cx={px(5.6)} cy={py(LAW(5.6))} r={16} fill="none" stroke={COLORS.lime} strokeWidth={4} /> {/* predicted point */}
-					<text x={px(5.6)} y={py(LAW(5.6)) - 30} fill={COLORS.lime} fontFamily={FONTS.mono} fontSize={22} textAnchor="middle">predicted before training</text>
+					<circle cx={px(target[0])} cy={py(target[1])} r={22} fill="none" stroke={COLORS.lime} strokeWidth={4} />
+					<text x={px(target[0])} y={py(target[1]) + 46} fill={COLORS.lime} fontFamily={FONTS.mono} fontSize={18} textAnchor="middle">10²¹ FLOPs: best N ≈ {(target[0] / 1e9).toFixed(1)}B, predicted before training</text>
 				</g>
 			</svg>
-			<div style={{position: 'absolute', left: 1180, top: 230, padding: '10px 22px', border: `4px solid ${COLORS.lime}`, borderRadius: 10, fontFamily: FONTS.display, fontSize: 34,
-				color: COLORS.lime, transform: `rotate(-6deg) scale(${1.6 - 0.6 * smooth((t - falsAt) / 0.2)})`, opacity: smooth((t - falsAt) / 0.2)}}>
+			<div style={{position: 'absolute', left: 1130, top: 470, padding: '6px 18px', border: `4px solid ${COLORS.lime}`, borderRadius: 10, fontFamily: FONTS.display, fontSize: 28,
+				color: COLORS.lime, transform: `rotate(-5deg) scale(${1.6 - 0.6 * smooth((t - falsAt) / 0.2)})`, opacity: smooth((t - falsAt) / 0.2)}}>
 				FALSIFIABLE · QUANTITATIVE
 			</div>
 		</AbsoluteFill>

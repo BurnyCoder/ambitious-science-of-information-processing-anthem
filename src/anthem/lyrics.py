@@ -58,6 +58,12 @@ class Section:
     lines: list[Line] = field(default_factory=list)  # its lines
 
 
+def section_keys(kind: str, occurrence: int) -> tuple[str, str]:
+    """Local: the config keys that address a section, most specific first ("chorus 2", then "chorus").
+    Global: shared by content/scenes.toml (timeline._scene_for) and content/vignettes.toml (vignettes.place_vignettes)."""
+    return f"{kind} {occurrence}", kind
+
+
 def parse_lyrics(text: str) -> list[Section]:
     """Local: parse tagged lyrics into Section/Line/Word records.
     Global: single source of truth for the written words used by alignment and the overlay."""

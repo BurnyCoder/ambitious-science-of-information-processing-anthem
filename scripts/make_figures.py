@@ -149,6 +149,52 @@ def fig_lyric_edit() -> None:
     plt.close(fig)
 
 
+def fig_exp07() -> None:
+    """Local: exp07, (a) loss curves of the released grokking run with the paper's phases, (b) Fourier norms of its
+    epoch-40k embedding with the paper's key frequencies, (c) ARENA's induction scores for GPT-2 small, (d) paired
+    PNG-size log2 ratio v1.3.0 / v1.2.0 per sampled frame, sections shaded.
+    Global: what the pre-specified checks of reports/exp07_provenance.md looked at."""
+    vig = ROOT / "video" / "public" / "vignettes"  # card data written by scripts/vignette_data.py
+    grok = json.loads((vig / "grokking.json").read_text(encoding="utf-8"))
+    ind = json.loads((vig / "induction.json").read_text(encoding="utf-8"))
+    dens_path = DATA / "exp07_density.json"
+    fig, axes = plt.subplots(1, 4 if dens_path.exists() else 3, figsize=(17 if dens_path.exists() else 13, 3.6))
+    a, b, c = axes[:3]
+    for key, label, color in [("train", "train", "C4"), ("test", "test", "C1")]:
+        e, v = np.array(grok[key]).T
+        a.loglog(np.maximum(e, 1), v, color=color, label=label)
+    for x0, x1, col in [(1, grok["phases"][0], "C3"), (grok["phases"][0], grok["phases"][1], "C1"), (grok["phases"][1], grok["phases"][2], "C2")]:
+        a.axvspan(x0, x1, color=col, alpha=0.08)
+    a.set(xlabel="epoch", ylabel="cross-entropy loss", title="released mainline run (Nanda et al. 2023)")
+    a.legend(fontsize=8)
+    i40 = grok["spectraEpochs"].index(40000)  # spectra are stored every 1,000 epochs
+    norms = np.array(grok["spectra"][i40])  # the model analysed in the paper
+    k = np.arange(1, len(norms) + 1)
+    b.bar(k, norms, color=["C2" if kk in grok["keyFreqs"] else "C7" for kk in k])
+    b.set(xlabel="frequency k", ylabel="‖W_E‖ along cos/sin(2πk·x/113)",
+          title=f"epoch {grok['spectraEpochs'][i40]:,}: top-5 = {grok['top5At40k']}")
+    im = c.imshow(np.array(ind["z"]), cmap="viridis", vmin=0, vmax=1, aspect="auto")
+    for t in ind["top"]:
+        l, h = map(int, t["head"].split("."))
+        c.add_patch(plt.Rectangle((h - 0.5, l - 0.5), 1, 1, fill=False, ec="white", lw=1.5))
+    c.set(xlabel="head", ylabel="layer", title="GPT-2 small induction scores (ARENA)")
+    fig.colorbar(im, ax=c, fraction=0.046)
+    if dens_path.exists():
+        d = json.loads(dens_path.read_text(encoding="utf-8"))
+        r = np.log2(np.array(d["bytesNew"]) / np.array(d["bytesOld"]))
+        sec = np.array(d["section"])
+        for s in np.unique(sec):
+            axes[3].axvspan(np.min(np.array(d["times"])[sec == s]) - 1, np.max(np.array(d["times"])[sec == s]) + 1, color=f"C{s % 10}", alpha=0.07)
+        axes[3].plot(d["times"], r, ".", ms=3, color="C0")
+        axes[3].axhline(0, color="grey", lw=0.8)
+        lo, hi = d["ci95SectionBootstrap"]
+        axes[3].set(xlabel="song time (s)", ylabel="log₂(PNG bytes v1.3.0 / v1.2.0)",
+                    title=f"v1.3.0 vs v1.2.0: median {d['medianLog2Ratio']:+.2f} [{lo:+.2f}, {hi:+.2f}]")
+    fig.tight_layout()
+    fig.savefig(FIG / "fig6_exp07.png", dpi=130)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     FIG.mkdir(parents=True, exist_ok=True)  # reports/figures
     fig_stills()
@@ -158,4 +204,6 @@ if __name__ == "__main__":
         fig_onset_offset()
     if (DATA / "exp06_lyric_edit.json").exists():  # written by scripts/validate_lyric_edit.py
         fig_lyric_edit()
+    if (DATA / "exp07_checks.json").exists():  # written by scripts/vignette_data.py
+        fig_exp07()
     print("figures written to", FIG)
