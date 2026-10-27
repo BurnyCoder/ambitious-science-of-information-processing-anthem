@@ -1,0 +1,65 @@
+{
+  "grokking_key_frequencies": {
+    "pre_specified": "top-5 Fourier frequencies of W_E at epoch 40k == paper's key frequencies",
+    "paper": [
+      14,
+      35,
+      41,
+      42,
+      52
+    ],
+    "top5": [
+      14,
+      35,
+      41,
+      42,
+      52
+    ],
+    "top6": [
+      14,
+      31,
+      35,
+      41,
+      42,
+      52
+    ],
+    "pass": true
+  },
+  "induction_heads": {
+    "pre_specified": "ARENA's top-5 induction heads include IOI's induction heads 5.5 and 6.9",
+    "top5": [
+      {
+        "head": "5.5",
+        "score": 0.909
+      },
+      {
+        "head": "6.9",
+        "score": 0.898
+      },
+      {
+        "head": "5.1",
+        "score": 0.897
+      },
+      {
+        "head": "7.10",
+        "score": 0.891
+      },
+      {
+        "head": "7.2",
+        "score": 0.825
+      }
+    ],
+    "pass": true
+  },
+  "epoch_parameters": {
+    "pre_specified": "parameter counts shown match the Epoch CSV",
+    "values": {
+      "AlexNet": 60000000.0,
+      "GPT-2 (1.5B)": 1500000000.0,
+      "GPT-3 175B (davinci)": 174600000000.0,
+      "PaLM (540B)": 540350000000.0,
+      "Switch": 1571000000000.0
+    },
+    "pass": true
+  }
+}

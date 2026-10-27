@@ -23,3 +23,6 @@ video/build/
 
 # Duplicate of the chosen take, copied by the timeline phase
 video/public/anthem.mp3
+
+# released third-party artifacts fetched by scripts/vignette_data.py (provenance in reports/data/exp07_sources.json)
+data/external/
