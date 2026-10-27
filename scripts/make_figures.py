@@ -137,8 +137,9 @@ def fig_lyric_edit() -> None:
         med = np.array([np.median([x["suno"] - x["mms"] for x in rec if x["line"] == ln and not x["backing"]])
                         for ln in lines])  # per-line median
         song = np.median([x["suno"] - x["mms"] for x in rec if not x["backing"]])  # exp05's δ for this take
-        bot.plot(lines, np.minimum(med, 0.48), "o-", ms=3, lw=1, color=color,  # clipped lines drawn at the edge
-                 label=f"{label}: song median {song:+.3f} s ({int(np.sum(med > 0.48))} line(s) > 0.48 s drawn at the top)")
+        out = int(np.sum((med > 0.48) | (med < -0.08)))  # MMS failures on single lines, e.g. a chorus start
+        bot.plot(lines, np.clip(med, -0.08, 0.48), "o-", ms=3, lw=1, color=color,  # outliers drawn at the edge
+                 label=f"{label}: song median {song:+.3f} s ({out} line(s) outside the axis, drawn at its edge)")
     first, last = e6["parent"]["lines"]
     bot.axvspan(first - 0.5, last + 0.5, color="C3", alpha=0.2, label="re-sung lines")
     bot.set(xlabel="lyric line (0-based)", ylabel="median Suno − MMS onset (s)", ylim=(-0.1, 0.5))
