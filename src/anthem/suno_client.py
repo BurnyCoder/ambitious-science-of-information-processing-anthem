@@ -1,13 +1,14 @@
 """Minimal client for the sunoapi.org Suno API.
 
-Local: wraps the four endpoints the pipeline needs (credit balance, generate, poll task,
-timestamped lyrics) plus a CDN download, checks the {code, msg, data} envelope, and
+Local: wraps the five endpoints the pipeline needs (credit balance, generate, replace section,
+poll task, timestamped lyrics) plus a CDN download, checks the {code, msg, data} envelope, and
 logs every request body and response in full (the API key is only ever in a header
 that is never logged).
 Global context: song.py calls this client to turn content/ into two downloaded takes
 plus word timings; nothing else in the pipeline talks to the network.
 Sources:
 - generate:            https://docs.sunoapi.org/suno-api/generate-music
+- replace section:     https://docs.sunoapi.org/suno-api/replace-section
 - poll / statuses:     https://docs.sunoapi.org/suno-api/get-music-generation-details
 - timestamped lyrics:  https://docs.sunoapi.org/suno-api/get-timestamped-lyrics
 - credits:             https://docs.sunoapi.org/suno-api/get-remaining-credits
@@ -113,6 +114,21 @@ class SunoClient:
             "callBackUrl": callback_url,  # marked required in the OpenAPI schema; we poll anyway
         }
         return self._request("POST", "/api/v1/generate", json=payload)["taskId"]  # documented: data.taskId
+
+    def replace_section(self, *, task_id: str, audio_id: str, segment_lyrics: str, full_lyrics: str, tags: str,
+                        title: str, start_s: float, end_s: float, negative_tags: str, vocal_gender: str,
+                        callback_url: str) -> str:
+        """Local: re-sing [start_s, end_s] of an existing take with new segment lyrics; returns taskId.
+        Global: paid lyric fix that keeps the rest of the song (polled with wait_for like generate)."""
+        payload = {  # field names exactly as in https://docs.sunoapi.org/suno-api/replace-section
+            "taskId": task_id, "audioId": audio_id,  # "existing audio" mode: the parent task + take
+            "prompt": segment_lyrics, "lyrics": segment_lyrics,  # lyrics of the replaced segment only
+            "fullLyrics": full_lyrics,  # complete song lyrics after the change
+            "tags": tags, "title": title, "negativeTags": negative_tags, "vocalGender": vocal_gender,
+            "infillStartS": round(start_s, 2), "infillEndS": round(end_s, 2),  # 2 decimals, >= 10 s apart
+            "callBackUrl": callback_url,  # we poll anyway
+        }
+        return self._request("POST", "/api/v1/generate/replace-section", json=payload)["taskId"]  # data.taskId
 
     def record_info(self, task_id: str) -> dict:
         """Local: one status poll.  Global: wait_for() calls this until SUCCESS."""
