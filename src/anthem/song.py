@@ -16,6 +16,7 @@ Sources:
 import hashlib  # fingerprint the spec so a stale cache is detectable
 import json  # cache file format
 import logging  # phase progress
+import re  # banned-word check
 import tomllib  # stdlib TOML parser for content/song.toml
 from dataclasses import asdict, dataclass  # spec/take records
 from datetime import datetime, timezone  # cache timestamp
@@ -81,6 +82,9 @@ def load_song_spec(content_dir: Path) -> SongSpec:
     for field, limit in LIMITS.items():  # every limited field
         if len(getattr(spec, field)) > limit:  # too long -> the API would reject or truncate it
             raise SpecError(f"{field} is {len(getattr(spec, field))} chars; Suno V6 allows {limit}")
+    for word in meta.get("banned_words", []):  # words the author never wants sung (checked here, not sent)
+        if re.search(rf"\b{re.escape(word)}", spec.lyrics, re.IGNORECASE):  # word-start match: mind, Mind's, minds
+            raise SpecError(f"lyrics contain the banned word {word!r} (content/song.toml banned_words)")
     return spec
 
 

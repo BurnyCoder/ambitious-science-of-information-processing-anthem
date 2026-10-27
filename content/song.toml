@@ -6,3 +6,5 @@ title = "We Will Know"
 style = "epic cinematic anthem, hybrid orchestral, massive choir, taiko and driving drums, soaring synth arpeggios, powerful male lead vocal with choir harmonies, triumphant, major key, 124 BPM, stadium singalong chorus, key change on final chorus, uplifting, awe, scientific wonder"
 negative_tags = "lo-fi, mumbled vocals, comedic, sad, acoustic ballad"
 vocal_gender = "m"
+# Not sent to Suno: load_song_spec() refuses lyrics containing any of these words (word-start, any case).
+banned_words = ["mind"]

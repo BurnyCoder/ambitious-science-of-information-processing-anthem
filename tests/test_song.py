@@ -15,13 +15,13 @@ from anthem.song import SpecError, generate_or_load_song, load_song_spec  # unit
 from anthem.suno_client import Track  # the normalized track type the fake returns
 
 
-def write_content(root, title="We Will Know", lyrics="[Chorus]\nWe will know"):
+def write_content(root, title="We Will Know", lyrics="[Chorus]\nWe will know", extra=""):
     """Local: create a minimal content/ folder.  Global: mirrors the real content/ layout."""
     content = root / "content"  # content dir under the project root
-    content.mkdir()  # fresh dir per test
+    content.mkdir(parents=True)  # fresh dir per test
     (content / "lyrics.txt").write_text(lyrics, encoding="utf-8")  # Suno-format lyrics
     (content / "song.toml").write_text(  # metadata in TOML (stdlib tomllib reads it)
-        f'title = "{title}"\nstyle = "epic cinematic anthem"\nnegative_tags = "lo-fi"\nvocal_gender = "m"\n',
+        f'title = "{title}"\nstyle = "epic cinematic anthem"\nnegative_tags = "lo-fi"\nvocal_gender = "m"\n{extra}',
         encoding="utf-8")
     return content  # path for load_song_spec
 
@@ -61,6 +61,19 @@ def test_load_song_spec_reads_toml_and_lyrics(tmp_path):
 def test_load_song_spec_enforces_documented_limits(tmp_path):
     with pytest.raises(SpecError, match="title"):  # V6 title max 80 chars
         load_song_spec(write_content(tmp_path, title="x" * 81))
+
+
+def test_load_song_spec_rejects_banned_words(tmp_path):
+    banned = 'banned_words = ["mind"]\n'  # content/song.toml list, checked before any paid call
+    with pytest.raises(SpecError, match="mind"):  # any case, any suffix ("Mind's", "minds")
+        load_song_spec(write_content(tmp_path / "bad", lyrics="[Verse]\nA Mind's eye", extra=banned))
+    spec = load_song_spec(write_content(tmp_path / "ok", lyrics="[Verse]\nIt finds the minima", extra=banned))
+    assert "minima" in spec.lyrics  # only whole-word prefixes match, so "minima" is allowed
+
+
+def test_real_content_has_no_banned_words():
+    from pathlib import Path  # repo root is two levels above this test file
+    load_song_spec(Path(__file__).resolve().parents[1] / "content")  # raises SpecError if the guard is violated
 
 
 def test_generate_then_reuse_cache(tmp_path):
