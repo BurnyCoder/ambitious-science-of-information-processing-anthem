@@ -18,6 +18,8 @@ uv run python scripts/validate_beats.py   # experiment 02 (beat tracker vs groun
 uv run --group analysis python scripts/validate_alignment.py  # experiment 03 (needs the analysis group)
 uv run --group analysis python scripts/validate_onset_offset.py  # experiment 05 (Demucs + MMS_FA; run twice, see below)
 uv run --group analysis python scripts/validate_lyric_edit.py    # experiment 06 (checks the --replace-lines edit)
+uv run --group analysis python scripts/make_figures.py           # reports/figures/ (fig1 needs out/stills from a verify run)
+cd reports && pandoc paper.md -o paper.pdf --pdf-engine=xelatex -V mainfont=Cambria -V monofont=Consolas -V geometry:margin=1in
 ```
 
 ## Invariants: do not break these

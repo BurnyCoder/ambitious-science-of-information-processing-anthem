@@ -12,9 +12,9 @@ abstract: |
   1. On synthetic click tracks with known beats (12 tempos × 2 noise levels × 2 hop sizes × 5 seeds), the beat tracker at hop 256 placed beats within 15–19 ms (clean) of the truth. It failed the pre-registered criterion at 170 BPM through a half-tempo error. At librosa's default hop 512, the tempo estimates were quantized to errors of up to 3.55 BPM.
   2. Against an independent recogniser (faster-whisper), the provider's word onsets agreed to a median of 0.235 s (take 1) and 0.172 s (take 2) over 393 and 401 matched words. Random ±1 s shifts gave 0.59 s and 0.50 s, so the agreement is not an artifact of the metric.
   3. A plausible-looking timing-repair heuristic was **falsified** by the pre-registered test: on 43 words it moved onsets a median of 1.14 s *away* from the reference. A minimal post-hoc rule now touches only 2 grossly misplaced words.
-  4. A follow-up, also pre-registered, asked which system carries the Suno–Whisper lag. It separated the vocals (Demucs) and force-aligned the known lyrics on the vocal stem (MMS_FA). On the video's take, the provider's onsets were late by 0.137 s (95 % line-cluster CI 0.125–0.147 s, no drift over the song). Whisper was early by 0.080 s. The forced aligner was within 0.041 s of 34 blind hand-labelled onsets. The decision rule therefore shifted every word by −0.137 s, which cut the median error at the hand-labelled onsets from 0.233 s to 0.131 s (post hoc). The lag is take-specific: 0.061 s on the other take.
+  4. A follow-up, also pre-registered, asked which system carries the Suno–Whisper lag. It separated the vocals (Demucs) and force-aligned the known lyrics on the vocal stem (MMS_FA). On the take the video then used, the provider's onsets were late by 0.137 s (95 % line-cluster CI 0.125–0.147 s, no drift over the song). Whisper was early by 0.080 s. The forced aligner was within 0.041 s of 34 blind hand-labelled onsets. The decision rule therefore shifted every word by −0.137 s, which cut the median error at the hand-labelled onsets from 0.233 s to 0.131 s (post hoc). The lag is take-specific: 0.061 s on the other take.
+  5. Every 1920×1080, 30 fps render matched the song's duration to within 0.03 s (7213 frames for the original take, 7212 for the edited one).
   6. To take one word ("mind") out of the lyrics, one line was re-sung with the provider's replace-section operation. The line was fixed: an independent recogniser now hears the new word, and coverage stayed at 430/430. A pre-registered check that the rest of the take was untouched **failed**. The provider regenerated about 30 s around an 11.6 s window, shifted the whole file by 17 ms, and returned word times copied from the parent take. Re-running exp05's rule on the edited take gave a lag of 0.156 s [0.144, 0.167], which the video now corrects.
-  5. The final 1920×1080, 30 fps render (7213 frames) matched the song's duration to 0.03 s.
 
   We report these as properties of this pipeline and this song. They are not general claims about the music model.
 ---
@@ -219,6 +219,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - Container duration 240.45 s against a 240.42 s song, which passed the ≤ 0.5 s criterion.
 - The v1.0.0 render took 347.3 s (217.6 MB) on a 16-thread desktop with 8 headless-Chrome tabs; an earlier render with v1 timings took 453.6 s.
 - The v1.1.0 render with the exp05 offset took 485.0 s (217.8 MB), had the same container duration, and passed the same checks.
+- The v1.2.0 render of the edited take (exp06) with the −0.156 s offset has 7212 frames and a container duration of 240.405 s for a 240.41 s song. It took 467.8 s (218.0 MB) and passed the same checks. Its audio track is 23.0 ms later than the analysed MP3 decoding.
 - The MP4's audio track is 11.0 ms later than the analysed MP3 decoding (cross-correlation, first 60 s), a third of a frame. It is reported, not corrected.
 - The automated check passed.
 
@@ -270,7 +271,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - The pipeline renders a valid, song-length video deterministically.
 - Its beat times are accurate to under one frame on click tracks between 70 and 160 BPM.
 - Its word onsets agree with an independent recogniser to about a quarter of a second (median), clearly better than chance. Most of that disagreement is a constant 0.17–0.23 s lag, around which relative timing agrees to about 0.08 s (post-hoc).
-- That lag is shared between the two systems. Against a lyrics-aware forced alignment of the separated voice, the provider is 0.137 s late on the video's take and Whisper is 0.080 s early. A pre-registered global correction of −0.137 s moved 94 % of independently hand-labelled line starts closer.
+- That lag is shared between the two systems. Against a lyrics-aware forced alignment of the separated voice, the provider is 0.137 s late on the original video take and Whisper is 0.080 s early. A pre-registered global correction of −0.137 s moved 94 % of independently hand-labelled line starts closer.
 - The video's line was changed with a one-call section replacement. Because the provider shifted the file and copied its old word times, the correction had to be re-estimated (−0.156 s) and could not be carried over.
 
 **What it does not support.**
