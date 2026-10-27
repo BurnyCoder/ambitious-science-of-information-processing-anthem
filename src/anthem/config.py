@@ -79,6 +79,6 @@ def load_settings(env_file: Path | str = ".env", root: Path | str | None = None,
         callback_url=env.get("SUNO_CALLBACK_URL", "https://example.com/suno-callback"),  # placeholder
         fps=int(env.get("VIDEO_FPS", "30")),  # 30 fps -> 7200 frames for a 4 min song
         render_concurrency=int(env.get("RENDER_CONCURRENCY", "8")),  # Remotion's default is half the CPU threads
-        word_offset_s=float(env.get("VIDEO_WORD_OFFSET_S", "0")),  # exp05 measured -0.137 s for take 1
+        word_offset_s=float(env.get("VIDEO_WORD_OFFSET_S", "0")),  # exp06: -0.156 s for the edited take (exp05: -0.137 s for its parent)
         root=root,
     )
