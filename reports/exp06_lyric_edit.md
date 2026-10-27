@@ -88,3 +88,55 @@ The intent of a was to catch a segment-only response, the ambiguity in the docs;
 3. exp05's `decide_offset` (D1–D4, unchanged) turns these into the offset.
 
 The rationale for the transfer: where the new file is the parent audio shifted by a constant, a physical onset moves by exactly that constant. If the rule returns 0, or a basis other than `mms`, the render stops and this is reported.
+
+## Results
+
+Raw data: [`reports/data/exp06_lyric_edit.json`](data/exp06_lyric_edit.json). Script: `scripts/validate_lyric_edit.py`. Logs: `logs/run_20261027_202605.log` (the paid call), `logs/run_20261027_203059.log` (resume) and `logs/exp06_*.log`. Figure: [fig5](figures/fig5_lyric_edit.png).
+
+![exp06: where the audio changed, and per-line Suno − MMS](figures/fig5_lyric_edit.png)
+
+**Cost.** The balance read 987 before the call, 981 after it and 980 after the resume. The read is truncated to an integer by `SunoClient.credits()`, so each figure is ±1. The replacement, including two timestamped-lyrics fetches, therefore cost about 6 credits. The resume re-fetched both takes' timings for about 1 more: it skips the replace call, not the timing calls.
+
+### Checks
+
+| # | Check | Result | Pass |
+|---|---|---|---|
+| a | Full-length take | `303ab1c3` 240.40 s. `5c8aa2a0` (469.52 s) dropped per amendment 1 | yes (per take) |
+| b | Kept audio unchanged | lag **−17.0 ms** in both regions. r = 0.637 (0–24.97 s), 0.962 (38.6–239.4 s). Lag-aligned per-second r < 0.9 exactly in seconds 16–46 | **no** |
+| c | Suno's times outside the window | median \|Δ\| = 0.000 s, max 0.339 s, n = 401 words | yes |
+| d | Sung word in the window (Whisper `small.en`) | new: "… and out of it a **thing** that learns to answer why …". Control (parent): "… and out of it are **mine** and learns …" | yes ("mind" absent; "thing" heard) |
+| e | Alignment coverage | 1.0 (430/430, 2 repaired) | yes |
+
+The control in d did not produce the literal token "mind": Whisper heard "mine". Its value as a positive control is therefore weaker than planned. Still, the parent's window has an /m/-initial word where the new take has "thing".
+
+### Offset re-estimate (amendment 2: exp05's rule on the new take)
+
+| | Parent take `89f89b1d` (exp05) | Edited take `303ab1c3` (exp06) |
+|---|---|---|
+| δ = median(Suno − MMS), 405 lead words, line-cluster 95 % CI | +0.137 s [0.125, 0.147] | **+0.156 s [0.144, 0.167]** |
+| word-level bootstrap | — | [0.148, 0.162] |
+| δ, MMS-confident words only (score ≥ 0.5) | — | +0.148 s [0.138, 0.160] (n = 193) |
+| drift over the song (Spearman ρ, time vs d) | none | ρ = −0.02, p = 0.65 |
+| δ inside / outside the window | — | +0.157 / +0.154 s |
+| Whisper − MMS | −0.080 s | −0.080 s [−0.080, −0.070] |
+| anchors used | 34 | 26 transferred: the 8 in seconds 16–46 failed the local check; the kept ones all have local lag −17.0 ms, r ≥ 0.952 |
+| α_S = median(Suno − hand onset) | +0.220 s (+0.204 s on the same 26) | +0.221 s [0.162, 0.377] |
+| β = median(MMS − hand onset) | +0.041 s (+0.041 s on the same 26) | +0.035 s [−0.011, 0.075] |
+| D1–D4 | all true | all true |
+| **Offset** | −0.137 s | **−0.156 s** (basis `mms`) |
+
+The shift is accounted for. Suno's word times are copies of the parent's, but the new file plays 17 ms earlier, so Suno − MMS grows by 17–20 ms (MMS frames are 20 ms). On the same 26 anchors, α_S grows by 17 ms, and β, which compares two audio-derived onsets, stays within one MMS frame.
+
+### Conclusions
+
+- **Existence claim (causal intervention on one line).** A single replace-section call re-sang the targeted line, and an independent recogniser now hears "thing" there. Coverage, structure and tempo (129.2 BPM, 507 beats) were kept.
+- **The hypothesis "the rest of the take is untouched" is falsified** as stated (check b). Suno regenerated about 46 − 16 = 30 s, not the requested 11.6 s: roughly 10 s of blending on each side. It also shifted the whole file by 17 ms. Inside the blend zone the vocal phrasing was kept (MMS onsets move by one frame on every line), and Whisper recovers the written lyrics there.
+- **Suno's timestamped lyrics for an edited take are not re-measured outside the window.** They are byte-identical to the parent's even though the audio moved. Any per-take timing calibration must therefore be redone after an edit, which is what amendment 2 did.
+- **Video.** It uses `303ab1c3` with `VIDEO_WORD_OFFSET_S = −0.156`.
+
+### Learnings
+
+- **Pre-specifying a duration check paid off,** but it assumed the failure mode in the docs (a segment-only response). The real failure was a 469.52 s take that sings the song twice. Checks on paid API output should test "is this the song?" per take, rather than all-or-nothing.
+- **The window limit (≥ 10 s) forced re-singing three lines to change one word,** and Suno blends a further ~10 s on each side. A one-word edit costs ~30 s of regenerated audio.
+- **Resuming should not re-fetch timings that are already on disk.** It cost about 1 credit here.
+- **Waveform correlation needs the lag first.** The first per-second profile was computed at lag 0 and looked like the whole song had changed. A 17 ms shift decorrelates 16 kHz waveforms block by block. The script now aligns by the global lag before profiling.
