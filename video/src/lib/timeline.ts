@@ -10,8 +10,13 @@
 export type Word = {text: string; startS: number; endS: number; backing: boolean}; // one karaoke unit
 export type Line = {index: number; sectionIndex: number; text: string; startS: number; endS: number; backing: boolean; words: Word[]}; // one caption
 export type Section = {index: number; label: string; kind: string; occurrence: number; scene: string; startS: number; endS: number}; // one scene slot
+export type Badge = 'released data' | 'published numbers' | 'live math' | 'from the paper' | 'schematic'; // provenance label
+export type Vignette = {
+	id: string; slot: string; sectionIndex: number; lineIndex: number; startS: number; endS: number; // what/where/when
+	title: string; text: string; badge: Badge; cite: string; url: string; // what it says and where it comes from
+}; // one figure card (content/vignettes.toml placed by anthem/vignettes.py)
 export type Timeline = {
-	version: number; // schema version (1)
+	version: number; // schema version (2: adds slots + vignettes)
 	title: string; // song title
 	fps: number; // frames per second
 	audio: string; // file name inside public/
@@ -25,7 +30,12 @@ export type Timeline = {
 	energy: number[]; // RMS per frame, 0..1
 	onset: number[]; // onset strength per frame, 0..1
 	meta: Record<string, unknown>; // provenance (task/take ids, alignment stats)
+	slots: Record<string, [number, number, number, number]>; // card boxes [x, y, w, h] in frame pixels
+	vignettes: Vignette[]; // figure cards sorted by startS
 };
+
+/** Local: cards on screen at t (a card in a slot ends where the next one in that slot starts). Global: VignetteLayer. */
+export const activeVignettes = (tl: Timeline, t: number): Vignette[] => tl.vignettes.filter((v) => v.startS <= t && t < v.endS);
 
 /** Local: index of the last element <= t in a sorted array (-1 if none). Global: shared binary search. */
 export const lastIndexAtOrBefore = (sorted: number[], t: number): number => {

@@ -20,7 +20,8 @@ from pathlib import Path  # paths
 
 from anthem.alignment import TimedWord  # karaoke words
 from anthem.audio_analysis import AudioAnalysis  # beats + energy
-from anthem.lyrics import Section  # song structure
+from anthem.lyrics import Section, section_keys  # song structure + config-key lookup
+from anthem.vignettes import load_vignettes, place_vignettes, vignette_coverage  # illustration track
 
 log = logging.getLogger(__name__)  # module logger
 
@@ -53,7 +54,7 @@ def load_scene_map(path: Path) -> dict[str, str]:
 
 def _scene_for(section: Section, scene_map: dict[str, str]) -> str:
     """Local: "<kind> <occurrence>" first, then "<kind>", then "default".  Global: repeated choruses share a scene."""
-    return scene_map.get(f"{section.kind} {section.occurrence}") or scene_map.get(section.kind) or "default"
+    return next((scene_map[k] for k in section_keys(section.kind, section.occurrence) if k in scene_map), "default")
 
 
 def _r(x: float) -> float:
@@ -61,8 +62,9 @@ def _r(x: float) -> float:
 
 
 def build_timeline(sections: list[Section], words: list[TimedWord], audio: AudioAnalysis, fps: int,
-                   title: str, scene_map: dict[str, str], meta: dict | None = None) -> dict:
-    """Local: assemble the timeline dict.  Global: everything the video needs, in seconds + frame counts."""
+                   title: str, scene_map: dict[str, str], meta: dict | None = None, vignettes: dict | None = None) -> dict:
+    """Local: assemble the timeline dict; `vignettes` is load_vignettes()'s spec (None = no cards).
+    Global: everything the video needs, in seconds + frame counts."""
     starts = []  # (section, raw start) for sections that contain timed words
     for sec in sections:
         sec_words = [w for w in words if w.section_index == sec.index]  # its words
@@ -89,8 +91,8 @@ def build_timeline(sections: list[Section], words: list[TimedWord], audio: Audio
         line["startS"], line["endS"] = line["words"][0]["startS"], line["words"][-1]["endS"]
         line["text"] = " ".join(x["text"] for x in line["words"])
         line["backing"] = all(x["backing"] for x in line["words"])  # whole line is a backing echo
-    return {
-        "version": 1, "title": title, "fps": fps, "audio": "anthem.mp3",
+    timeline = {
+        "version": 2, "title": title, "fps": fps, "audio": "anthem.mp3",
         "durationS": _r(audio.duration_s), "durationInFrames": int(round(audio.duration_s * fps)),
         "tempoBpm": _r(audio.tempo_bpm), "sections": out_sections,
         "lines": [lines[k] for k in sorted(lines)],
@@ -98,6 +100,9 @@ def build_timeline(sections: list[Section], words: list[TimedWord], audio: Audio
         "energy": [_r(v) for v in audio.energy], "onset": [_r(v) for v in audio.onset],
         "meta": meta or {},
     }
+    timeline["slots"] = vignettes["slots"] if vignettes else {}  # named card boxes [x, y, w, h]
+    timeline["vignettes"] = place_vignettes(vignettes, timeline) if vignettes else []  # timed figure cards
+    return timeline
 
 
 def write_timeline(timeline: dict, audio_src: Path, public_dir: Path) -> Path:
@@ -139,11 +144,15 @@ def produce_timeline(settings, forced_take: str | None = None) -> Path:
     words = shift_words(words, settings.word_offset_s)  # exp05 onset correction (0 by default)
     log.info("Alignment of take %s: %s; word offset %+.3f s", take.id, stats, settings.word_offset_s)
     audio = analyze_audio(take.audio_path, settings.fps)  # rhythm + loudness
+    banned = tomllib.loads((settings.content_dir / "song.toml").read_text(encoding="utf-8")).get("banned_words", [])
     timeline = build_timeline(sections, words, audio, settings.fps, spec.title,
                               load_scene_map(settings.content_dir / "scenes.toml"),
                               meta={"taskId": song.task_id, "takeId": take.id, "alignment": stats,
                                     "wordOffsetS": settings.word_offset_s,
-                                    "hootCer": raw.get("hootCer"), "takeScores": scores})
+                                    "hootCer": raw.get("hootCer"), "takeScores": scores},
+                              vignettes=load_vignettes(settings.content_dir / "vignettes.toml", banned))  # cards
     timeline["meta"]["cutToBeatErrorS"] = cut_to_beat_error(timeline)  # beat-sync metric
-    log.info("Mean scene-cut distance to nearest beat: %s s", timeline["meta"]["cutToBeatErrorS"])
+    timeline["meta"]["vignetteCoverage"] = vignette_coverage(timeline)  # share of sung lines with a card (target 1.0)
+    log.info("Mean scene-cut distance to nearest beat: %s s; %d cards cover %s of sung lines",
+             timeline["meta"]["cutToBeatErrorS"], len(timeline["vignettes"]), timeline["meta"]["vignetteCoverage"])
     return write_timeline(timeline, take.audio_path, settings.video_dir / "public")
