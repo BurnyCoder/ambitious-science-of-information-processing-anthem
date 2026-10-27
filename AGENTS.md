@@ -17,11 +17,13 @@ cd video && npm run studio                # interactive Remotion Studio (http://
 uv run python scripts/validate_beats.py   # experiment 02 (beat tracker vs ground truth)
 uv run --group analysis python scripts/validate_alignment.py  # experiment 03 (needs the analysis group)
 uv run --group analysis python scripts/validate_onset_offset.py  # experiment 05 (Demucs + MMS_FA; run twice, see below)
+uv run --group analysis python scripts/validate_lyric_edit.py    # experiment 06 (checks the --replace-lines edit)
 ```
 
 ## Invariants: do not break these
 
-- **Never spend Suno credits by accident.** `uv run anthem` reuses `data/song/song.json`. Only `--regenerate-song` (or deleting the cache) pays for a new generation. Tests use `httpx.MockTransport` or fakes.
+- **Never spend Suno credits by accident.** `uv run anthem` reuses `data/song/song.json`. Only `--regenerate-song`, `--replace-lines` or deleting the cache pays for anything. `--resume-task` makes no new replace call, but it re-fetches word timings, which cost about 1 credit for two takes. Tests use `httpx.MockTransport` or fakes.
+- **No "mind" in the lyrics.** The author's rule is enforced by `banned_words` in `content/song.toml`; `load_song_spec` refuses violating lyrics before any paid call.
 - **Never commit `.env` or log the key.** The key exists only in the `Authorization` header built inside `SunoClient._request`. CDN downloads deliberately send no auth header. `tests/test_suno_client.py::test_api_key_is_never_logged` guards this.
 - **`timeline.json` is a contract.** If you change its shape in `src/anthem/timeline.py`, update `video/src/lib/timeline.ts` and `docs/architecture.md` in the same change.
 - **Determinism.** Remotion renders frames in parallel tabs, so every visual must be a pure function of `useCurrentFrame()`. Use `random(seed)` from `remotion`, never `Math.random()`, and never R3F `useFrame`.
