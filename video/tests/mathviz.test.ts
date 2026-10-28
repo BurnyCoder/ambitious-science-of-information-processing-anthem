@@ -5,7 +5,7 @@
  */
 import {test} from 'node:test'; // built-in runner https://nodejs.org/api/test.html
 import assert from 'node:assert/strict'; // assertions
-import {chinchillaLoss, histogram, marchenkoPastur, prng, randomCosines, randomNetOutputs, randomReluNet, reluPattern, saxeMode} from '../src/lib/mathviz.ts';
+import {chinchillaLoss, criticalPoint, hessian2, histogram, marchenkoPastur, prng, randomCosines, randomNetOutputs, randomReluNet, reluPattern, saxeMode, sym2Eig} from '../src/lib/mathviz.ts';
 
 const mean = (v: number[]) => v.reduce((a, b) => a + b, 0) / v.length; // sample mean
 const variance = (v: number[]) => mean(v.map((x) => (x - mean(v)) ** 2)); // sample variance
@@ -52,4 +52,23 @@ test('a second ReLU layer refines the regions of the first', () => {
 	const ids = (d: 1 | 2) => new Set(Array.from({length: 60 * 60}, (_, i) => reluPattern(net, (i % 60) / 10 - 3, Math.floor(i / 60) / 10 - 3, d)));
 	assert.ok(ids(2).size >= ids(1).size); // composition can only split regions
 	assert.deepEqual(histogram([0, 0.5, 0.99, 2], 0, 1, 2), [1, 2]); // helper: [0,.5) and [.5,1)
+});
+
+test('sym2Eig diagonalizes a symmetric 2x2 matrix', () => {
+	const {values, vectors} = sym2Eig([[2, 1], [1, 2]]); // eigenvalues 1 and 3, eigenvectors (1,-1)/√2 and (1,1)/√2
+	assert.ok(Math.abs(values[0] - 1) < 1e-12 && Math.abs(values[1] - 3) < 1e-12); // ascending
+	vectors.forEach(([x, y], i) => { // A v = λ v
+		assert.ok(Math.abs(2 * x + y - values[i] * x) < 1e-12 && Math.abs(x + 2 * y - values[i] * y) < 1e-12);
+		assert.ok(Math.abs(Math.hypot(x, y) - 1) < 1e-12); // unit length
+	});
+	assert.deepEqual(sym2Eig([[-1, 0], [0, 4]]).values, [-1, 4]); // already diagonal
+});
+
+test('hessian2 and criticalPoint find the saddle of x² − y² and the minimum of a bowl', () => {
+	const saddle = (x: number, y: number) => (x - 1) ** 2 - (y + 2) ** 2; // saddle at (1, -2), Hessian diag(2, -2)
+	const p = criticalPoint(saddle, [0.3, -1.1])!;
+	assert.ok(Math.abs(p[0] - 1) < 1e-6 && Math.abs(p[1] + 2) < 1e-6);
+	const {values} = sym2Eig(hessian2(saddle, p[0], p[1]));
+	assert.ok(Math.abs(values[0] + 2) < 1e-4 && Math.abs(values[1] - 2) < 1e-4); // one negative, one positive
+	assert.equal(criticalPoint((x, y) => Math.exp(x) + y, [0, 0]), null); // no critical point -> null
 });

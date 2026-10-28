@@ -1,17 +1,27 @@
 /**
  * Pre-chorus 1 — gradient descent through a non-convex landscape into flat minima.
- * Local: a toy 2D loss surface (one wide basin, one sharp narrow basin, a saddle, ripples)
+ * Local: a toy 2D loss surface (one wide basin, one sharp narrow basin, saddles, ripples)
  * drawn as a height-colored point lattice; 28 noisy-gradient-descent particles, whose
- * trajectories are precomputed deterministically, descend with glowing trails.
+ * trajectories are precomputed deterministically, descend with glowing trails. Concrete layers on the same surface:
+ *  - "saddle": the surface's own saddle between the basins (found by Newton's method) sprouts its two Hessian
+ *    eigen-axes and eigen-bars, labelled with the computed eigenvalues;
+ *  - "flat": both minima are shaken by ±ρ; the live ΔL and λmax show why the wide one is "flat" (SAM's sharpness);
+ *  - "generalize": the released grokking train/test curves and the double-descent curve rise as glowing ribbons
+ *    as glowing ribbons on two walls standing at the sides of the surface;
+ *  - "inside": the camera dives into the particle that reached the wide basin (into the chorus).
  * Global: illustrates the lyric "past every saddle, to valleys flat and wide"; the flat-minima
  * <-> generalization link is the hypothesis of Hochreiter & Schmidhuber (1997, Neural Computation
- * "Flat Minima") and Keskar et al. (2017, ICLR, arXiv:1609.04836). This surface is illustrative only.
+ * "Flat Minima") and Keskar et al. (2017, ICLR, arXiv:1609.04836). This surface is illustrative only;
+ * the numbers on it are computed from it, the ribbons are released data (Nanda et al. 2023; Nakkiran et al. 2019).
  */
 import React, {useMemo} from 'react'; // JSX + memo
 import {AbsoluteFill, random} from 'remotion'; // layer + seeded RNG
-import {beatPulse} from '../lib/timeline'; // beat kick
-import {COLORS, useSceneClock} from '../lib/theme'; // look + clock
-import {CameraRig, GlowLines, GlowPoints, Stage, rgb} from '../components/three'; // 3D blocks
+import {beatPulse, wordTime} from '../lib/timeline'; // beat kick + lyric triggers
+import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
+import {criticalPoint, hessian2, sym2Eig} from '../lib/mathviz'; // Newton + Hessian eigen-decomposition
+import {CameraRig, GlowLines, GlowPoints, Stage, projectToScreen, rgb} from '../components/three'; // 3D blocks
+import grok from '../../public/vignettes/grokking.json'; // Nanda et al. mainline run (train/test loss per epoch)
+import dd from '../../public/vignettes/double_descent.json'; // Nakkiran et al. ResNet18 width sweep
 import type {SceneProps} from './types'; // contract
 
 const N = 90; // lattice resolution per side
@@ -20,8 +30,10 @@ const RUNS = 28; // SGD particles
 const STEPS = 400; // optimizer steps per particle
 const TRAIL = 30; // trail length in steps
 const LR = 0.5; // learning rate η (below 2/curvature of the sharp basin)
+const RHO = 0.8; // perturbation radius ρ, as in SAM's sharpness max_{‖ε‖≤ρ} L(w+ε) − L(w) (Foret et al. 2021, arXiv:2010.01412)
+const FOV = 50; // camera field of view (shared with the label projection)
 
-/** Local: toy loss L(x, y). Global: same function for surface heights and gradients. */
+/** Local: toy loss L(x, y). Global: same function for surface heights, gradients, critical points and labels. */
 const loss = (x: number, y: number): number =>
 	2.8 - 2.4 * Math.exp(-((x - 5) ** 2 + (y - 3) ** 2) / 30) // wide, flat basin
 	- 2.0 * Math.exp(-((x + 6) ** 2 + (y + 5) ** 2) / 2.5) // sharp, narrow basin
@@ -35,9 +47,45 @@ const grad = (x: number, y: number): [number, number] => {
 	return [(loss(x + h, y) - loss(x - h, y)) / (2 * h), (loss(x, y + h) - loss(x, y - h)) / (2 * h)];
 };
 
+/** Local: the surface's own critical points (Newton from nearby seeds), so every label is computed from L. */
+const SADDLE = criticalPoint(loss, [-3.7, -2.3])!; // the saddle on the path between the two basins
+const WIDE = criticalPoint(loss, [4.8, 1.5])!; // wide basin minimum
+const SHARP = criticalPoint(loss, [-5.9, -4.9])!; // sharp basin minimum
+const EIG = sym2Eig(hessian2(loss, ...SADDLE)); // one negative (escape) and one positive eigenvalue
+const lmax = (p: [number, number]) => sym2Eig(hessian2(loss, ...p)).values[1]; // largest curvature at a minimum
+const BASINS = [{p: SHARP, name: 'sharp', color: COLORS.magenta, l: lmax(SHARP)}, {p: WIDE, name: 'flat', color: COLORS.lime, l: lmax(WIDE)}];
+const surf = (x: number, y: number, lift = 0.15): [number, number, number] => [x, loss(x, y) * 2 + lift, y]; // world point on the surface (x2 height)
+
+/** Local: a polyline as segment pairs, drawn `n` times with a small vertical offset so it reads as a ribbon. */
+const ribbon = (pts: [number, number, number][], color: string, k: number) => {
+	const p: number[] = [], c: number[] = [];
+	for (const dy of [-0.07, 0, 0.07]) for (let i = 1; i < pts.length; i++) {
+		p.push(pts[i - 1][0], pts[i - 1][1] + dy, pts[i - 1][2], pts[i][0], pts[i][1] + dy, pts[i][2]);
+		c.push(...rgb(color, k), ...rgb(color, k));
+	}
+	return {p, c};
+};
+const EPOCHS = Math.log10(Math.max(...grok.train.map(([e]) => e), ...grok.test.map(([e]) => e)) + 1); // log10 of the last epoch
+const WALL = 12.5; // the ribbon walls stand at x = ±WALL, from z = 6 (near the camera) to z = −10 (far)
+const zAt = (f: number) => 6 - 16 * f; // fraction along the wall -> world z
+const grokPts = (s: number[][]) => s.map(([e, l]) => [-WALL, 7.2 + 0.5 * Math.log10(Math.max(l, 1e-9)), zAt(Math.log10(e + 1) / EPOCHS)] as [number, number, number]); // log-log; reads left -> right
+const ddPts = (v: number[]) => v.map((y, i) => [WALL, 3.6 + 9 * y, zAt(1 - (dd.k[i] - 1) / (dd.k[dd.k.length - 1] - 1))] as [number, number, number]); // linear width k; reads left -> right
+const RIBBONS = [ // `tag`: index of the point that carries the label
+	{pts: grokPts(grok.train), color: COLORS.cyan, label: 'train', at: 0, tag: 0.45},
+	{pts: grokPts(grok.test), color: COLORS.magenta, label: 'test', at: 0, tag: 0.45},
+	{pts: ddPts(dd.trainMean), color: COLORS.cyan, label: 'train', at: 0.8, tag: 1},
+	{pts: ddPts(dd.testMean), color: COLORS.amber, label: 'test', at: 0.8, tag: 1},
+];
+
 export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {frame, t, local, progress} = useSceneClock(section); // time
 	const pulse = beatPulse(tl.beats, t); // beat kick
+	const at = (re: RegExp, frac: number) => wordTime(tl, section, re) ?? section.startS + frac * (section.endS - section.startS); // lyric trigger
+	const saddle = smooth((t - at(/saddle/i, 0.3)) / 0.7); // eigen-axes grow
+	const flat = smooth((t - at(/flat/i, 0.4)) / 0.5); // basins shake
+	const gen = at(/generalize/i, 0.55); // ribbons draw from here
+	const insideAt = at(/inside/i, 0.85);
+	const dive = smooth((t - insideAt) / Math.max(0.5, section.endS - insideAt)); // camera dive into the winning particle
 	const surface = useMemo(() => { // static lattice: positions + height colors
 		const pos = new Float32Array(N * N * 3);
 		const col = new Float32Array(N * N * 3);
@@ -66,8 +114,12 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 		}
 		return path;
 	}), []);
+	const diver = useMemo(() => runs.reduce((b, p, r) => { // the particle that ends closest to the wide minimum
+		const d = (q: [number, number, number][]) => Math.hypot(q[STEPS - 1][0] - WIDE[0], q[STEPS - 1][2] - WIDE[1]);
+		return d(p) < d(runs[b]) ? r : b;
+	}, 0), [runs]);
+	const step = Math.min(STEPS - 1, Math.floor(Math.pow(progress, 0.8) * STEPS)); // ease: fast start, settle
 	const {ppos, pcol, tpos, tcol} = useMemo(() => { // per-frame particle + trail arrays
-		const step = Math.min(STEPS - 1, Math.floor(Math.pow(progress, 0.8) * STEPS)); // ease: fast start, settle
 		const ppos = new Float32Array(RUNS * 3);
 		const pcol = new Float32Array(RUNS * 3);
 		const tpos = new Float32Array(RUNS * TRAIL * 6);
@@ -87,15 +139,77 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 		return {ppos, pcol, tpos, tcol};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [frame]);
+	const shake = local * 5; // direction angle φ of the ±ρ perturbation
+	const probes = BASINS.map((b) => { // perturbed point ε = ρ(cos φ, sin φ) on each basin
+		const q: [number, number] = [b.p[0] + RHO * flat * Math.cos(shake), b.p[1] + RHO * flat * Math.sin(shake)];
+		return {...b, q, dL: loss(...q) - loss(...b.p)};
+	});
+	const extras = useMemo(() => { // eigen-axes, eigen-bars, shake rings, ribbons (segment pairs)
+		const p: number[] = [], c: number[] = [];
+		const add = (r: {p: number[]; c: number[]}) => { p.push(...r.p); c.push(...r.c); };
+		EIG.vectors.forEach((v, i) => { // the two Hessian eigen-directions, following the surface
+			const len = 3.5 * saddle, col = EIG.values[i] < 0 ? COLORS.magenta : COLORS.cyan;
+			add(ribbon(Array.from({length: 25}, (_, k) => surf(SADDLE[0] + (k / 12 - 1) * len * v[0], SADDLE[1] + (k / 12 - 1) * len * v[1], 0.3)), col, 1.6));
+			const [x, y, z] = surf(SADDLE[0] + 0.25 * (i * 2 - 1), SADDLE[1], 0.2); // eigen-bar: height ∝ |λ|
+			for (const dx of [-0.08, 0, 0.08]) { p.push(x + dx, y, z, x + dx, y + 5 * Math.abs(EIG.values[i]) * saddle, z); c.push(...rgb(col, 1.8), ...rgb(col, 1.8)); }
+		});
+		probes.forEach((b) => { if (flat > 0) add(ribbon(Array.from({length: 33}, (_, k) => surf(b.p[0] + RHO * Math.cos(k * Math.PI / 16), b.p[1] + RHO * Math.sin(k * Math.PI / 16), 0.25)), b.color, 1.2)); }); // ‖ε‖ = ρ ring
+		RIBBONS.forEach((r) => { const d = smooth((t - gen - r.at) / 1.6); if (d > 0) add(ribbon(r.pts.slice(0, Math.max(2, Math.ceil(d * r.pts.length))), r.color, 1.5)); });
+		return {p: new Float32Array(p), c: new Float32Array(c)};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [frame]);
+	const ball = new Float32Array(probes.flatMap((b) => surf(...b.q, 0.35))); // the shaken weights
+	const ballCol = new Float32Array(probes.flatMap((b) => rgb(b.color, 1.8 + pulse)));
 	const theta = 0.6 + local * 0.08; // slow orbit
+	const head = runs[diver][step]; // the diver's current position
+	const orbit: [number, number, number] = [Math.cos(theta) * 26, 15 - progress * 4, Math.sin(theta) * 26];
+	const cam = orbit.map((o, i) => o + (head[i] + [0, 2.2, 3.2][i] - o) * dive) as [number, number, number]; // dive toward the particle
+	const target = [0, 1, 0].map((o, i) => o + (head[i] - o) * dive) as [number, number, number];
+	const proj = (p: [number, number, number]) => projectToScreen(p, cam, target, FOV); // 3D -> pixel
+	const live = (from: number, to: number) => smooth((t - from) / 0.5) * (1 - smooth((t - to) / 0.5)); // a callout's lifetime
+	/** Local: a label in the side margin (clear of the centre hero) with a dashed leader line to its 3D point.
+	 * x ≥ 110 and ≤ 1810 so the camera push (×1.08 about the centre) does not crop it. */
+	const callout = (key: string, p: [number, number, number], left: boolean, y: number, op: number, lines: [string, string][]) => {
+		const q = proj(p);
+		if (op <= 0 || !q.visible) return null;
+		const x = left ? 110 : 1530; // text column
+		return (
+			<g key={key} opacity={op}>
+				<line x1={q.x} y1={q.y} x2={left ? x + 290 : x - 12} y2={y - 6} stroke={lines[0][1]} strokeWidth={1.5} strokeDasharray="5 5" opacity={0.7} />
+				<circle cx={q.x} cy={q.y} r={6} fill={lines[0][1]} />
+				{lines.map(([txt, col], i) => <text key={i} x={x} y={y + i * 24} fill={col} fontFamily={FONTS.mono} fontSize={18} style={{textShadow: glow(col, 0.4)}}>{txt}</text>)}
+			</g>
+		);
+	};
+	const ribbonOp = (k: number) => smooth((t - gen - k) / 0.5) * (1 - dive);
+	const tagAt = (r: (typeof RIBBONS)[number]) => proj(r.pts[Math.round(r.tag * (r.pts.length - 1))]);
+	const flatAt = at(/flat/i, 0.4);
 	return (
 		<AbsoluteFill>
-			<Stage fov={50}>
-				<CameraRig position={[Math.cos(theta) * 26, 15 - progress * 4, Math.sin(theta) * 26]} target={[0, 1, 0]} />
+			<Stage fov={FOV}>
+				<CameraRig position={cam} target={target} />
 				<GlowPoints positions={surface.pos} colors={surface.col} size={0.22} opacity={0.9} />
 				<GlowLines positions={tpos} colors={tcol} opacity={0.9} />
+				<GlowLines positions={extras.p} colors={extras.c} opacity={0.95} />
 				<GlowPoints positions={ppos} colors={pcol} size={0.9 + 0.3 * pulse} />
+				<GlowPoints positions={ball} colors={ballCol} size={1.3 * flat} />
 			</Stage>
+			<svg width={1920} height={1080} style={{position: 'absolute'}}>
+				{callout('saddle', surf(SADDLE[0], SADDLE[1], 0.3), true, 250, live(at(/saddle/i, 0.3), gen) * (1 - dive), [
+					['saddle of this surface', COLORS.ink], ['∇L = 0 (Newton)', COLORS.dim],
+					[`Hessian λ₁ = ${EIG.values[0].toFixed(2)}`, COLORS.magenta], [`        λ₂ = +${EIG.values[1].toFixed(2)}`, COLORS.cyan]])}
+				{probes.map((b, i) => callout(b.name, surf(...b.p, 0.35), i === 0, 640, live(flatAt, insideAt) * (1 - dive), [
+					[`${b.name} minimum`, b.color], [`λmax = ${b.l.toFixed(2)}`, COLORS.ink], [`shake ‖ε‖ = ρ = ${RHO}`, COLORS.dim],
+					[`ΔL = ${b.dL >= 0 ? '+' : ''}${b.dL.toFixed(2)}`, b.color]]))}
+				{RIBBONS.map((r, i) => { const q = tagAt(r); return q.visible ? (
+					<text key={i} x={q.x + (i < 2 ? -10 : 10)} y={q.y + (r.label === 'test' ? -10 : 22)} fill={r.color} fontFamily={FONTS.mono} fontSize={16} textAnchor={i < 2 ? 'end' : 'start'}
+						opacity={ribbonOp(r.at + 1.2)} style={{textShadow: glow(r.color, 0.4)}}>{r.label}</text>) : null; })}
+				{[[`grokking · mod ${grok.config.p}`, 'Nanda et al. 2023 · log epochs', -WALL, 0], ['double descent · width k', 'Nakkiran et al. 2019 · test error', WALL, 0.8]].map(([a, b, x, k]) => {
+					const q = proj([x as number, 9.4, 6]);
+					return q.visible ? <g key={a as string} opacity={ribbonOp(k as number)}>
+						<text x={Math.min(1810, Math.max(110, q.x))} y={q.y} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={17} textAnchor={(x as number) < 0 ? 'start' : 'end'}>{a}</text>
+						<text x={Math.min(1810, Math.max(110, q.x))} y={q.y + 22} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={14} textAnchor={(x as number) < 0 ? 'start' : 'end'}>{b}</text></g> : null; })}
+			</svg>
 		</AbsoluteFill>
 	);
 };
