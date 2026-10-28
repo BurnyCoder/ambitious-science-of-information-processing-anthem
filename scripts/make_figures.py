@@ -9,6 +9,7 @@ and writes PNG figures to reports/figures/:
   fig5_lyric_edit.png    exp06: where replace-section changed the audio, and per-line Suno - MMS on both takes
   fig6_exp07.png         exp07: released grokking run, its Fourier spectrum, induction scores, density v1.3.0 vs v1.2.0
   fig7_exp08.png         exp08: density v1.4.0 vs v1.3.0, hero share over the song, cards docked per section
+  fig8_exp09.png         exp09: seconds each figure is shown (v1.4.0 hero vs v1.5.0), density v1.5.0 vs v1.4.0, the 0:14 window
 and the README images docs/img/s*.jpg (the verify stills) and docs/img/stage.jpg (six frames of out/anthem.mp4)
 Global context: every number plotted is read from the committed raw data, so figures are reproducible.
 Design notes (avoiding misleading plots): shared, labelled axes; log scale only where errors span 3 decades and it
@@ -233,9 +234,34 @@ def fig_exp08() -> None:
     plt.close(fig)
 
 
-SHOWCASE = [(33.6, "verse 1: GPT-2 ids of the sung line"), (53.7, "pre-chorus: the surface's own saddle, basins, released curves"),
-            (81.1, "chorus: the traced prompt -> Austin"), (99.7, "verse 2: the encyclopedia files the rung figures"),
-            (163.6, "verse 3: five pillars filled by their plots"), (206.7, "final chorus: do(circuit := c'), bits -> program")]  # (song time, caption; ASCII: PIL's default font)
+def fig_exp09() -> None:
+    """Local: exp09, (a) empirical CDF of the seconds each figure is the hero (v1.4.0) or on screen (v1.5.0), (b) paired
+    density v1.5.0 / v1.4.0 before the outro with the pre-specified margin, (c) the intro window 13-18 s against v1.3.0.
+    Global: what reports/exp09_unified.md tests and describes."""
+    base = json.loads((DATA / "exp09_v140_baseline.json").read_text(encoding="utf-8"))
+    uni = json.loads((DATA / "exp09_unified.json").read_text(encoding="utf-8"))
+    tl = json.loads((ROOT / "video" / "public" / "timeline.json").read_text(encoding="utf-8"))
+    fig, (a, b, c) = plt.subplots(1, 3, figsize=(17, 3.6), gridspec_kw={"width_ratios": [1, 1.6, 0.8]})
+    for xs, label, color in [([x["heroS"] for x in base["heroSecondsPerCard"]], "v1.4.0: seconds as the centre hero", "C3"),
+                             ([v["endS"] - v["startS"] for v in tl["vignettes"]], "v1.5.0: seconds on screen", "C2")]:
+        xs = np.sort(xs)
+        a.step(xs, np.arange(1, len(xs) + 1) / len(xs), where="post", color=color, label=f"{label} (n = {len(xs)})")
+    a.axvline(3, color="grey", lw=0.8, ls="--")
+    a.set(xlabel="seconds", ylabel="share of figures ≤ x", title="how long each figure is shown", xlim=(0, 9))
+    a.legend(fontsize=8, loc="lower right")
+    density_panel(b, DATA / "exp09_density.json", "v1.5.0", "v1.4.0", margin=0.10)
+    h4 = uni["H4"]
+    c.bar(h4["times"], h4["log2RatioVsV130"], color=["C2" if r >= 0 else "C3" for r in h4["log2RatioVsV130"]])
+    c.axhline(0, color="grey", lw=0.8)
+    c.set(xlabel="song time (s)", ylabel="log₂(PNG bytes v1.5.0 / v1.3.0)", title=f"0:13-0:18 window: median {h4['median']:+.2f}")
+    fig.tight_layout()
+    fig.savefig(FIG / "fig8_exp09.png", dpi=130)
+    plt.close(fig)
+
+
+SHOWCASE = [(15.5, "intro: the title became its GPT-2 tokens"), (53.7, "pre-chorus: panels wired to the surface's own saddle and basins"),
+            (95.5, "verse 2: the ladder stays visible; figures wired to their rungs"), (146.0, "verse 3: 'Limits' opens its block as it is sung"),
+            (190.0, "bridge: ONE SCIENCE OF INFORMATION stands alone"), (221.0, "outro: the flying rewind through the whole video")]  # (song time, caption; ASCII: PIL's default font)
 
 
 def readme_images() -> None:
@@ -268,6 +294,8 @@ if __name__ == "__main__":
         fig_exp07()
     if (DATA / "exp08_density.json").exists() and (DATA / "exp08_integration.json").exists():  # written by the exp08 scripts
         fig_exp08()
+    if (DATA / "exp09_density.json").exists() and (DATA / "exp09_unified.json").exists():  # written by the exp09 scripts
+        fig_exp09()
     if (ROOT / "out" / "anthem.mp4").exists():  # the README images come from the rendered video
         readme_images()
     print("figures written to", FIG)

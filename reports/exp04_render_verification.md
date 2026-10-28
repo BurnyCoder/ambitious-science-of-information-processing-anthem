@@ -27,7 +27,7 @@ Chorus, manifolds, theory and outro needed no layout fixes. The re-rendered stil
 
 Command (from `src/anthem/render.py`, logged in full): `npx remotion render src/index.ts Anthem out/anthem.mp4 --gl=angle --concurrency=8 --log=info`
 
-There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections), the sixth (before two label fixes found in its card stills) and the seventh (before the code-review fixes of PR #9) were not released; the eighth is v1.3.0. The ninth and tenth stage the cards as hero shots inside the scenes ([exp08](exp08_integration.md)); the ninth was rendered before the code-review fixes of the v1.4.0 PR, and the tenth is v1.4.0.
+There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections), the sixth (before two label fixes found in its card stills) and the seventh (before the code-review fixes of PR #9) were not released; the eighth is v1.3.0. The ninth and tenth stage the cards as hero shots inside the scenes ([exp08](exp08_integration.md)); the ninth was rendered before the code-review fixes of the v1.4.0 PR, and the tenth is v1.4.0. The eleventh puts the figures into their scenes' own layouts and adds the rewind; it is v1.5.0.
 
 | Render | Frames | Wall time | File size | Streams (ffprobe) | Duration (video / song) | Verify |
 |---|---|---|---|---|---|---|
@@ -41,6 +41,7 @@ There were three full renders: the first with repair v1 timings, the second with
 | 8 (illustration track + review fixes, v1.3.0) | 7212 | 441.3 s | 244.4 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 | 9 (hero shots + concrete scene layers; not released) | 7212 | 691.9 s | 263.0 MB | h264 1920×1080 30/1 + aac | not recorded (file replaced by render 10) / 240.41 s | **ok** |
 | 10 (hero shots + review fixes, v1.4.0) | 7212 | 694.1 s | 263.6 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
+| 11 (figures as part of their scenes + the rewind, v1.5.0) | 7212 | 659.0 s | 282.3 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 
 - **Hardware.** A 16-thread Windows 11 desktop, Remotion 4.0.536, concurrency 8, ANGLE GL.
 - **Log volume.** Render 1 logged one line per frame (about 14k lines), and its Remotion lines contained ANSI colour codes. Both were fixed before render 2: progress is logged every 5 %, and the codes are stripped (`render.keep_line`, `render.ANSI`). Render 2's run log shows 64 Remotion lines with no escape codes.
@@ -81,6 +82,30 @@ The cards no longer sit in boxes. Each one dives out of a scene object, is hero 
 | Intro: the tokens card's caption overlapped the title's subtitle | The title dissolves as its own tokens emerge |
 
 The code review of the branch then found a visible defect that stills cannot show. When one hero handed over to the next, the push origin jumped from one anchor to the other in a single frame. With the scale near 1.04–1.07 at that moment, the scene would jerk by up to about 70 px. The push origin is now the heroes' anchors averaged by heroness (`focusOf`, tested). The review also docked verse-3 cards by order rather than by direction, which is now fixed. Render 10 includes these fixes.
+
+## Iteration 5: figures as part of their scenes, and the rewind (v1.5.0)
+
+Each scene now places at most two panels in slots its layout reserves away from its key objects, and draws other figures itself. The outro became a flying rewind ([exp09](exp09_unified.md)).
+
+**Checks.** Stills were rendered with a layout overlay (`stills.mjs --layout`, slots in cyan, protected regions in red, bands in yellow) while each scene was rebuilt, then for every card 1.6 s after it appears (82 stills) and every section end (11 stills).
+
+**Problems found and fixed before the full render:**
+
+| Problem seen | Fix |
+|---|---|
+| The intro title, split at its token boundaries, ran off both frame edges | Narrower split gap |
+| The tokens card left its lower half empty | Token chips sized to fill the body |
+| The open theory block left its lower half empty | Wider (720 px) and shorter blocks; the card scales to fill |
+| Up to six atlas star plates grew at once and overlapped | At most two grown at once; older stars shrink back to their labels |
+| The landscape's dive started on "inside", 1 s before the cut, so the curve-detector tiles barely appeared | The dive starts with its card, on "go" |
+| The manifolds' R² label sat in the lyric band | Moved above the globe |
+| The carbon/silicon/stars triptych bodies overflowed their columns | Each body drawn at its own proportions and scaled into its column |
+| Two outro headline plates overlapped during the rewind | Only the newest plate is shown |
+| gpt4 was assigned lane b in a scene with one slot | Caught by `tests/test_layout.py`; moved to lane a |
+
+**Code review.** A rewind cut whose moment lies in the intro's first seconds could play forwards. The cut is now guarded and covered by a test. The review commit also un-exported unused ladder constants and replaced a constant-zero variable with its value.
+
+Render 11 was bundled just before that commit. None of these changes alters a frame: on the real timeline every rewind moment lies after 14.7 s, so the guard never fires, and the other two changes do not change behaviour. Render 11 is therefore the v1.5.0 video. Its run log has no error or warning lines apart from the known `THREE.Clock` notice.
 
 ## Learnings
 

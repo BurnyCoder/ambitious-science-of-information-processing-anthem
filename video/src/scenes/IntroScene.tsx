@@ -4,7 +4,8 @@
  * embedding cells (cells slide out; bar lengths are illustrative seeded values, not the real weights)
  * -> "WE WILL KNOW" letter-by-letter -> subtitle and credits -> the title splits at its real GPT-2 token boundaries
  * (We | will | know: 1135 · 481 · 760) and condenses into the first figure card, which takes the title's place until
- * the cut, while the embedding column keeps streaming (the 768-d vector scrolling past).
+ * the cut, while the embedding column keeps streaming (the 768-d vector scrolling past) and verse 1's layers fly out of
+ * the vanishing point behind the card, faster and faster: a match cut into the tunnel.
  * Global: first scene; sets the "information processing starts from one token" motif that the outro reverses.
  */
 import React from 'react'; // JSX
@@ -30,10 +31,23 @@ export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 	const split = smooth((t - tokensAt) / 0.5); // the title breaks at its token boundaries
 	const dissolve = smooth((t - tokensAt - 0.5) / 0.5); // then condenses into the card
 	const stream = Math.max(0, t - tokensAt) * 60; // px the embedding column has scrolled since
+	const warp = smooth((t - tokensAt - 1) / 1.5); // verse 1's layers start flying out of the vanishing point
+	const fly = Math.max(0, t - tokensAt - 1) * (0.5 + 0.12 * Math.max(0, t - tokensAt - 1)); // accelerating depth travel
 	return (
 		<AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', opacity: 1 - exit * 0.8, transform: `scale(${1 + exit * 0.3})`}}>
+			{warp > 0 ? <svg width={1920} height={1080} style={{position: 'absolute', left: 0, top: 0}}> {/* verse 1's layers (12 x 7 neurons) flying out of the vanishing point */}
+				{Array.from({length: 10}, (_, k) => {
+					const phase = (fly + k / 10) % 1, scale = 0.12 * Math.pow(15, phase); // depth -> size (perspective)
+					const op = warp * smooth(phase * 4) * (1 - smooth((phase - 0.8) / 0.2));
+					return Array.from({length: 84}, (_, i) => {
+						const c = i % 12, r = Math.floor(i / 12), lit = random(`warp${k}-${i}-${Math.floor(fly + k / 10)}`) > 0.8;
+						return <circle key={`${k}-${i}`} cx={960 + (c - 5.5) * 120 * scale} cy={470 + (r - 3) * 120 * scale} r={2 + 4 * scale}
+							fill={lit ? COLORS.cyan : COLORS.violet} opacity={op * (lit ? 0.9 : 0.45)} />;
+					});
+				})}
+			</svg> : null}
 			{/* token and its unfolding vector */}
-			<div style={{position: 'absolute', left: 300, top: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 1 - smooth((local - titleAt) / 2) * 0.75}}>
+			<div style={{position: 'absolute', left: 300, top: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 1 - smooth((local - titleAt) / 2) * 0.75 + 0.75 * warp}}>
 				{Array.from({length: CELLS}, (_, i) => {
 					const offset = (((i - (CELLS - 1) / 2) * 24 * unfold - stream) % (CELLS * 24) + CELLS * 36) % (CELLS * 24) - CELLS * 12; // spread, then scroll (wraps)
 					const v = random(`emb${i}-${Math.floor(((i * 24 - stream) / (CELLS * 24)))}`) * 2 - 1; // seeded component; a new one each time the cell wraps
