@@ -37,7 +37,7 @@ def main() -> None:
     scene_of = {s["index"]: s["scene"] for s in sections}
     lines = [(l["startS"], l["endS"]) for l in tl["lines"]]
     frames = [i / FPS for i in range(int(tl["durationS"] * FPS))]
-    sung, hero_on, coverage, active, flying = [], [], [], [], []
+    sung, hero_on, coverage, active, flying, hs = [], [], [], [], [], []
     hero_time: Counter = Counter()  # seconds each card spends as hero
     for t in frames:
         shots = shots_at(cards, sections, t)
@@ -45,6 +45,7 @@ def main() -> None:
         h = heroness(best) if best else 0.0
         sung.append(any(a <= t < b for a, b in lines))
         hero_on.append(h >= HERO_ON)
+        hs.append(h)
         coverage.append(h * hero_area_fraction(scene_of[best["v"]["sectionIndex"]]) if best else 0.0)
         active.append(sum(1 for s in shots if t < s["v"]["endS"]))  # emerging, hero or orbiting (the lane cap)
         flying.append(sum(1 for s in shots if s["dock"] < 1))  # plus cards still flying back to their object
@@ -63,12 +64,14 @@ def main() -> None:
         "maxCardsActive": max(active), "maxCardsInFlight": max(flying),
         "cardsDockedPerSection": {f"{k + 1:02d} {scene_of[k]}": docks.get(k, 0) for k in scene_of},
         "cardsFlyingPast": sum(1 for c in cards if scene_of[c["sectionIndex"]] in PAST_SCENES),
+        "seriesStepS": 0.1, "heroSeries": [round(h, 3) for h in hs[::3]],  # max heroness at 10 Hz (for the figure)
+        "sectionStarts": [s["startS"] for s in sections], "sectionScenes": [s["scene"] for s in sections],
     }
     result["designChecks"] = {"heroAreaAtMost0.6": result["maxHeroAreaFraction"] <= 0.6,
                               "heroAtMostHeroMaxPlusHalfEase": result["maxHeroSecondsPerCard"] <= C["HERO_MAX_S"] + C["EASE_S"] / 2 + 1 / FPS,
                               "atMost4CardsActive": result["maxCardsActive"] <= 4}
     (ROOT / "reports" / "data" / "exp08_integration.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
-    log_json(log, "exp08 integration", result)
+    log_json(log, "exp08 integration", {k: v for k, v in result.items() if k != "heroSeries"})
 
 
 if __name__ == "__main__":

@@ -7,6 +7,8 @@ and writes PNG figures to reports/figures/:
   fig3_alignment.png  exp03: CDF of |onset(Suno, repaired v2) - onset(Whisper)| per take, with the random-shift control
   fig4_onset_offset.png  exp05: signed onset differences vs the MMS forced aligner, plus hand-labelled anchors
   fig5_lyric_edit.png    exp06: where replace-section changed the audio, and per-line Suno - MMS on both takes
+  fig6_exp07.png         exp07: released grokking run, its Fourier spectrum, induction scores, density v1.3.0 vs v1.2.0
+  fig7_exp08.png         exp08: density v1.4.0 vs v1.3.0, hero share over the song, cards docked per section
 Global context: every number plotted is read from the committed raw data, so figures are reproducible.
 Design notes (avoiding misleading plots): shared, labelled axes; log scale only where errors span 3 decades and it
 is stated on the axis; half-tempo failures are marked explicitly instead of being clipped away.
@@ -180,18 +182,51 @@ def fig_exp07() -> None:
     c.set(xlabel="head", ylabel="layer", title="GPT-2 small induction scores (ARENA)")
     fig.colorbar(im, ax=c, fraction=0.046)
     if dens_path.exists():
-        d = json.loads(dens_path.read_text(encoding="utf-8"))
-        r = np.log2(np.array(d["bytesNew"]) / np.array(d["bytesOld"]))
-        sec = np.array(d["section"])
-        for s in np.unique(sec):
-            axes[3].axvspan(np.min(np.array(d["times"])[sec == s]) - 1, np.max(np.array(d["times"])[sec == s]) + 1, color=f"C{s % 10}", alpha=0.07)
-        axes[3].plot(d["times"], r, ".", ms=3, color="C0")
-        axes[3].axhline(0, color="grey", lw=0.8)
-        lo, hi = d["ci95SectionBootstrap"]
-        axes[3].set(xlabel="song time (s)", ylabel="log₂(PNG bytes v1.3.0 / v1.2.0)",
-                    title=f"v1.3.0 vs v1.2.0: median {d['medianLog2Ratio']:+.2f} [{lo:+.2f}, {hi:+.2f}]")
+        density_panel(axes[3], dens_path, "v1.3.0", "v1.2.0")
     fig.tight_layout()
     fig.savefig(FIG / "fig6_exp07.png", dpi=130)
+    plt.close(fig)
+
+
+def density_panel(ax, path: Path, new: str, old: str, margin: float | None = None) -> None:
+    """Local: per-frame paired log2 PNG-size ratio with sections shaded, the median and its section-bootstrap CI in
+    the title, and the non-inferiority margin if there is one.  Global: panel (d) of fig6 and panel (a) of fig7."""
+    d = json.loads(path.read_text(encoding="utf-8"))
+    r = np.log2(np.array(d["bytesNew"]) / np.array(d["bytesOld"]))
+    sec, times = np.array(d["section"]), np.array(d["times"])
+    for s in np.unique(sec):
+        ax.axvspan(times[sec == s].min() - 1, times[sec == s].max() + 1, color=f"C{s % 10}", alpha=0.07)
+    ax.plot(times, r, ".", ms=3, color="C0")
+    ax.axhline(0, color="grey", lw=0.8)
+    if margin is not None:
+        ax.axhline(-margin, color="C3", lw=1, ls="--", label=f"non-inferiority margin −{margin}")
+        ax.legend(fontsize=8, loc="lower right")
+    lo, hi = d["ci95SectionBootstrap"]
+    ax.set(xlabel="song time (s)", ylabel=f"log₂(PNG bytes {new} / {old})", title=f"{new} vs {old}: median {d['medianLog2Ratio']:+.2f} [{lo:+.2f}, {hi:+.2f}]")
+
+
+def fig_exp08() -> None:
+    """Local: exp08, (a) paired density v1.4.0 / v1.3.0 with the pre-specified margin, (b) max heroness over the song
+    with the 0.5 threshold and sections shaded, (c) cards docked into a scene object per section.
+    Global: what reports/exp08_integration.md tests and describes."""
+    integ = json.loads((DATA / "exp08_integration.json").read_text(encoding="utf-8"))
+    fig, (a, b, c) = plt.subplots(1, 3, figsize=(17, 3.6), gridspec_kw={"width_ratios": [1.2, 1.6, 1]})
+    density_panel(a, DATA / "exp08_density.json", "v1.4.0", "v1.3.0", margin=0.10)
+    t = np.arange(len(integ["heroSeries"])) * integ["seriesStepS"]
+    starts = integ["sectionStarts"] + [t[-1]]
+    for i in range(len(starts) - 1):
+        b.axvspan(starts[i], starts[i + 1], color=f"C{i % 10}", alpha=0.07)
+    b.plot(t, integ["heroSeries"], lw=0.7, color="C4")
+    b.axhline(integ["heroOn"], color="grey", lw=0.8, ls="--")
+    b.set(xlabel="song time (s)", ylabel="max heroness", ylim=(0, 1.05),
+          title=f"a figure is hero {100 * integ['heroShareOfSungTime']:.0f} % of sung time; the scene alone {100 * integ['sceneOnlyShareOfSong']:.0f} % of the song")
+    names = list(integ["cardsDockedPerSection"])
+    c.barh(range(len(names)), list(integ["cardsDockedPerSection"].values()), color="C2")
+    c.set_yticks(range(len(names)), [n.split(" ", 1)[1] for n in names], fontsize=8)
+    c.invert_yaxis()
+    c.set(xlabel="cards docked into a scene object", title=f"docks per section ({integ['cardsFlyingPast']} cards fly past instead)")
+    fig.tight_layout()
+    fig.savefig(FIG / "fig7_exp08.png", dpi=130)
     plt.close(fig)
 
 
@@ -206,4 +241,6 @@ if __name__ == "__main__":
         fig_lyric_edit()
     if (DATA / "exp07_checks.json").exists():  # written by scripts/vignette_data.py
         fig_exp07()
+    if (DATA / "exp08_density.json").exists() and (DATA / "exp08_integration.json").exists():  # written by the exp08 scripts
+        fig_exp08()
     print("figures written to", FIG)
