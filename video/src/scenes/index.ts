@@ -1,6 +1,6 @@
 /**
  * Scene registry: scene id (from content/scenes.toml) -> component + HUD caption.
- * Local: one entry per visual scene; `bigLyrics` scenes draw their own giant lyrics,
+ * Local: one entry per visual scene; in `bigLyrics` scenes Anthem draws giant lyrics in the lower third,
  * so the bottom karaoke overlay is hidden there.
  * Global: Anthem.tsx looks up each timeline section's `scene` here; unknown ids fall back to `default`.
  */
