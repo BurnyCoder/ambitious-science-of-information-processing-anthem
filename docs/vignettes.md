@@ -98,7 +98,7 @@ How cards are placed and drawn: [architecture](architecture.md). Checks of every
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 45 | 143.6–149.6 | `^solve$` | **Solvable settings** (saxe) | live math | [Saxe, McClelland & Ganguli 2014](https://arxiv.org/abs/1312.6120) |
+| 45 | 141.2–147.2 | `^there$` | **Solvable settings** (saxe) | live math | [Saxe, McClelland & Ganguli 2014](https://arxiv.org/abs/1312.6120) |
 | 46 | 144.6–150.6 | `^limits$` | **Tractable limits** (nngp) | live math | [Neal 1996 · Lee et al. 2018 · Jacot et al. 2018 (NTK)](https://arxiv.org/abs/1806.07572) |
 | 47 | 148.2–154.2 | `^laws$` | **Simple laws** (formula) | published numbers | [Kaplan et al. 2020, Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) |
 | 48 | 151.4–157.4 | `^hyperparameters$` | **Theories of hyperparameters** (weightDecay) | released data | [Nanda et al. 2023 (official saved runs) · Yang et al. 2022 (μTransfer)](https://github.com/mechanistic-interpretability-grokking/progress-measures-paper) |

@@ -2,7 +2,8 @@
  * Verse 3 — "There will be a theory!"
  * Local: the title of Simon, Kunin et al. 2026 (arXiv:2604.21691); five blocks (a)-(e), an accordion: each rises when
  * its direction is sung and widens to show that direction's figure inside it (a card the scene draws itself), while the
- * earlier blocks narrow to a vertical title and a thumbnail; on "mechanics" all five settle side by side. Right: a real
+ * earlier blocks narrow to a vertical title and a thumbnail; on "Predict" all five settle side by side. Each figure
+ * runs on a clock fast enough to finish while its block is open (ANIM_S). Right: a real
  * scaling-law plot (the "Learning mechanics" and GPT-4 figures sit in the slot above it): Epoch AI's 245 runs extracted from Hoffmann et al. 2022
  * (loss vs parameters, colored by training compute) with the iso-FLOP curves L(N, C/6N) of two published
  * parametric fits (Hoffmann et al. solid, Epoch's re-fit dashed) and their compute-optimal minima, the last one
@@ -26,6 +27,12 @@ const DIRECTIONS = ['solvable settings', 'tractable limits', 'simple laws', 'hyp
 const BLOCKS = {x: 40, y: 230, w: 1040, h: 520, gap: 10, narrow: 70}; // accordion area (left), inside layout.json's protected region
 const WIDE = BLOCKS.w - 4 * (BLOCKS.narrow + BLOCKS.gap); // the open block: 720 px
 const ease = (x: number) => smooth(x); // shorthand
+/** Local: how long each block's figure animates (seconds, read off its body in vignettes/verse3.tsx and formula.tsx);
+ * a block whose open window is shorter runs its figure on a faster clock, at most MAX_SPEED, leaving SEE_S of the finished
+ * figure. Global: tests/test_vignettes.py checks the windows against these (exp10 H2). */
+export const ANIM_S = {saxe: 2.5, nngp: 1.4, formula: 1.2, weightDecay: 3, collapse: 3.5};
+export const SEE_S = 0.3;
+export const MAX_SPEED = 1.6;
 /** Local: plot area (right half, under the panel slot). Global: drawn here; stage/anchors.ts wires the slot's figures to it. */
 export const PLOT = {x: 1110, y: 520, w: 760, h: 330};
 const BOX = PLOT; // plot area
@@ -49,7 +56,12 @@ export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 	const cards = DIRECTIONS.map((d) => tl.vignettes.find((v) => v.sectionIndex === section.index && v.lane === 'scene' && v.title.toLowerCase().includes(d))); // block i's card
 	const startOf = (i: number) => cards[i]?.startS ?? section.startS + (i + 1) * length / 7; // when block i is sung
 	const lit = DIRECTIONS.map((_, i) => ease((t - startOf(i)) / 0.5)); // block i rises when sung
-	const settle = ease((t - (wordTime(tl, section, /mechanics/i) ?? section.startS + 0.6 * length)) / 0.6); // all five side by side
+	const settle = ease((t - predAt) / 0.6); // all five settle side by side on "Predict"
+	const clock = cards.map((v, i) => { // block i's figure clock: sped up so its animation ends SEE_S before the block narrows
+		const window = (i < 4 ? startOf(i + 1) : predAt) - startOf(i), len = v ? ANIM_S[v.id as keyof typeof ANIM_S] ?? 0 : 0;
+		const speed = Math.min(MAX_SPEED, Math.max(1, len / Math.max(0.1, window - SEE_S)));
+		return v ? v.startS + (t - v.startS) * speed : t;
+	});
 	const open = DIRECTIONS.map((_, i) => ease((t - startOf(i)) / 0.5) * (i < 4 ? 1 - ease((t - startOf(i + 1)) / 0.5) : 1)); // newest is open
 	const widths = open.map((o) => (BLOCKS.narrow + (WIDE - BLOCKS.narrow) * o) * (1 - settle) + ((BLOCKS.w - 4 * BLOCKS.gap) / 5) * settle);
 	const lefts = widths.map((_, i) => BLOCKS.x + widths.slice(0, i).reduce((a, b) => a + b + BLOCKS.gap, 0));
@@ -74,7 +86,7 @@ export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 						</div>
 						{v ? <div style={{position: 'absolute', left: 10, top: w < 150 ? BLOCKS.h - 20 - 350 * s : Math.max(44, (BLOCKS.h - 350 * s) / 2 + 14), width: 600, transformOrigin: 'left top',
 							transform: `scale(${s})`, opacity: on}}>
-							<CardFace tl={tl} v={v} t={t} accent={COLORS.cyan} pulse={0} words={smooth((w - 300) / 120)} />
+							<CardFace tl={tl} v={v} t={clock[i]} accent={COLORS.cyan} pulse={0} words={smooth((w - 300) / 120)} />
 						</div> : null}
 					</div>
 				);
