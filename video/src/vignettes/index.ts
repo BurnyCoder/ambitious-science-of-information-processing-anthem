@@ -2,7 +2,7 @@
  * Card registry: vignette id (content/vignettes.toml) -> body component.
  * Local: `showText: false` means the body itself renders the card's `text` (the generic formula card);
  * otherwise `text` is shown as a caption under the body. Unknown ids fall back to the formula card.
- * Global: VignetteLayer looks every active card up here; one file per song section holds the bodies.
+ * Global: stage/Shot.tsx looks every card on stage up here; one file per song section holds the bodies.
  */
 import type React from 'react'; // component type
 import type {BodyProps} from './primitives'; // card body contract

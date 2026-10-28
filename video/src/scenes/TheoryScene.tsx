@@ -22,7 +22,7 @@ const DIRECTIONS: [string, RegExp][] = [['solvable settings', /solve/i], ['tract
 	['hyperparameters', /hyperparameter/i], ['universal behaviors', /universal/i]];
 /** Local: pillar boxes [x, y, w, h]. Global: drawn here; stage/anchors.ts docks each direction's card into its pillar. */
 export const PILLARS: [number, number, number, number][] = DIRECTIONS.map((_, i) => [56 + i * 200, 236, 184, 610]);
-const BOX = {x: 1110, y: 520, w: 760, h: 330}; // plot area (right half, below the top-right card slot)
+const BOX = {x: 1110, y: 520, w: 760, h: 330}; // plot area (right half, below where the sixth card docks)
 const Ns = Array.from({length: 80}, (_, i) => 10 ** (7.7 + i * (10.3 - 7.7) / 79)); // 5e7 .. 2e10 parameters
 const px = (N: number) => BOX.x + ((Math.log10(N) - 7.7) / 2.6) * BOX.w; // log N -> screen x
 const py = (L: number) => BOX.y + BOX.h - ((L - 2) / 3) * BOX.h; // loss 2..5 -> screen y

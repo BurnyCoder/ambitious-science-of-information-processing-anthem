@@ -100,11 +100,11 @@ How cards are placed and drawn: [architecture](architecture.md). Checks of every
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 47 | 143.6–164.0 | `^solve$` | **Solvable settings** (saxe) | live math | [Saxe, McClelland & Ganguli 2014](https://arxiv.org/abs/1312.6120) |
-| 48 | 146.9–164.0 | `^infinity$` | **Tractable limits** (nngp) | live math | [Neal 1996 · Lee et al. 2018 · Jacot et al. 2018 (NTK)](https://arxiv.org/abs/1806.07572) |
-| 49 | 148.2–164.0 | `^laws$` | **Simple laws** (formula) | published numbers | [Kaplan et al. 2020, Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) |
-| 50 | 151.4–164.0 | `^hyperparameters$` | **Theories of hyperparameters** (weightDecay) | released data | [Nanda et al. 2023 (official saved runs) · Yang et al. 2022 (μTransfer)](https://github.com/mechanistic-interpretability-grokking/progress-measures-paper) |
-| 51 | 153.7–164.0 | `^universals$` | **Universal behaviors** (collapse) | schematic | [Papyan, Han & Donoho 2020 · Cohen et al. 2021](https://arxiv.org/abs/2008.08186) |
+| 47 | 143.6–149.6 | `^solve$` | **Solvable settings** (saxe) | live math | [Saxe, McClelland & Ganguli 2014](https://arxiv.org/abs/1312.6120) |
+| 48 | 146.9–152.9 | `^infinity$` | **Tractable limits** (nngp) | live math | [Neal 1996 · Lee et al. 2018 · Jacot et al. 2018 (NTK)](https://arxiv.org/abs/1806.07572) |
+| 49 | 148.2–154.2 | `^laws$` | **Simple laws** (formula) | published numbers | [Kaplan et al. 2020, Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) |
+| 50 | 151.4–157.4 | `^hyperparameters$` | **Theories of hyperparameters** (weightDecay) | released data | [Nanda et al. 2023 (official saved runs) · Yang et al. 2022 (μTransfer)](https://github.com/mechanistic-interpretability-grokking/progress-measures-paper) |
+| 51 | 153.7–159.7 | `^universals$` | **Universal behaviors** (collapse) | schematic | [Papyan, Han & Donoho 2020 · Cohen et al. 2021](https://arxiv.org/abs/2008.08186) |
 | 52 | 155.6–159.0 | `^mechanics$` | **Learning mechanics** (formula) | from the paper | [Seung, Sompolinsky & Tishby 1992 · Simon, Kunin et al. 2026](https://arxiv.org/abs/2604.21691) |
 | 53 | 159.0–164.0 | `^predict$` | **Predict it before you train it** (gpt4) | schematic | [OpenAI 2023, GPT-4 Technical Report, Fig. 1](https://arxiv.org/abs/2303.08774) |
 
