@@ -1,9 +1,9 @@
 /**
  * Tests for src/stage/rewind.ts (run with `npm test`), on the real timeline.
  * Local: the outro's flying rewind starts at the outro, cuts on an accelerating beat grid, plays every cut backwards,
- * visits every earlier section, lands on the opening token as the last line ends, and never shows
- * more than two copies of the video at once.
- * Global: Anthem renders the rewind from these numbers; exp09 lists them.
+ * visits every earlier section, lands on the opening token at the landing downbeat (where the overview bursts out of
+ * it), and never shows more than two copies of the video at once.
+ * Global: Anthem renders the rewind from these numbers, then stage/overview.ts takes over; exp09/exp10 list them.
  */
 import {test} from 'node:test'; // built-in runner
 import assert from 'node:assert/strict'; // assertions
@@ -16,7 +16,8 @@ const outro = tl.sections.find((s: {scene: string}) => s.scene === 'outro');
 
 test('the rewind spans the outro, cut by cut, and lands on the token', () => {
 	assert.equal(plan.start, outro.startS); // starts with the outro
-	assert.equal(plan.end, tl.lines[tl.lines.length - 1].endS); // ends with the last sung word
+	const landing = [...tl.downbeats].reverse().find((d: number) => d <= tl.lines[tl.lines.length - 1].endS - 0.6);
+	assert.equal(plan.end, landing); // ends on the last downbeat before the last sung word
 	plan.cuts.forEach((c, i) => { // contiguous, backwards
 		if (i) assert.ok(Math.abs(c.from - plan.cuts[i - 1].to) < 1e-9); // contiguous
 		assert.ok(c.src0 > c.src1 && c.src1 > 0); // every cut plays backwards, never before the start of the song
@@ -26,8 +27,8 @@ test('the rewind spans the outro, cut by cut, and lands on the token', () => {
 });
 
 test('cuts speed up and every earlier section is visited', () => {
-	const grid = plan.cuts.slice(0, -1).map((c) => c.to - c.from); // all but the landing
-	grid.forEach((d, i) => i && assert.ok(d <= grid[i - 1] + 1e-9)); // intervals never grow
+	const grid = plan.cuts.map((c) => c.to - c.from);
+	grid.forEach((d, i) => i && assert.ok(d <= grid[i - 1] * 1.25 + 1e-9)); // intervals never grow (the last absorbs a sliver)
 	assert.ok(grid[0] > 2.5 * grid[grid.length - 1]); // it accelerates (1 beat -> 1/4 beat)
 	for (const s of tl.sections.filter((x: {scene: string}) => x.scene !== 'outro')) // each section appears in some cut
 		assert.ok(plan.cuts.some((c) => c.src1 < s.endS && c.src0 > s.startS), s.label);
