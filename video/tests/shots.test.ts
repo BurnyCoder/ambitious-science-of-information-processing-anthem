@@ -1,48 +1,41 @@
 /**
  * Tests for src/stage/shots.ts (run with `npm test`).
- * Local: one card emerges, is hero, recedes after its hero time, docks at its end and disappears at the cut;
- * a newer card takes over as hero and pushes the older one back; the camera focus glides between heroes; everything is
- * deterministic.
- * Global: the stage draws every figure card from these states, so the phases must be right.
+ * Local: a panel card emerges from its object, stays in its slot for its whole time, docks after its end and is gone
+ * at the cut; lanes map to slots; "scene" cards are left to their scene (cardsOn); everything is deterministic.
+ * Global: the stage draws every panel from these states (v1.5.0: no hero, no stealing), and tests/test_integration.py
+ * repeats these cases for the Python mirror.
  */
 import {test} from 'node:test'; // built-in runner
 import assert from 'node:assert/strict'; // assertions
-import {focusOf, heroness, shotsAt} from '../src/stage/shots.ts';
+import {cardsOn, shotsAt} from '../src/stage/shots.ts';
 
-const card = (id: string, startS: number, endS: number, sectionIndex = 0) =>
-	({id, lane: 'a', sectionIndex, lineIndex: 0, startS, endS, title: id, text: '', badge: 'schematic', cite: '', url: ''}) as const;
-const sections = [{index: 0, label: 'Verse', kind: 'verse', occurrence: 1, scene: 'layers', startS: 0, endS: 20}];
+const card = (id: string, startS: number, endS: number, lane = 'a', sectionIndex = 0) =>
+	({id, lane, sectionIndex, lineIndex: 0, startS, endS, title: id, text: '', badge: 'schematic', cite: '', url: ''}) as const;
+const sections = [{index: 0, label: 'Verse', kind: 'verse', occurrence: 1, scene: 'ladder', startS: 0, endS: 20}];
 
-test('one card: emerge, hero, recede, dock, gone at the cut', () => {
+test('a panel stays in its slot for its whole time, then docks', () => {
 	const v = [card('a', 1, 7)];
 	assert.equal(shotsAt(v, sections, 0.5).length, 0); // before its start
 	const e = shotsAt(v, sections, 1.2)[0];
-	assert.ok(e.emerge > 0 && e.emerge < 1 && e.rank === 0); // flying out of its object
-	const h = shotsAt(v, sections, 3)[0];
-	assert.equal(heroness(h), 1); // full hero
-	assert.ok(shotsAt(v, sections, 5)[0].rank >= 1); // hero time (3.2 s) over: receded
+	assert.ok(e.emerge > 0 && e.emerge < 1 && e.dock === 0); // flying out of its object
+	for (const t of [2, 4, 6.9]) assert.deepEqual([shotsAt(v, sections, t)[0].emerge, shotsAt(v, sections, t)[0].dock], [1, 0]); // in its slot until its end
 	assert.equal(shotsAt(v, sections, 8)[0].dock, 1); // docked after its end
 	assert.equal(shotsAt(v, sections, 20).length, 0); // gone with its section
 });
 
-test('a newer card becomes hero and pushes the older one back', () => {
-	const v = [card('old', 1, 9), card('new', 2, 9)];
-	const s = shotsAt(v, sections, 2.6);
-	assert.equal(s.reduce((a, b) => (heroness(b) > heroness(a) ? b : a)).v.id, 'new');
-	assert.ok(s.find((x) => x.v.id === 'old')!.rank >= 1);
-	assert.deepEqual(shotsAt(v, sections, 2.6), s); // pure: same input, same output
-	assert.equal(s.find((x) => x.v.id === 'new')!.k, 1); // second card of its section
+test('a newer card never pushes an older one out of its slot', () => {
+	const v = [card('old', 1, 9, 'a'), card('new', 2, 9, 'b')];
+	const s = shotsAt(v, sections, 3);
+	assert.deepEqual(s.map((x) => [x.v.id, x.slot, x.emerge, x.dock]), [['old', 0, 1, 0], ['new', 1, 1, 0]]); // both fully shown
+	assert.deepEqual(shotsAt(v, sections, 3), s); // pure: same input, same output
+	assert.equal(s[1].k, 1); // second card of its section
 });
 
-test('cards of other sections do not push each other', () => {
-	const v = [card('a', 1, 7, 0), card('b', 1.5, 7, 1)];
-	assert.equal(shotsAt(v, [...sections, {...sections[0], index: 1, startS: 0, endS: 20}], 2)[0].rank, 0);
-});
-
-test('camera focus glides between heroes and returns to the centre', () => {
-	assert.deepEqual(focusOf([]), {x: 960, y: 540}); // no hero: frame centre
-	assert.deepEqual(focusOf([{x: 100, y: 200, w: 1}]), {x: 100, y: 200}); // one full hero: its anchor
-	assert.deepEqual(focusOf([{x: 100, y: 200, w: 0.5}, {x: 300, y: 400, w: 0.5}]), {x: 200, y: 300}); // hand-over: in between
-	const near = focusOf([{x: 100, y: 200, w: 0.001}]); // a hero fading out pulls only a little
-	assert.ok(Math.abs(near.x - 960) < 1 && Math.abs(near.y - 540) < 1);
+test('scene cards are drawn by their scene, not the stage', () => {
+	const v = [card('chip', 1, 5, 'scene'), card('p', 1, 5, 'a')];
+	assert.deepEqual(shotsAt(v, sections, 2).map((x) => x.v.id), ['p']);
+	const on = cardsOn(v, 0, 2);
+	assert.deepEqual(on.map((x) => [x.v.id, x.k, x.on]), [['chip', 0, 1]]); // k counts the section's scene cards
+	assert.ok(cardsOn(v, 0, 5.2)[0].on < 1 && cardsOn(v, 0, 5.6).length === 0); // fades out over DOCK_S after its end
+	assert.equal(cardsOn(v, 1, 2).length, 0); // other sections see nothing
 });
