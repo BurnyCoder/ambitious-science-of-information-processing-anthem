@@ -1,0 +1,650 @@
+{
+ "source": "v1.4.0 timeline (git tag v1.4.0) with the v1.4.0 shot lifecycle (scripts/analysis/shots.py at that tag)",
+ "heroSecondsPerCard": [
+  {
+   "fig": 1,
+   "id": "tokens",
+   "title": "Every answer starts as tokens",
+   "section": "intro",
+   "heroS": 3.2
+  },
+  {
+   "fig": 2,
+   "id": "matmul",
+   "title": "A matrix: the most general linear map",
+   "section": "layers",
+   "heroS": 1.0
+  },
+  {
+   "fig": 3,
+   "id": "activations",
+   "title": "And a bend: one nonlinearity",
+   "section": "layers",
+   "heroS": 3.2
+  },
+  {
+   "fig": 4,
+   "id": "scale",
+   "title": "Stacked a trillion high",
+   "section": "layers",
+   "heroS": 2.37
+  },
+  {
+   "fig": 5,
+   "id": "regions",
+   "title": "Linear, then nonlinear, again",
+   "section": "layers",
+   "heroS": 3.2
+  },
+  {
+   "fig": 6,
+   "id": "residual",
+   "title": "How it answers: the residual stream",
+   "section": "layers",
+   "heroS": 2.8
+  },
+  {
+   "fig": 7,
+   "id": "induction",
+   "title": "Nobody wrote its circuits: induction heads",
+   "section": "layers",
+   "heroS": 1.83
+  },
+  {
+   "fig": 8,
+   "id": "formula",
+   "title": "Nobody drew the plan",
+   "section": "layers",
+   "heroS": 0.83
+  },
+  {
+   "fig": 9,
+   "id": "backprop",
+   "title": "Gradient by gradient",
+   "section": "layers",
+   "heroS": 3.2
+  },
+  {
+   "fig": 10,
+   "id": "concentration",
+   "title": "A billion-dimensional night",
+   "section": "landscape",
+   "heroS": 3.2
+  },
+  {
+   "fig": 11,
+   "id": "saddle",
+   "title": "Past every saddle",
+   "section": "landscape",
+   "heroS": 1.4
+  },
+  {
+   "fig": 12,
+   "id": "flat",
+   "title": "To valleys flat and wide",
+   "section": "landscape",
+   "heroS": 2.3
+  },
+  {
+   "fig": 13,
+   "id": "doubleDescent",
+   "title": "Bigger can generalize better: double descent",
+   "section": "landscape",
+   "heroS": 0.77
+  },
+  {
+   "fig": 14,
+   "id": "grokking",
+   "title": "Minima that generalize: grokking",
+   "section": "landscape",
+   "heroS": 3.2
+  },
+  {
+   "fig": 15,
+   "id": "curves",
+   "title": "So we go inside: curve detectors",
+   "section": "landscape",
+   "heroS": 2.97
+  },
+  {
+   "fig": 16,
+   "id": "formula",
+   "title": "Ambitious mechanistic interpretability",
+   "section": "chorus",
+   "heroS": 2.17
+  },
+  {
+   "fig": 17,
+   "id": "sae",
+   "title": "Monosemantic features from a sparse dictionary",
+   "section": "chorus",
+   "heroS": 1.57
+  },
+  {
+   "fig": 18,
+   "id": "graphDallas",
+   "title": "Every cause: Dallas → Texas → Austin",
+   "section": "chorus",
+   "heroS": 3.2
+  },
+  {
+   "fig": 19,
+   "id": "patching",
+   "title": "Open the black box: activation patching",
+   "section": "chorus",
+   "heroS": 3.2
+  },
+  {
+   "fig": 20,
+   "id": "formula",
+   "title": "The circuits program, in three claims",
+   "section": "chorus",
+   "heroS": 3.2
+  },
+  {
+   "fig": 21,
+   "id": "ioi",
+   "title": "A whole circuit, mapped: IOI in GPT-2 small",
+   "section": "chorus",
+   "heroS": 3.2
+  },
+  {
+   "fig": 22,
+   "id": "neuronFeature",
+   "title": "Start with neurons and features",
+   "section": "ladder",
+   "heroS": 1.07
+  },
+  {
+   "fig": 23,
+   "id": "formula",
+   "title": "Heads: QK picks where, OV picks what",
+   "section": "ladder",
+   "heroS": 2.57
+  },
+  {
+   "fig": 24,
+   "id": "dayCircle",
+   "title": "Manifolds of meaning: the week is a circle",
+   "section": "ladder",
+   "heroS": 3.2
+  },
+  {
+   "fig": 25,
+   "id": "paramDecomp",
+   "title": "Parameter components",
+   "section": "ladder",
+   "heroS": 1.63
+  },
+  {
+   "fig": 26,
+   "id": "grokClock",
+   "title": "An algorithm, reverse-engineered",
+   "section": "ladder",
+   "heroS": 2.27
+  },
+  {
+   "fig": 27,
+   "id": "othello",
+   "title": "Decisions from a world model: Othello-GPT",
+   "section": "ladder",
+   "heroS": 0.73
+  },
+  {
+   "fig": 28,
+   "id": "refusal",
+   "title": "A behavior with one direction: refusal",
+   "section": "ladder",
+   "heroS": 1.13
+  },
+  {
+   "fig": 29,
+   "id": "shoggoth",
+   "title": "The drives behind the face",
+   "section": "ladder",
+   "heroS": 3.03
+  },
+  {
+   "fig": 30,
+   "id": "encyclopedia",
+   "title": "The encyclopedia so far",
+   "section": "ladder",
+   "heroS": 3.1
+  },
+  {
+   "fig": 31,
+   "id": "rome",
+   "title": "How it recalls a fact",
+   "section": "ladder",
+   "heroS": 1.5
+  },
+  {
+   "fig": 32,
+   "id": "graphRabbit",
+   "title": "Where the reasoning hides: planning a rhyme",
+   "section": "ladder",
+   "heroS": 2.07
+  },
+  {
+   "fig": 33,
+   "id": "superposition",
+   "title": "Not noise: superposition",
+   "section": "manifolds",
+   "heroS": 1.83
+  },
+  {
+   "fig": 34,
+   "id": "polysemantic",
+   "title": "Can't be read? Untangle it",
+   "section": "manifolds",
+   "heroS": 0.83
+  },
+  {
+   "fig": 35,
+   "id": "bsf",
+   "title": "Structure everywhere: concepts as regions",
+   "section": "manifolds",
+   "heroS": 1.03
+  },
+  {
+   "fig": 36,
+   "id": "functionVector",
+   "title": "Function vectors",
+   "section": "manifolds",
+   "heroS": 1.63
+  },
+  {
+   "fig": 37,
+   "id": "truth",
+   "title": "Shapes of thought: a direction for truth",
+   "section": "manifolds",
+   "heroS": 2.43
+  },
+  {
+   "fig": 38,
+   "id": "worldMap",
+   "title": "Geometry that mirrors the world",
+   "section": "manifolds",
+   "heroS": 0.47
+  },
+  {
+   "fig": 39,
+   "id": "formula",
+   "title": "The bigger they get, the more they agree",
+   "section": "manifolds",
+   "heroS": 1.83
+  },
+  {
+   "fig": 40,
+   "id": "probeR2",
+   "title": "The crisper the concepts",
+   "section": "manifolds",
+   "heroS": 3.2
+  },
+  {
+   "fig": 41,
+   "id": "formula",
+   "title": "Universality",
+   "section": "chorus",
+   "heroS": 2.77
+  },
+  {
+   "fig": 42,
+   "id": "graphCalc",
+   "title": "36 + 59: two paths at once",
+   "section": "chorus",
+   "heroS": 0.93
+  },
+  {
+   "fig": 43,
+   "id": "goldenGate",
+   "title": "Turn one cause up: Golden Gate Claude",
+   "section": "chorus",
+   "heroS": 3.2
+  },
+  {
+   "fig": 44,
+   "id": "formula",
+   "title": "Simple probes catch sleeper agents",
+   "section": "chorus",
+   "heroS": 3.2
+  },
+  {
+   "fig": 45,
+   "id": "graphGemma",
+   "title": "The same graph, on an open model",
+   "section": "chorus",
+   "heroS": 3.2
+  },
+  {
+   "fig": 46,
+   "id": "formula",
+   "title": "Shared concepts across languages",
+   "section": "chorus",
+   "heroS": 3.2
+  },
+  {
+   "fig": 47,
+   "id": "saxe",
+   "title": "Solvable settings",
+   "section": "theory",
+   "heroS": 3.17
+  },
+  {
+   "fig": 48,
+   "id": "nngp",
+   "title": "Tractable limits",
+   "section": "theory",
+   "heroS": 1.3
+  },
+  {
+   "fig": 49,
+   "id": "formula",
+   "title": "Simple laws",
+   "section": "theory",
+   "heroS": 3.13
+  },
+  {
+   "fig": 50,
+   "id": "weightDecay",
+   "title": "Theories of hyperparameters",
+   "section": "theory",
+   "heroS": 2.3
+  },
+  {
+   "fig": 51,
+   "id": "collapse",
+   "title": "Universal behaviors",
+   "section": "theory",
+   "heroS": 1.87
+  },
+  {
+   "fig": 52,
+   "id": "formula",
+   "title": "Learning mechanics",
+   "section": "theory",
+   "heroS": 3.2
+  },
+  {
+   "fig": 53,
+   "id": "gpt4",
+   "title": "Predict it before you train it",
+   "section": "theory",
+   "heroS": 3.2
+  },
+  {
+   "fig": 54,
+   "id": "formula",
+   "title": "Linear algebra",
+   "section": "atlas",
+   "heroS": 1.17
+  },
+  {
+   "fig": 55,
+   "id": "formula",
+   "title": "Calculus",
+   "section": "atlas",
+   "heroS": 0.47
+  },
+  {
+   "fig": 56,
+   "id": "formula",
+   "title": "Probability",
+   "section": "atlas",
+   "heroS": 0.77
+  },
+  {
+   "fig": 57,
+   "id": "formula",
+   "title": "Information",
+   "section": "atlas",
+   "heroS": 0.93
+  },
+  {
+   "fig": 58,
+   "id": "formula",
+   "title": "Optimization",
+   "section": "atlas",
+   "heroS": 0.83
+  },
+  {
+   "fig": 59,
+   "id": "formula",
+   "title": "Dynamics",
+   "section": "atlas",
+   "heroS": 0.8
+  },
+  {
+   "fig": 60,
+   "id": "formula",
+   "title": "The geometry of loss",
+   "section": "atlas",
+   "heroS": 1.7
+  },
+  {
+   "fig": 61,
+   "id": "formula",
+   "title": "Statistical mechanics",
+   "section": "atlas",
+   "heroS": 1.57
+  },
+  {
+   "fig": 62,
+   "id": "mp",
+   "title": "Random matrices",
+   "section": "atlas",
+   "heroS": 1.23
+  },
+  {
+   "fig": 63,
+   "id": "formula",
+   "title": "Singular learning theory",
+   "section": "atlas",
+   "heroS": 1.0
+  },
+  {
+   "fig": 64,
+   "id": "formula",
+   "title": "Symmetry",
+   "section": "atlas",
+   "heroS": 0.8
+  },
+  {
+   "fig": 65,
+   "id": "category",
+   "title": "Categories",
+   "section": "atlas",
+   "heroS": 0.8
+  },
+  {
+   "fig": 66,
+   "id": "pearl",
+   "title": "Causality",
+   "section": "atlas",
+   "heroS": 0.9
+  },
+  {
+   "fig": 67,
+   "id": "formula",
+   "title": "Compression",
+   "section": "atlas",
+   "heroS": 2.83
+  },
+  {
+   "fig": 68,
+   "id": "formula",
+   "title": "Invariants",
+   "section": "atlas",
+   "heroS": 1.1
+  },
+  {
+   "fig": 69,
+   "id": "formula",
+   "title": "Bounds",
+   "section": "atlas",
+   "heroS": 0.93
+  },
+  {
+   "fig": 70,
+   "id": "formula",
+   "title": "Every level",
+   "section": "atlas",
+   "heroS": 3.2
+  },
+  {
+   "fig": 71,
+   "id": "neuronIcon",
+   "title": "In carbon",
+   "section": "atlas",
+   "heroS": 0.83
+  },
+  {
+   "fig": 72,
+   "id": "chip",
+   "title": "In silicon",
+   "section": "atlas",
+   "heroS": 1.9
+  },
+  {
+   "fig": 73,
+   "id": "hydrogen",
+   "title": "Or something from the stars",
+   "section": "atlas",
+   "heroS": 0.9
+  },
+  {
+   "fig": 74,
+   "id": "formula",
+   "title": "One science of information",
+   "section": "atlas",
+   "heroS": 3.2
+  },
+  {
+   "fig": 75,
+   "id": "checklist",
+   "title": "Ideal solving",
+   "section": "finale",
+   "heroS": 2.67
+  },
+  {
+   "fig": 76,
+   "id": "arc",
+   "title": "Understanding = learning new skills efficiently",
+   "section": "finale",
+   "heroS": 0.47
+  },
+  {
+   "fig": 77,
+   "id": "kProgram",
+   "title": "The shortest theory that predicts it all",
+   "section": "finale",
+   "heroS": 1.13
+  },
+  {
+   "fig": 78,
+   "id": "formula",
+   "title": "Predicts it all: AIXI",
+   "section": "finale",
+   "heroS": 2.93
+  },
+  {
+   "fig": 79,
+   "id": "dag",
+   "title": "Every counterfactual: do(circuit := c′)",
+   "section": "finale",
+   "heroS": 2.47
+  },
+  {
+   "fig": 80,
+   "id": "actadd",
+   "title": "Every cause that we can steer",
+   "section": "finale",
+   "heroS": 2.53
+  },
+  {
+   "fig": 81,
+   "id": "formula",
+   "title": "Compression as a test of understanding",
+   "section": "finale",
+   "heroS": 3.2
+  },
+  {
+   "fig": 82,
+   "id": "formula",
+   "title": "Intentional design",
+   "section": "finale",
+   "heroS": 1.87
+  },
+  {
+   "fig": 83,
+   "id": "formula",
+   "title": "The mathematics of AI",
+   "section": "outro",
+   "heroS": 3.03
+  },
+  {
+   "fig": 84,
+   "id": "formula",
+   "title": "The mathematics of intelligence",
+   "section": "outro",
+   "heroS": 2.6
+  },
+  {
+   "fig": 85,
+   "id": "formula",
+   "title": "Of information itself",
+   "section": "outro",
+   "heroS": 3.17
+  },
+  {
+   "fig": 86,
+   "id": "milestones",
+   "title": "We must now",
+   "section": "outro",
+   "heroS": 3.17
+  }
+ ],
+ "heroOverProtectedSecondsByScene": {
+  "intro": {
+   "coveringS": 3.2,
+   "heroS": 3.2
+  },
+  "layers": {
+   "coveringS": 18.43,
+   "heroS": 18.43
+  },
+  "landscape": {
+   "coveringS": 13.83,
+   "heroS": 13.83
+  },
+  "chorus": {
+   "coveringS": 33.03,
+   "heroS": 33.03
+  },
+  "ladder": {
+   "coveringS": 22.3,
+   "heroS": 22.3
+  },
+  "manifolds": {
+   "coveringS": 13.27,
+   "heroS": 13.27
+  },
+  "theory": {
+   "coveringS": 18.17,
+   "heroS": 18.17
+  },
+  "atlas": {
+   "coveringS": 27.87,
+   "heroS": 27.87
+  },
+  "finale": {
+   "coveringS": 17.27,
+   "heroS": 17.27
+  },
+  "outro": {
+   "coveringS": 11.97,
+   "heroS": 11.97
+  }
+ },
+ "note": "protected regions are those of v1.5.0's layout.json; the v1.4.0 hero box is the nominal 600x350 card at the hero scale, centred"
+}
