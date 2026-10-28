@@ -39,7 +39,7 @@ export const Checklist: React.FC<BodyProps> = ({local, h, accent}) => {
 	);
 };
 
-const PAL = ['#0b0e24', COLORS.cyan, COLORS.magenta, COLORS.amber, COLORS.lime]; // ARC-style cell colors
+export const PAL = ['#0b0e24', COLORS.cyan, COLORS.magenta, COLORS.amber, COLORS.lime]; // ARC-style cell colors (also the finale's drifting cells)
 /** Two input -> output examples (rule: mirror left-right), then a test grid whose answer appears. */
 export const Arc: React.FC<BodyProps> = ({local, w, h}) => {
 	const grids = [[[1, 0, 0], [1, 2, 0], [0, 0, 3]], [[0, 4, 0], [2, 0, 0], [2, 2, 1]], [[3, 0, 1], [0, 0, 1], [4, 4, 0]]]; // original puzzle
@@ -61,18 +61,22 @@ export const Arc: React.FC<BodyProps> = ({local, w, h}) => {
 	);
 };
 
+/** Local: a 20-bit period, the 280-bit string it repeats into, and the program that prints it (a short description, in
+ * the sense of Kolmogorov complexity). Global: the kProgram card and the finale's bit rain. */
+export const PERIOD = Array.from({length: 20}, (_, i) => (random(`b${i}`) > 0.5 ? '1' : '0')).join('');
+export const BITS = PERIOD.repeat(14); // 280 bits
+export const PROGRAM = `p = "${PERIOD}"
+print(p * 14)`;
+
 /** 280 bits that are a 20-bit pattern repeated 14 times, collapsing into the program that prints them. */
 export const KProgram: React.FC<BodyProps> = ({local, w, h, accent}) => {
-	const p = Array.from({length: 20}, (_, i) => (random(`b${i}`) > 0.5 ? '1' : '0')).join(''); // the period
 	const k = smooth((local - 0.6) / 1.4); // compression progress
-	const bits = p.repeat(14).slice(0, Math.round(280 * (1 - k))); // remaining raw bits
-	const prog = `p = "${p}"
-print(p * 14)`; // the short description
+	const bits = BITS.slice(0, Math.round(280 * (1 - k))); // remaining raw bits
 	return (
 		<div style={{position: 'absolute', inset: 0, fontFamily: FONTS.mono, color: COLORS.ink, width: w}}>
 			<div style={{fontSize: 11, color: accent, wordBreak: 'break-all', lineHeight: 1.15, height: h * 0.45, overflow: 'hidden', opacity: 0.85}}>{bits}</div>
-			<div style={{fontSize: 17, opacity: k, marginTop: 4, whiteSpace: 'pre'}}>{prog}</div>
-			<div style={{fontSize: 13, color: COLORS.dim, opacity: k, marginTop: 4}}>280 bits → a {prog.length}-character program</div>
+			<div style={{fontSize: 17, opacity: k, marginTop: 4, whiteSpace: 'pre'}}>{PROGRAM}</div>
+			<div style={{fontSize: 13, color: COLORS.dim, opacity: k, marginTop: 4}}>280 bits → a {PROGRAM.length}-character program</div>
 		</div>
 	);
 };
@@ -102,9 +106,10 @@ export const Actadd: React.FC<BodyProps> = ({local, h, accent}) => {
 };
 
 /** Dated landmarks on one line, lighting up left to right. */
+export const MILESTONES: [number, string][] = [[1943, 'McCulloch–Pitts neuron'], [1948, 'Shannon: information'], [1958, 'perceptron'], [1986, 'backprop'], [2012, 'AlexNet'],
+	[2017, 'Transformer'], [2020, 'scaling laws'], [2022, 'induction heads'], [2024, 'Golden Gate feature'], [2025, 'attribution graphs'], [2026, 'theory of deep learning?']]; // also spiral into the outro token
 export const Milestones: React.FC<BodyProps> = ({local, w, h, accent}) => {
-	const ms: [number, string][] = [[1943, 'McCulloch–Pitts neuron'], [1948, 'Shannon: information'], [1958, 'perceptron'], [1986, 'backprop'], [2012, 'AlexNet'],
-		[2017, 'Transformer'], [2020, 'scaling laws'], [2022, 'induction heads'], [2024, 'Golden Gate feature'], [2025, 'attribution graphs'], [2026, 'theory of deep learning?']];
+	const ms = MILESTONES;
 	const row = h / ms.length; // one line per landmark
 	return (
 		<svg width={w} height={h} style={{position: 'absolute'}}>
