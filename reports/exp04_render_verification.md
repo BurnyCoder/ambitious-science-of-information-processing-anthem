@@ -27,7 +27,7 @@ Chorus, manifolds, theory and outro needed no layout fixes. The re-rendered stil
 
 Command (from `src/anthem/render.py`, logged in full): `npx remotion render src/index.ts Anthem out/anthem.mp4 --gl=angle --concurrency=8 --log=info`
 
-There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections), the sixth (before two label fixes found in its card stills) and the seventh (before the code-review fixes of PR #9) were not released; the eighth is v1.3.0. The ninth and tenth stage the cards as hero shots inside the scenes ([exp08](exp08_integration.md)); the ninth was rendered before the code-review fixes of the v1.4.0 PR, and the tenth is v1.4.0. The eleventh puts the figures into their scenes' own layouts and adds the rewind; it is v1.5.0.
+There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections), the sixth (before two label fixes found in its card stills) and the seventh (before the code-review fixes of PR #9) were not released; the eighth is v1.3.0. The ninth and tenth stage the cards as hero shots inside the scenes ([exp08](exp08_integration.md)); the ninth was rendered before the code-review fixes of the v1.4.0 PR, and the tenth is v1.4.0. The eleventh puts the figures into their scenes' own layouts and adds the rewind. The twelfth adds the intro's flying layers after exp09's H4 failed, and is v1.5.0.
 
 | Render | Frames | Wall time | File size | Streams (ffprobe) | Duration (video / song) | Verify |
 |---|---|---|---|---|---|---|
@@ -41,7 +41,8 @@ There were three full renders: the first with repair v1 timings, the second with
 | 8 (illustration track + review fixes, v1.3.0) | 7212 | 441.3 s | 244.4 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 | 9 (hero shots + concrete scene layers; not released) | 7212 | 691.9 s | 263.0 MB | h264 1920×1080 30/1 + aac | not recorded (file replaced by render 10) / 240.41 s | **ok** |
 | 10 (hero shots + review fixes, v1.4.0) | 7212 | 694.1 s | 263.6 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
-| 11 (figures as part of their scenes + the rewind, v1.5.0) | 7212 | 659.0 s | 282.3 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
+| 11 (figures as part of their scenes + the rewind; not released) | 7212 | 659.0 s | 282.3 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
+| 12 (+ the intro's flying layers, post hoc after exp09 H4; v1.5.0) | 7212 | 624.6 s | 285.3 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 
 - **Hardware.** A 16-thread Windows 11 desktop, Remotion 4.0.536, concurrency 8, ANGLE GL.
 - **Log volume.** Render 1 logged one line per frame (about 14k lines), and its Remotion lines contained ANSI colour codes. Both were fixed before render 2: progress is logged every 5 %, and the codes are stripped (`render.keep_line`, `render.ANSI`). Render 2's run log shows 64 Remotion lines with no escape codes.
@@ -105,7 +106,7 @@ Each scene now places at most two panels in slots its layout reserves away from 
 
 **Code review.** A rewind cut whose moment lies in the intro's first seconds could play forwards. The cut is now guarded and covered by a test. The review commit also un-exported unused ladder constants and replaced a constant-zero variable with its value.
 
-Render 11 was bundled just before that commit. None of these changes alters a frame: on the real timeline every rewind moment lies after 14.7 s, so the guard never fires, and the other two changes do not change behaviour. Render 11 is therefore the v1.5.0 video. Its run log has no error or warning lines apart from the known `THREE.Clock` notice.
+Render 11 was bundled just before that commit. None of these changes alters a frame: on the real timeline every rewind moment lies after 14.7 s, so the guard never fires, and the other two changes do not change behaviour. Render 12, the v1.5.0 video, was bundled after all these commits. The run logs of renders 11 and 12 have no error or warning lines apart from the known `THREE.Clock` notice.
 
 ## Learnings
 

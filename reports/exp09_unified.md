@@ -60,7 +60,7 @@ These are fixed in the approved plan and in this file **before** any v1.5.0 rend
 
 Lanes a/b were then assigned greedily: each new panel takes the slot that has been free longest.
 
-**Result.** 86 → 82 cards: 49 panels and 33 drawn by their scenes. Line coverage stays 1.0.
+**Result.** 86 → 82 cards: 50 panels and 32 drawn by their scenes. Line coverage stays 1.0.
 
 | Card(s) | Change | Why |
 |---|---|---|
@@ -82,4 +82,78 @@ Lanes a/b were then assigned greedily: each new panel takes the slot that has be
 
 ## Results
 
-*(filled in after the render)*
+Raw data:
+- [`data/exp09_unified_render11.json`](data/exp09_unified_render11.json) and [`data/exp09_density_render11.json`](data/exp09_density_render11.json): the pre-registered run, render 11.
+- [`data/exp09_unified.json`](data/exp09_unified.json) and [`data/exp09_density.json`](data/exp09_density.json): the final video, render 12.
+- [`data/exp09_v140_baseline.json`](data/exp09_v140_baseline.json): the v1.4.0 baseline.
+
+Figure: [`figures/fig8_exp09.png`](figures/fig8_exp09.png).
+
+### Pre-registered run (render 11)
+
+| Check | Result |
+|---|---|
+| H0 render verification | **pass**: 7212 frames, h264 1920×1080 30/1 + aac, 240.405 s for a 240.41 s song ([exp04](exp04_render_verification.md)) |
+| H1 dwell | **pass**: every panel ≥ 3 s, except the one cut-limited panel (rome, 2.76 s ≥ 2.5); median 5.8 s |
+| H2 concurrency | **pass**: at most 2 panels at once |
+| H3 no cover | **pass**: no panel slot overlaps a protected region or a band |
+| H4 the 0:14 gap | **fail**: median log₂(v1.5.0 / v1.3.0) = −0.58 at 13–18 s (all six frames −0.55 to −0.59) |
+| H5 detail vs v1.4.0 (before the outro) | **pass**: median +0.027, section-bootstrap CI [−0.049, +0.088]; frame bootstrap [−0.000, +0.057]; 63/107 frames larger |
+
+**Why H4 failed, and what changed.**
+- Against v1.4.0, the frames at 15 and 17 s gained detail: +0.37 and +0.29 log₂. The tokens card now stays full-size until the cut instead of shrinking to a corner.
+- They stayed about 0.56 log₂ below v1.3.0, whose giant glowing title filled that window.
+- The approved plan included a match cut in which the tokens stream into verse 1's tunnel. Render 11 had only the scrolling embedding column.
+- **Post-hoc fix:** verse 1's layer grids now fly out of the vanishing point behind the card, and the column returns to full brightness. The video was re-rendered (render 12), and H4 and H5 were measured again.
+- These are post-hoc numbers, so they are reported separately. **The pre-registered H4 result is a failure.**
+
+### Post-hoc run (render 12, the released video)
+
+| Check | Result |
+|---|---|
+| H0 | **pass**: 7212 frames, 240.405 s |
+| H1–H3 | unchanged: the timeline and layout did not change |
+| H4 (post hoc) | **still below the criterion**: median −0.093 (frames −0.156 to −0.061). Against v1.4.0 the same window gained +0.26, +0.83 and +0.80 log₂ at 13, 15 and 17 s |
+| H5 | **pass**: median +0.033, section-bootstrap CI [−0.047, +0.102]; 65/107 frames larger |
+
+**Reading.** The intro window is now within about 6 % of v1.3.0's PNG detail, and far fuller than v1.4.0. It still does not meet the pre-registered "≥ 0", so H4 is reported as **not met**. The threshold was not tuned after the fact.
+
+
+**H5 per section** (render 11, median log₂ v1.5.0 / v1.4.0):
+- intro +0.005;
+- verse 1 +0.209, pre-chorus 1 +0.104, chorus 1 −0.008;
+- verse 2 +0.088, pre-chorus 2 +0.088, chorus 2 +0.044;
+- verse 3 −0.076, bridge −0.219, final chorus +0.097.
+
+Verse 1 regained what exp08 had found lost (−0.19 against v1.3.0). The bridge lost detail: its 21 formula cards became star labels that grow two at a time, and the sphere shrank.
+
+**Descriptive: how long figures are shown, and what they cover.**
+
+| | v1.4.0 (hero model) | v1.5.0 |
+|---|---|---|
+| Figures | 86 | 82 (50 panels, 32 drawn by their scenes) |
+| Median seconds a figure is the hero (v1.4.0) / on screen (v1.5.0) | 2.22 s | 6.0 s |
+| Figures shown under 2 s | 41 of 86 | 1 of 82 (the closing "Intentional design" banner, 0.94 s) |
+| Share of the time a figure covered a protected scene object | 100 % (every hero second) | 0 % (no slot overlaps a protected region) |
+
+The v1.4.0 numbers are its *hero* seconds, the time a figure was the main, readable centre of the frame. v1.4.0 cards stayed longer as small receded thumbnails. The v1.5.0 numbers are the seconds on screen at full panel size. The "covered" share uses v1.5.0's protected regions for both versions, and v1.4.0's nominal 600 × 350 hero box at its hero scale.
+
+## What this does and does not show
+
+- **It shows that the layout constraints hold by construction:**
+  - figures stay on screen long enough to read;
+  - at most two compete in a scene;
+  - none covers the ladder, the SGD swarm, the closing statement or the lyrics.
+- **Overall detail is not lower** than v1.4.0 before the outro.
+- **The 0:14 window is fuller than v1.4.0**, but the pre-registered comparison with v1.3.0 failed on render 11.
+- **It does not show that viewers find the video more unified or easier to follow.** No viewer study was run. "Two overlapped videos" is a perceptual judgement, and the metrics here only check the layout properties meant to address it.
+- **Limitations:**
+  - The protected regions are static rectangles, so moving 3D objects (orbiting landscape points, rotating atlas stars) can still pass under a panel.
+  - PNG size measures detail, not quality.
+  - The rewind replaces the outro's content entirely, so the outro is outside the density test.
+
+## Learnings
+
+- **A layout contract beats a camera trick.** v1.4.0 made a figure the centre of attention by dimming and pushing the scene. That is exactly what made the two layers read as separate videos. Reserving slots in each scene's own composition, and testing them against the scene's key objects, fixed the cover problem by construction.
+- **Let the scene draw what it can.** Where a scene already showed an idea (the antonym stream, the bit rain, an atlas star's formula), drawing the figure in place removed a duplicate panel and a short-lived card at the same time.
+- **Pre-registered checks catch what the eye forgives.** The intro looked filled in stills, but against the v1.3.0 baseline it was still sparse. The failure pointed at a planned element that had been skipped.
