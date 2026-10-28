@@ -1,7 +1,7 @@
 ---
 title: "We Will Know: a reproducible pipeline for a code-animated, word- and beat-synchronised music video, with pre-registered validation of its timing components"
 author: "Libor Burian (independent researcher)"
-date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06) and 28 October 2026 (illustration track, exp07; hero shots, exp08)"
+date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06) and 28 October 2026 (illustration track, exp07; hero shots, exp08; figures as part of the scenes and the rewind, exp09)"
 abstract: |
   We describe and evaluate an open pipeline that turns hand-written lyrics into a four-minute music video in which every frame is drawn in code.
 
@@ -17,6 +17,7 @@ abstract: |
   6. To take one word ("mind") out of the lyrics, one line was re-sung with the provider's replace-section operation. The line was fixed: an independent recogniser now hears the new word, and coverage stayed at 430/430. A pre-registered check that the rest of the take was untouched **failed**. The provider regenerated about 30 s around an 11.6 s window, shifted the whole file by 17 ms, and returned word times copied from the parent take. Re-running exp05's rule on the edited take gave a lag of 0.156 s [0.144, 0.167], which the video now corrects.
   7. The figure cards reuse data released by the original authors or well-known third parties: 31 pinned files, with no experiment re-run. Two pre-specified consistency checks passed. The five largest Fourier frequencies of the released grokking embedding equal the paper's key frequencies, and ARENA's top induction heads include the IOI paper's. Every sung line has a card (56/56). Paired frames carry more detail than v1.2.0: median log₂ PNG-size ratio +0.26, section-bootstrap 95 % CI [+0.18, +0.42]. A fact-check removed three overclaims from our own plan.
   8. Staging the cards inside the scenes (v1.4.0) passed its pre-registered non-inferiority test against v1.3.0. The median log₂ PNG-size ratio was −0.014, with a section-bootstrap 95 % CI of [−0.075, +0.016] against a margin of −0.10. The change was not uniform: verse 1 lost detail (−0.19) and the finale gained (+0.13). Partly, this may be the dimming of the scene behind the hero, which was not tested. A figure is the hero during 82.6 % of the sung time, covers at most 32.8 % of the frame, and 71 of the 86 cards dock into a scene object.
+  9. In v1.5.0 each scene owns its figures: at most two panels in slots reserved away from its key objects, and ideas the scene can draw itself drawn in place; the outro became a flying rewind through the whole video. Pre-registered layout checks passed: every panel stays ≥ 3 s (one cut-limited panel 2.76 s), at most two at once, and no slot overlaps a protected object. The median time a figure is on screen rose from 2.2 s as v1.4.0's hero to 6.0 s. Detail before the outro was not lower than v1.4.0 (+0.027 [−0.049, +0.088]). The pre-registered check that the 0:14 window is as full as v1.3.0 **failed** on the first render (−0.58 log₂). A post-hoc fix (verse 1's layers flying out behind the tokens card, part of the approved plan but skipped) brought the window to −0.09 in the released render. That is much fuller than v1.4.0 (+0.26 to +0.83) but still short of the criterion, which was not changed. Final detail before the outro: +0.033 [−0.047, +0.102].
 
   We report these as properties of this pipeline and this song. They are not general claims about the music model.
 ---
@@ -185,6 +186,26 @@ The scenes also gained concrete layers inside their general pictures:
 - **Outro.** Every figure title spiralling into the token.
 
 Labels that a hero would cover are drawn as margin callouts with leader lines.
+
+## 3.8 Figures as part of their scenes, and the rewind (v1.5.0)
+
+After v1.4.0 the author reported that the figures still read as "two overlapped independent videos". The causes were measured from the timeline:
+- **Short hero times.** 41 of 86 cards were the hero for under 2 s, because the newest card always took the centre.
+- **Covered key objects.** The hero covered a key scene object the whole time it was up: the ladder, the theory blocks and the closing statement.
+- **Empty stretches.** There were empty stretches, for example 14–18 s.
+
+v1.5.0 replaces the hero model with a layout contract (`video/src/stage/layout.json`). Each scene declares:
+- at most two panel slots;
+- the protected rectangles of its key objects;
+- its lyric band.
+
+Slots are tested to lie on screen, to be readable (≥ 0.9 of the native 600 × 350 card) and to be disjoint from the protected regions and bands. Placement then works as follows:
+- **Panels** (lanes a/b) stay in their slot for their whole time and are wired by a connector to the object they explain. The objects are geometry the scene exports: rung label ends, star projections, surface points, manifold centres.
+- **Lane `scene`** marks figures the scene draws itself, in place.
+- **A `[[clear]]` cue** ends a section's figures before a highlight line.
+- **The curation** (86 → 82 cards, logged with reasons in exp09) gives every panel ≥ 3 s while keeping a figure on every sung line.
+
+**The rewind.** The outro is a pure schedule (`stage/rewind.ts`). Cuts sit on the beat grid and shrink from 1 beat to ¼ beat. Each cut plays an earlier moment of the video backwards at 2× rising to 12×. The moments are each figure's midpoint and each section's, latest first. The landing cut plays the intro backwards onto its single token. The copies are Remotion `<Freeze>` instances of the same `World` component that draws the live video (Remotion, 2026), with at most two on screen at once.
 
 # 4. Experiments and results
 
@@ -393,6 +414,31 @@ The mirror reads its constants from the TypeScript source, and it agreed with it
 
 ![Exp08. (a) Per-frame log₂ PNG-size ratio v1.4.0 / v1.3.0 with sections shaded and the pre-specified margin. (b) Largest heroness over the song with the 0.5 threshold. (c) Cards docked into a scene object per section.](figures/fig7_exp08.png){width=100%}
 
+## 4.9 Figures as part of their scenes (exp09)
+
+**Pre-specified** (`reports/exp09_unified.md`, committed before the render):
+- **H0:** the render verifies.
+- **H1:** every panel is shown ≥ 3 s, or ≥ 2.5 s when its trigger is within 3 s of a cut.
+- **H2:** at most two panels at once.
+- **H3:** no slot overlaps a protected region or band.
+- **H4:** at 13–18 s, the median log₂ PNG ratio against v1.3.0 is ≥ 0.
+- **H5:** non-inferiority of detail against v1.4.0 before the outro, with margin 0.10.
+
+| Check | Render 11 (pre-registered) |
+|---|---|
+| H0 | **pass** |
+| H1 | **pass**: shortest panel 2.76 s (cut-limited), median 5.8 s |
+| H2 | **pass**: 2 |
+| H3 | **pass**: no overlap |
+| H4 | **fail**: −0.58 (six frames, −0.55 to −0.59) |
+| H5 | **pass**: +0.027 [−0.049, +0.088]; verse 1 +0.21, bridge −0.22 |
+
+**Post-hoc (render 12, released).** After H4 failed, the planned match cut was added: verse 1's layers fly out behind the tokens card. H4 is now −0.093 (−0.156 to −0.061), still below the pre-registered ≥ 0, so it is reported as not met. H5 is +0.033 [−0.047, +0.102]. Against v1.4.0, the window gained +0.26, +0.83 and +0.80 log₂ at 13, 15 and 17 s.
+
+**Descriptive.** The median time a figure is shown rose from 2.22 s (v1.4.0 hero time) to 6.0 s (v1.5.0, on screen at full panel size). Figures under 2 s fell from 41/86 to 1/82: the closing banner, 0.94 s. The share of figure time over a protected object fell from 100 % to 0 % by construction.
+
+![Exp09. (a) Empirical CDF of the seconds each figure is the hero (v1.4.0) or on screen (v1.5.0). (b) Per-frame log₂ PNG-size ratio v1.5.0 / v1.4.0 before the outro, with the margin. (c) The 0:13–0:18 window against v1.3.0.](figures/fig8_exp09.png){width=100%}
+
 # 5. Discussion
 
 **What the evidence supports.**
@@ -403,6 +449,7 @@ The mirror reads its constants from the TypeScript source, and it agreed with it
 - That lag is shared between the two systems. Against a lyrics-aware forced alignment of the separated voice, the provider is 0.137 s late on the original video take and Whisper is 0.080 s early. A pre-registered global correction of −0.137 s moved 94 % of independently hand-labelled line starts closer.
 - Concrete content can be added without re-running anyone's experiment. Released artifacts covered every "real data" card, and the two checks that could fail against the papers passed.
 - Concrete examples can be staged inside the general animation without losing measurable detail overall (exp08). The change redistributes detail between sections rather than adding it.
+- A per-scene layout contract (slots, protected objects, lyric bands, tested) satisfies the layout properties meant to address the author's "two overlapped videos" judgement, and keeps detail (exp09). Whether viewers perceive the video as more unified was not measured.
 - The video's line was changed with a one-call section replacement. Because the provider shifted the file and copied its old word times, the correction had to be re-estimated (−0.156 s) and could not be carried over.
 
 **What it does not support.**
@@ -434,6 +481,11 @@ The mirror reads its constants from the TypeScript source, and it agreed with it
   - The hero area is a nominal box, not measured pixels.
   - The density proxy confounds detail with brightness where the scene is dimmed.
   - The hero share (82.6 % of sung time) is a design choice for a maximalist video. It was measured but not tuned against any viewer outcome.
+- **Scene-owned figures (exp09).**
+  - The protected regions are static rectangles, so moving 3D objects can still pass under a panel.
+  - The intro fix was post hoc, made after the pre-registered H4 failed.
+  - The rewind's outro is excluded from the density test.
+  - The curation removed four cards and moved 32 into their scenes; this is a judgement, logged with reasons.
 - **Black-box components.** Schematic content is labelled per card. The music model and the provider are black boxes, and hootCer's definition is undocumented.
 
 # 7. Conclusion
@@ -444,7 +496,7 @@ A code-animated music video can be built as an ordinary, testable data pipeline:
 - the timing components are validated against references fixed in advance;
 - the render is deterministic and checked automatically.
 
-Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Adding concrete, cited content showed the same pattern: a fact-check of our own plan against the cited sources removed three overclaims before release. Moving that content into the scenes did too: a code review found a camera jump that no still frame could show, and a pre-registered density check surfaced a section that lost detail, which the aggregate hides. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
+Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Adding concrete, cited content showed the same pattern: a fact-check of our own plan against the cited sources removed three overclaims before release. Moving that content into the scenes did too: a code review found a camera jump that no still frame could show, and a pre-registered density check surfaced a section that lost detail, which the aggregate hides. Making each scene own its figures then fixed the cover and dwell problems by construction, and a failed pre-registered check pointed at a planned element that had been skipped. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
 
 # References
 
@@ -494,6 +546,7 @@ Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repa
 - Wang, K., Variengien, A., Conmy, A., Shlegeris, B., & Steinhardt, J. (2022). Interpretability in the wild: A circuit for indirect object identification in GPT-2 small. arXiv:2211.00593.
 - Rouard, S., Massa, F., & Défossez, A. (2022). Hybrid transformers for music source separation. arXiv:2211.08553.
 - sunoapi.org (n.d.). Replace Music Section. <https://docs.sunoapi.org/suno-api/replace-section> (accessed 27 Oct 2026).
+- Remotion (2026). `<Freeze>`. <https://www.remotion.dev/docs/freeze> (accessed 28 Oct 2026).
 - Remotion documentation, <https://www.remotion.dev/docs/>; torchaudio MMS_FA, <https://docs.pytorch.org/audio/stable/generated/torchaudio.pipelines.MMS_FA.html>; sunoapi.org documentation, <https://docs.sunoapi.org/> (both accessed 18 Oct 2026).
 
 # Appendix A. Reproduction
@@ -509,7 +562,8 @@ uv run --group analysis python scripts/validate_lyric_edit.py     # exp06; uses 
 uv run --group analysis python -I scripts/vignette_data.py       # exp07 data phase (downloads 31 pinned files once)
 uv run python -I scripts/validate_density.py                     # exp07 density (needs the v1.2.0 MP4 in out/v1.2.0/)
 uv run python -I scripts/validate_density.py out/v1.3.0/we-will-know-anthem.mp4 out/anthem.mp4 --name exp08_density --margin 0.10
-uv run python -I scripts/validate_integration.py                 # exp08 integration measures (timeline only)
+uv run python -I scripts/validate_unified.py                     # exp09 H1-H4 (exp08's integration script: git checkout v1.4.0)
+uv run python -I scripts/validate_density.py out/v1.4.0/we-will-know-anthem.mp4 out/anthem.mp4 --name exp09_density --margin 0.10 --until 213.96
 uv run python -I scripts/make_vignette_docs.py                   # docs/vignettes.md, the card catalog
 uv run --group analysis python scripts/make_figures.py
 ```
