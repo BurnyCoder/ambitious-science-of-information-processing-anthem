@@ -13,9 +13,11 @@ An original song plus a music video in which **every frame is drawn in code**. T
     - Epoch AI's model and Chinchilla data, Nakkiran et al.'s double descent;
     - Gurnee & Tegmark's places, Goodfire's block-sparse-featurizer figure.
   - See [docs/vignettes.md](docs/vignettes.md) and [experiment 7](reports/exp07_provenance.md).
+- **Hero shots (v1.4.0):** the cards now live inside the scenes. Each one dives out of the scene object its lyric names (a ladder rung, a theory pillar, an atlas star, a chorus circuit node) and takes centre stage without a frame while the camera pushes toward that object. It then docks back into it. The scenes keep their general pictures (the layer tunnel, the loss landscape, the circuit network, the ladder, the pillars, the atlas) and draw concrete examples inside them. See [docs/scenes.md](docs/scenes.md) and [experiment 8](reports/exp08_integration.md).
 - **One-line lyric edit:** the word "mind" was taken out of Verse 1 ("And out of it a **thing** that learns to answer why"). Only that part was re-sung, with Suno's replace-section. The line was fixed, but Suno regenerated about 30 s of audio rather than the requested 11.6 s window, and it shifted the file by 17 ms. See [experiment 6](reports/exp06_lyric_edit.md).
 
-**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.3.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.3.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.3.0): the maximalist cut with the illustration track. Older cuts:
+**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.4.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.4.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.4.0): the figure cards staged inside the scenes as hero shots. Older cuts:
+- [v1.3.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.3.0): the same 86 cards in corner boxes beside the scenes.
 - [v1.2.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.2.0): the edited lyric with corrected onsets, no figure cards.
 - [v1.1.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.1.0): the original lyric, corrected onsets.
 - [v1.0.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.0.0): uncorrected.
@@ -28,9 +30,25 @@ An original song plus a music video in which **every frame is drawn in code**. T
 | **Verse 2: ladder of abstraction** | **Verse 3: theory of deep learning** | **Bridge: atlas of the math** | **Final chorus: ideal solving** |
 | ![ladder](docs/img/s05_ladder.jpg) | ![theory](docs/img/s08_theory.jpg) | ![atlas](docs/img/s09_atlas.jpg) | ![finale](docs/img/s10_finale.jpg) |
 
+Concrete examples inside the general scenes (frames of the v1.4.0 video):
+
+![Six frames of v1.4.0: GPT-2 token ids of the sung line in the layer tunnel; the loss surface with its own saddle, basins and the released grokking and double-descent curves; the chorus circuit over the traced prompt ending in Austin; the encyclopedia filing the ladder's figures; five theory pillars filled by their plots; the do()-intervention graph and the bit string collapsing into its program](docs/img/stage.jpg)
+
 Twelve of the 86 figure cards, all drawn from released data:
 
 ![Twelve figure cards drawn from released data: attribution graph, grokking curves and Fourier spectrum, induction scores, refusal scores, world places, model scale, double descent, block-sparse featurizers, superposition, weekday latents, a Neuronpedia feature](docs/img/cards.jpg)
+
+**Highlights of v1.4.0** ([experiment 8](reports/exp08_integration.md)):
+- **Inside the scenes.**
+  - 71 of the 86 cards dock into a scene object; the other 15 fly past the camera in the three fly-through scenes.
+  - A hero covers at most 33 % of the frame, for at most 3.2 s.
+  - The camera push is at most 8 %, so the general scene stays visible around every example.
+- **Real numbers in the general pictures.** Examples: the loss surface's own saddle (Hessian eigenvalues −0.27, +0.19, found by Newton's method), the sharp vs flat basin curvature (1.76 vs 0.27), and the traced prompt under the chorus circuits.
+- **Detail kept, not gained.** The pre-registered test passes: frames are not less detailed than v1.3.0 by more than the margin. The median log₂ PNG-size ratio is −0.014, with 95 % CI [−0.075, +0.016].
+- **Negative findings.**
+  - Verse 1 lost detail (−0.19), as did the bridge (−0.11); the finale gained (+0.13). Dimming the scene behind the hero may explain part of the loss, but this was not tested.
+  - A figure is centre stage 83 % of the sung time. The general scene has the frame alone for a quarter of the song.
+  - No viewer study was run.
 
 **Highlights of v1.3.0** ([experiment 7](reports/exp07_provenance.md)):
 - **Consistent with the papers.**
@@ -78,9 +96,12 @@ Twelve of the 86 figure cards, all drawn from released data:
 8. **Rendering.** A Remotion composition stacks the following, all as pure functions of the frame number (deterministic, parallel rendering):
    - a starfield and faint drifting "equation dust" (the section's card titles);
    - an audio spectrum ring;
-   - one scene per section (2D SVG or Three.js), punch-zoomed on downbeats and RGB-split for 0.25 s after each cut;
-   - the figure cards;
-   - a karaoke overlay, or giant kinetic words in the choruses;
+   - one scene per section (2D SVG or Three.js), punch-zoomed on downbeats and RGB-split for 0.25 s after each cut. Each scene draws its general picture with concrete examples inside it;
+   - the stage, where the figure cards play as hero shots:
+     - a card dives out of the scene object its lyric names;
+     - it is centre stage for at most 3.2 s, while the scene layer is pushed gently toward that object;
+     - it then recedes, and docks back into the object at its end ([experiment 8](reports/exp08_integration.md));
+   - a karaoke overlay, or giant kinetic words in the lower third of the choruses;
    - beat and cut flashes, a HUD and a scrolling citation ticker.
 9. **Verification.** ffprobe checks resolution, fps, codecs and duration against the song. ffmpeg extracts one still per section for visual inspection.
 
@@ -135,7 +156,7 @@ flowchart LR
         X[(released artifacts<br/>pinned URL + sha256)] --> Y[video/public/vignettes/*.json]
     end
     subgraph rd["phase 3: render (Remotion, video/)"]
-        R[Root.tsx calculateMetadata] --> V[Anthem.tsx: scenes + figure cards + karaoke + flashes + HUD + ticker + audio]
+        R[Root.tsx calculateMetadata] --> V[Anthem.tsx: scenes with concrete layers + stage: cards dive out of scene objects + karaoke / giant words + flashes + HUD + ticker + audio]
     end
     subgraph vf["phase 4: verify"]
         F[ffprobe checks + section stills]
@@ -164,7 +185,7 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
    - Analyzes the audio (about 10 s), places the 86 figure cards at their sung words (logging trims and coverage), and writes `video/public/timeline.json` plus a copy of the MP3.
 3. **render**
    - `npx remotion render … --gl=angle` bundles the project, runs `calculateMetadata` (video length = song length, 7212 frames), and renders the frames in 8 parallel headless-Chrome tabs.
-   - It then encodes H.264 + AAC to `out/anthem.mp4`. This took about 6 minutes on a 16-thread desktop.
+   - It then encodes H.264 + AAC to `out/anthem.mp4`. This took about 11.5 minutes for v1.4.0 (7.5 for v1.3.0) on a 16-thread desktop.
 4. **verify**
    - Checks 1920×1080, 30 fps, h264/aac, and duration within 0.5 s of the song.
    - Writes `out/anthem_verify.json` and `out/stills/verify_s*.png`.
@@ -176,7 +197,15 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
 - **Paid calls happen only on request:** one generation, plus one lyric-line edit so far. Results are cached, banned lyric words are refused before any call, and tests never touch the network.
 - **Word-level karaoke sync** from Suno's timestamped lyrics, with alignment, artifact repair, and an onset correction measured against a forced-aligned vocal stem.
 - **Beat-synced cuts and flashes** from librosa beat tracking, validated on ground-truth click tracks.
-- **Ten code-drawn scenes**, each tied to the lyric it illustrates; keyword reveals fire when the word is sung. See [docs/scenes.md](docs/scenes.md).
+- **Ten code-drawn scenes**, each tied to the lyric it illustrates; keyword reveals fire when the word is sung. Each keeps its general picture and draws concrete examples inside it. Examples:
+  - the sung line's real GPT-2 token ids in the layer tunnel;
+  - the loss surface's own saddle with its Hessian eigenvalues, and released grokking and double-descent curves over the surface;
+  - the traced prompt under the chorus circuits ("… Dallas is → Austin");
+  - an encyclopedia that files the ladder's figures;
+  - the 280-bit string collapsing into its program.
+  
+  See [docs/scenes.md](docs/scenes.md).
+- **Dive-in hero shots (v1.4.0):** each figure card comes out of the scene object its lyric names: a ladder rung, a theory pillar, an atlas star, a chorus circuit node. It takes centre stage without a frame for at most 3.2 s while the camera pushes toward that object, then docks back into it.
 - **86 figure cards**, at least one per sung line, each with a provenance badge and a citation. Released data is reused, never re-generated. Concrete examples include:
   - Anthropic's Dallas → Austin, rabbit-rhyme and 36+59 attribution graphs, and the grokking run with its Fourier key frequencies;
   - GPT-2's induction heads, the IOI circuit and the refusal direction;
@@ -207,11 +236,12 @@ content/            lyrics.txt, song.toml (Suno spec), scenes.toml (section -> s
 src/anthem/         pipeline.py (wrapper) + config, logging_setup, suno_client, song, lyrics,
                     alignment, take_selection, audio_analysis, timeline, vignettes, render, verify
 video/              Remotion project: src/Root.tsx, src/Anthem.tsx, src/lib (incl. mathviz.ts), src/components,
-                    src/scenes, src/vignettes (card bodies), public/vignettes (card data), scripts/stills.mjs, tests/
+                    src/scenes, src/stage (hero-shot lifecycle + anchors), src/vignettes (card bodies),
+                    public/vignettes (card data), scripts/stills.mjs, tests/
 data/song/          generated takes, covers, raw Suno timing JSON, song.json (cache)
 tests/              pytest suite (offline)
-scripts/            experiment scripts (exp02, exp03, exp05, exp06, exp07 data + density, figures, card docs) + analysis/ (shared helpers: stats, released-artifact helpers,
-                    Whisper reference, Demucs separation, MMS_FA alignment, blinded anchors, decision rule)
+scripts/            experiment scripts (exp02, exp03, exp05, exp06, exp07 data + density, exp08 integration, figures, card docs) + analysis/ (shared helpers: stats,
+                    released-artifact helpers, Whisper reference, Demucs separation, MMS_FA alignment, blinded anchors, decision rule, shot-lifecycle mirror)
 docs/               architecture, Suno API notes, scene guide, images
 reports/            per-experiment reports, summary, technical report (paper.md / paper.pdf)
 ```
