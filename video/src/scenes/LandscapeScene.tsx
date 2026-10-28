@@ -8,7 +8,10 @@
  *  - "flat": both minima are shaken by ±ρ; the live ΔL and λmax show why the wide one is "flat" (SAM's sharpness);
  *  - "generalize": the released grokking train/test curves and the double-descent curve rise as glowing ribbons
  *    as glowing ribbons on two walls standing at the sides of the surface;
- *  - "inside": the camera dives into the particle that reached the wide basin (into the chorus).
+ *  - "inside": the camera dives into the particle that reached the wide basin, and the dive ends in the
+ *    curve-detector tiles (a card the scene draws itself).
+ * The figure panels sit in the side slots (stage/layout.json), wired to the surface point each explains
+ * (landscapeAnchor); the labels sit on their 3D points, since nothing covers the centre.
  * Global: illustrates the lyric "past every saddle, to valleys flat and wide"; the flat-minima
  * <-> generalization link is the hypothesis of Hochreiter & Schmidhuber (1997, Neural Computation
  * "Flat Minima") and Keskar et al. (2017, ICLR, arXiv:1609.04836). This surface is illustrative only;
@@ -22,6 +25,8 @@ import {criticalPoint, hessian2, sym2Eig} from '../lib/mathviz'; // Newton + Hes
 import {CameraRig, GlowLines, GlowPoints, Stage, projectToScreen, rgb} from '../components/three'; // 3D blocks
 import grok from '../../public/vignettes/grokking.json'; // Nanda et al. mainline run (train/test loss per epoch)
 import dd from '../../public/vignettes/double_descent.json'; // Nakkiran et al. ResNet18 width sweep
+import {cardsOn} from '../stage/shots'; // the cards this scene draws itself
+import {VIGNETTES} from '../vignettes'; // their bodies
 import type {SceneProps} from './types'; // contract
 
 const N = 90; // lattice resolution per side
@@ -82,6 +87,20 @@ const RIBBONS = [ // `tag`: index of the point that carries the label
 	{pts: ddPts(dd.testMean), color: COLORS.amber, label: 'test', at: 0.8, tag: 1},
 ];
 
+/** Local: the orbit camera at `local` seconds and `progress` 0..1 of the section (before the dive). Global: shared by the
+ * scene and landscapeAnchor, so panels are wired to where the surface points are actually drawn. */
+const orbitCam = (local: number, progress: number): [number, number, number] => {
+	const theta = 0.6 + local * 0.08; // slow orbit
+	return [Math.cos(theta) * 26, 15 - progress * 4, Math.sin(theta) * 26];
+};
+/** Local: screen point a pre-chorus-1 figure is wired to: the saddle, the wide basin, a ribbon wall, or the surface
+ * centre. Global: stage/anchors.ts. */
+export const landscapeAnchor = (id: string, local: number, progress: number) => {
+	const p: [number, number, number] = id === 'saddle' ? surf(...SADDLE, 0.3) : id === 'flat' ? surf(...WIDE, 0.35)
+		: id === 'grokking' ? [-WALL, 8, -2] : id === 'doubleDescent' ? [WALL, 7, -2] : surf(0, 0, 0.3);
+	return projectToScreen(p, orbitCam(local, progress), [0, 1, 0], FOV);
+};
+
 export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {frame, t, local, progress} = useSceneClock(section); // time
 	const pulse = beatPulse(tl.beats, t); // beat kick
@@ -90,7 +109,7 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 	const flatAt = at(/flat/i, 0.4); // "flat" sung
 	const flat = smooth((t - flatAt) / 0.5); // basins shake
 	const gen = at(/generalize/i, 0.55); // ribbons draw from here
-	const insideAt = at(/inside/i, 0.85);
+	const insideAt = tl.vignettes.find((v) => v.sectionIndex === section.index && v.id === 'curves')?.startS ?? at(/inside/i, 0.85); // "So we go inside!": the dive starts with its card
 	const dive = smooth((t - insideAt) / Math.max(0.5, section.endS - insideAt)); // camera dive into the winning particle
 	const surface = useMemo(() => { // static lattice: positions + height colors
 		const pos = new Float32Array(N * N * 3);
@@ -166,27 +185,28 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 	}, [frame]);
 	const ball = new Float32Array(probes.flatMap((b) => surf(...b.q, 0.35))); // the shaken weights
 	const ballCol = new Float32Array(probes.flatMap((b) => rgb(b.color, 1.8 + pulse)));
-	const theta = 0.6 + local * 0.08; // slow orbit
 	const head = runs[diver][step]; // the diver's current position
-	const orbit: [number, number, number] = [Math.cos(theta) * 26, 15 - progress * 4, Math.sin(theta) * 26];
+	const orbit = orbitCam(local, progress); // before the dive
 	const cam = orbit.map((o, i) => o + (head[i] + [0, 2.2, 3.2][i] - o) * dive) as [number, number, number]; // dive toward the particle
 	const target = [0, 1, 0].map((o, i) => o + (head[i] - o) * dive) as [number, number, number];
 	const proj = (p: [number, number, number]) => projectToScreen(p, cam, target, FOV); // 3D -> pixel
 	const live = (from: number, to: number) => smooth((t - from) / 0.5) * (1 - smooth((t - to) / 0.5)); // a callout's lifetime
-	/** Local: a label in the side margin (clear of the centre hero) with a dashed leader line to its 3D point.
-	 * x ≥ 110 and ≤ 1810 so the camera push (×1.08 about the centre) does not crop it. */
-	const callout = (key: string, p: [number, number, number], left: boolean, y: number, op: number, lines: [string, string][]) => {
+	/** Local: a label on its 3D point, on the side facing the centre (the side slots hold the figure panels). */
+	const callout = (key: string, p: [number, number, number], op: number, lines: [string, string][]) => {
 		const q = proj(p);
 		if (op <= 0 || !q.visible) return null;
-		const x = left ? 110 : 1530; // text column
+		const right = q.x < 960, x = q.x + (right ? 18 : -18); // text towards the centre
 		return (
 			<g key={key} opacity={op}>
-				<line x1={q.x} y1={q.y} x2={left ? x + 290 : x - 12} y2={y - 6} stroke={lines[0][1]} strokeWidth={1.5} strokeDasharray="5 5" opacity={0.7} />
 				<circle cx={q.x} cy={q.y} r={6} fill={lines[0][1]} />
-				{lines.map(([txt, col], i) => <text key={i} x={x} y={y + i * 24} fill={col} fontFamily={FONTS.mono} fontSize={18} style={{textShadow: glow(col, 0.4)}}>{txt}</text>)}
+				<rect x={right ? x - 6 : x - 300} y={q.y - 22} width={306} height={lines.length * 22 + 12} rx={8} fill="rgba(6,8,22,0.62)" />
+				{lines.map(([txt, col], i) => <text key={i} x={x} y={q.y - 4 + i * 22} fill={col} fontFamily={FONTS.mono} fontSize={17} textAnchor={right ? 'start' : 'end'}
+					style={{textShadow: glow(col, 0.4)}}>{txt}</text>)}
 			</g>
 		);
 	};
+	const tiles = cardsOn(tl.vignettes, section.index, t).find((c) => c.v.id === 'curves'); // the dive's destination
+	const Tiles = VIGNETTES.curves?.Body;
 	const ribbonOp = (k: number) => smooth((t - gen - k) / 0.5) * (1 - dive);
 	const tagAt = (r: (typeof RIBBONS)[number]) => proj(r.pts[Math.round(r.tag * (r.pts.length - 1))]);
 	return (
@@ -200,10 +220,10 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 				<GlowPoints positions={ball} colors={ballCol} size={1.3 * flat} />
 			</Stage>
 			<svg width={1920} height={1080} style={{position: 'absolute'}}>
-				{callout('saddle', surf(SADDLE[0], SADDLE[1], 0.3), true, 250, live(at(/saddle/i, 0.3), gen) * (1 - dive), [
+				{callout('saddle', surf(SADDLE[0], SADDLE[1], 0.3), live(at(/saddle/i, 0.3), gen) * (1 - dive), [
 					['saddle of this surface', COLORS.ink], ['∇L = 0 (Newton)', COLORS.dim],
 					[`Hessian λ₁ = ${EIG.values[0].toFixed(2)}`, COLORS.magenta], [`        λ₂ = +${EIG.values[1].toFixed(2)}`, COLORS.cyan]])}
-				{probes.map((b, i) => callout(b.name, surf(...b.p, 0.35), i === 0, 640, live(flatAt, insideAt) * (1 - dive), [
+				{probes.map((b) => callout(b.name, surf(...b.p, 0.35), live(flatAt, insideAt) * (1 - dive), [
 					[`${b.name} minimum`, b.color], [`λmax = ${b.l.toFixed(2)}`, COLORS.ink], [`shake ‖ε‖ = ρ = ${RHO}`, COLORS.dim],
 					[`ΔL = ${b.dL >= 0 ? '+' : ''}${b.dL.toFixed(2)}`, b.color]]))}
 				{RIBBONS.map((r, i) => { const q = tagAt(r); return q.visible ? (
@@ -215,6 +235,10 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 						<text x={Math.min(1810, Math.max(110, q.x))} y={q.y} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={17} textAnchor={(x as number) < 0 ? 'start' : 'end'}>{a}</text>
 						<text x={Math.min(1810, Math.max(110, q.x))} y={q.y + 22} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={14} textAnchor={(x as number) < 0 ? 'start' : 'end'}>{b}</text></g> : null; })}
 			</svg>
+			{tiles && Tiles ? <div style={{position: 'absolute', left: 960 - 300, top: 470 - 125, width: 600, height: 250, opacity: tiles.on * dive,
+				transform: `scale(${0.3 + 1.5 * dive})`}}> {/* the dive lands in the curve-detector tiles */}
+				<Tiles v={tiles.v} tl={tl} t={t} local={t - tiles.v.startS} p={dive} w={600} h={250} pulse={pulse} accent={COLORS.violet} />
+			</div> : null}
 		</AbsoluteFill>
 	);
 };

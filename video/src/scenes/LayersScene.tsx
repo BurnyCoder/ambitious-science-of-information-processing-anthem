@@ -7,17 +7,20 @@
  *  - each new token drops into the tunnel;
  *  - Epoch AI's model milestones (Mark I perceptron 1957 ... Switch-C 1.57T, PaLM 2022) are mile markers the camera flies past;
  *  - on "gradient", the wave reverses and turns magenta: the backward pass.
- *  The concrete figure cards (W·h, the bend, the scale, ReLU regions, induction heads) dive out of the vanishing point.
+ *  - "Nobody drew the plan": Sutton's Bitter Lesson rolls along the tunnel floor (a card the scene draws itself).
+ *  The figure panels (W·h, the bend, the scale, ReLU regions, induction heads...) sit on the tunnel's left and right,
+ *  wired to the layer stack.
  * Global: introduces depth = composition of linear maps and nonlinearities, which the landscape scene then trains.
  */
 import React, {useMemo} from 'react'; // JSX + memo
 import {AbsoluteFill, random} from 'remotion'; // layer + seeded RNG
 import {activeWordIndex, beatPulse, featureAt, lineAt, wordTime} from '../lib/timeline'; // audio reactivity + lyrics
-import {COLORS, FONTS, smooth, useSceneClock} from '../lib/theme'; // look + clock
+import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
 import {CameraRig, GlowLines, GlowPoints, Stage, projectToScreen, rgb} from '../components/three'; // 3D blocks
 import {human} from '../vignettes/primitives'; // 1.57T-style numbers
 import lyricTokens from '../../public/vignettes/lyric_tokens.json'; // GPT-2 ids of every lyric word
 import scaleData from '../../public/vignettes/scale.json'; // Epoch AI milestones
+import {cardsOn} from '../stage/shots'; // the cards this scene draws itself
 import type {SceneProps} from './types'; // contract
 
 const LAYERS = 16; // depth of the stack
@@ -88,7 +91,8 @@ export const LayersScene: React.FC<SceneProps> = ({tl, section}) => {
 	const line = lineAt(tl, t); // the line being sung
 	const ids = line ? TOKENS[String(line.index)] ?? [] : []; // its GPT-2 ids
 	const sung = line ? Math.min(line.words.length, activeWordIndex(line, t) + 1) : 0; // tokens so far
-	const chipX = (k: number, n: number) => 960 + (k - (n - 1) / 2) * 128; // chip centres (11 words fit inside the push-safe width)
+	const chipX = (k: number, n: number) => 960 + (k - (n - 1) / 2) * 128; // chip centres (11 words fit inside the frame's margins)
+	const quote = cardsOn(tl.vignettes, section.index, t).find((c) => c.v.title === 'Nobody drew the plan'); // the Bitter Lesson
 	return (
 		<AbsoluteFill>
 			<Stage>
@@ -125,6 +129,13 @@ export const LayersScene: React.FC<SceneProps> = ({tl, section}) => {
 				<text x={100} y={140} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={13} opacity={line ? 1 : 0}>GPT-2 ids</text>
 				<text x={100} y={160} fill={backward ? COLORS.magenta : COLORS.cyan} fontFamily={FONTS.mono} fontSize={13} opacity={line ? 1 : 0}>{backward ? '← ∂L/∂W' : 'forward →'}</text>
 			</svg>
+			{quote ? <div style={{position: 'absolute', left: 360, width: 1200, top: 660, height: 200, perspective: 500, opacity: quote.on}}> {/* on the tunnel floor */}
+				<div style={{transform: `rotateX(58deg) translateY(${120 - (t - quote.v.startS) * 26}px)`, transformOrigin: 'center bottom', textAlign: 'center',
+					fontFamily: FONTS.display, fontWeight: 700, fontSize: 40, lineHeight: 1.15, color: COLORS.amber, textShadow: glow(COLORS.amber, 0.7)}}>
+					{quote.v.text.split('\n').map((l, i) => <div key={i}>{l}</div>)}
+					<div style={{fontFamily: FONTS.mono, fontSize: 20, color: COLORS.dim, textShadow: 'none'}}>{quote.v.cite}</div>
+				</div>
+			</div> : null}
 		</AbsoluteFill>
 	);
 };

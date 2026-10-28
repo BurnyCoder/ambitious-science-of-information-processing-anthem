@@ -10,6 +10,7 @@
 import type {Section, Timeline, Vignette} from '../lib/timeline';
 import {ladderRung, rungAnchor} from '../scenes/LadderScene';
 import {FIELDS, projectStar} from '../scenes/AtlasScene';
+import {landscapeAnchor} from '../scenes/LandscapeScene';
 import {CHORUS_NODES, chorusNode} from '../scenes/ChorusScene';
 import {MANIFOLD_X, MANIFOLD_OF} from '../scenes/ManifoldsScene';
 import {PLOT} from '../scenes/TheoryScene';
@@ -26,9 +27,10 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 		case 'intro':
 			return {x: 960, y: 615, dock: PAST}; // the title, which condenses into the tokens card
 		case 'layers':
-			return {x: 960, y: 470, dock: PAST}; // the fly-through's vanishing point; cards fly past the camera
+			return {x: v.lane === 'b' ? 1110 : 810, y: 470, dock: PAST}; // the layer stack on the panel's side of the vanishing point
 		case 'landscape':
-			return {x: 960, y: 600, dock: PAST}; // the SGD swarm over the basin
+			const q = landscapeAnchor(v.id, t - section.startS, Math.min(1, (t - section.startS) / (section.endS - section.startS)));
+			return {x: q.x, y: q.y, dock: PAST}; // the surface point the figure explains
 		case 'chorus': {
 			const n = chorusNode(hash(`${v.id}${v.startS}`) % CHORUS_NODES); // a node of the network
 			return {x: n.x, y: n.y, dock: {kind: 'thumb', x: n.x, y: n.y, s: 0.12}};
