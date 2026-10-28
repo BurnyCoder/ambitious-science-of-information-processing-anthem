@@ -92,7 +92,7 @@ def build_timeline(sections: list[Section], words: list[TimedWord], audio: Audio
         line["text"] = " ".join(x["text"] for x in line["words"])
         line["backing"] = all(x["backing"] for x in line["words"])  # whole line is a backing echo
     timeline = {
-        "version": 2, "title": title, "fps": fps, "audio": "anthem.mp3",
+        "version": 3, "title": title, "fps": fps, "audio": "anthem.mp3",
         "durationS": _r(audio.duration_s), "durationInFrames": int(round(audio.duration_s * fps)),
         "tempoBpm": _r(audio.tempo_bpm), "sections": out_sections,
         "lines": [lines[k] for k in sorted(lines)],
@@ -100,7 +100,6 @@ def build_timeline(sections: list[Section], words: list[TimedWord], audio: Audio
         "energy": [_r(v) for v in audio.energy], "onset": [_r(v) for v in audio.onset],
         "meta": meta or {},
     }
-    timeline["slots"] = vignettes["slots"] if vignettes else {}  # named card boxes [x, y, w, h]
     timeline["vignettes"] = place_vignettes(vignettes, timeline) if vignettes else []  # timed figure cards
     return timeline
 
