@@ -48,6 +48,14 @@ def _normalize(x: np.ndarray) -> np.ndarray:
     return np.clip(x / ref, 0.0, 1.0) if ref > 0 else np.zeros_like(x)  # silence -> zeros
 
 
+def frame_rms(y: np.ndarray, sr: int, n_frames: int, fps: int, hop: int = HOP) -> np.ndarray:
+    """Local: RMS loudness of mono samples y at each of n_frames video frames, normalized to 0..1.
+    Global: the song's energy track here, and the vocal envelope of scripts/vocal_energy.py (same definition)."""
+    rms = librosa.feature.rms(y=y, hop_length=hop)[0]  # frame-wise loudness
+    feat_t = librosa.frames_to_time(np.arange(len(rms)), sr=sr, hop_length=hop)  # feature frame centers
+    return _normalize(np.interp(np.arange(n_frames) / fps, feat_t, rms))  # RMS sampled at video frames
+
+
 def analyze_audio(path: Path, fps: int, hop: int = HOP) -> AudioAnalysis:
     """Local: run the full analysis on one audio file.  Global: phase "timeline" calls this on the chosen take."""
     y, sr = librosa.load(path, sr=SR, mono=True)  # decode + resample to mono 22.05 kHz
@@ -58,11 +66,9 @@ def analyze_audio(path: Path, fps: int, hop: int = HOP) -> AudioAnalysis:
     # Both the tempogram estimate and the median beat spacing are quantized to whole frames (hop 512 @ 22.05 kHz:
     # 120 BPM sits between lag 21 = 123.0 and lag 22 = 117.45 BPM); hop 256 halves that error (reports/exp02).
     tempo = 60.0 / float(np.median(np.diff(beats))) if len(beats) > 1 else raw_tempo  # robust to a skipped beat
-    rms = librosa.feature.rms(y=y, hop_length=hop)[0]  # frame-wise loudness
-    feat_t = librosa.frames_to_time(np.arange(len(rms)), sr=sr, hop_length=hop)  # feature frame centers
     onset_t = librosa.frames_to_time(np.arange(len(onset_env)), sr=sr, hop_length=hop)  # onset frame centers
     video_t = np.arange(int(round(duration * fps))) / fps  # one timestamp per video frame
-    energy = _normalize(np.interp(video_t, feat_t, rms))  # RMS sampled at video frames
+    energy = frame_rms(y, sr, len(video_t), fps, hop)  # RMS sampled at video frames
     onset = _normalize(np.interp(video_t, onset_t, onset_env))  # onset strength at video frames
     strength = np.interp(beats, onset_t, onset_env)  # how strong each beat is
     phase = int(np.argmax([strength[p::4].sum() for p in range(4)])) if len(beats) >= 4 else 0  # strongest 4/4 phase

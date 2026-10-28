@@ -27,7 +27,7 @@ Chorus, manifolds, theory and outro needed no layout fixes. The re-rendered stil
 
 Command (from `src/anthem/render.py`, logged in full): `npx remotion render src/index.ts Anthem out/anthem.mp4 --gl=angle --concurrency=8 --log=info`
 
-There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections), the sixth (before two label fixes found in its card stills) and the seventh (before the code-review fixes of PR #9) were not released; the eighth is v1.3.0. The ninth and tenth stage the cards as hero shots inside the scenes ([exp08](exp08_integration.md)); the ninth was rendered before the code-review fixes of the v1.4.0 PR, and the tenth is v1.4.0. The eleventh puts the figures into their scenes' own layouts and adds the rewind. The twelfth adds the intro's flying layers after exp09's H4 failed, and is v1.5.0.
+There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections), the sixth (before two label fixes found in its card stills) and the seventh (before the code-review fixes of PR #9) were not released; the eighth is v1.3.0. The ninth and tenth stage the cards as hero shots inside the scenes ([exp08](exp08_integration.md)); the ninth was rendered before the code-review fixes of the v1.4.0 PR, and the tenth is v1.4.0. The eleventh puts the figures into their scenes' own layouts and adds the rewind. The twelfth adds the intro's flying layers after exp09's H4 failed, and is v1.5.0. The thirteenth answers six notes on v1.5.0 ([exp10](exp10_finale.md)) and is v1.6.0.
 
 | Render | Frames | Wall time | File size | Streams (ffprobe) | Duration (video / song) | Verify |
 |---|---|---|---|---|---|---|
@@ -43,6 +43,7 @@ There were three full renders: the first with repair v1 timings, the second with
 | 10 (hero shots + review fixes, v1.4.0) | 7212 | 694.1 s | 263.6 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 | 11 (figures as part of their scenes + the rewind; not released) | 7212 | 659.0 s | 282.3 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 | 12 (+ the intro's flying layers, post hoc after exp09 H4; v1.5.0) | 7212 | 624.6 s | 285.3 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
+| 13 (centred intro, 3D chorus, theory clocks, voice-driven atlas, overview finale; v1.6.0) | 7212 | 588.7 s | 356.6 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 
 - **Hardware.** A 16-thread Windows 11 desktop, Remotion 4.0.536, concurrency 8, ANGLE GL.
 - **Log volume.** Render 1 logged one line per frame (about 14k lines), and its Remotion lines contained ANSI colour codes. Both were fixed before render 2: progress is logged every 5 %, and the codes are stripped (`render.keep_line`, `render.ANSI`). Render 2's run log shows 64 Remotion lines with no escape codes.
@@ -107,6 +108,32 @@ Each scene now places at most two panels in slots its layout reserves away from 
 **Code review.** A rewind cut whose moment lies in the intro's first seconds could play forwards. The cut is now guarded and covered by a test. The review commit also un-exported unused ladder constants and replaced a constant-zero variable with its value.
 
 Render 11 was bundled just before that commit. None of these changes alters a frame: on the real timeline every rewind moment lies after 14.7 s, so the guard never fires, and the other two changes do not change behaviour. Render 12, the v1.5.0 video, was bundled after all these commits. The run logs of renders 11 and 12 have no error or warning lines apart from the known `THREE.Clock` notice.
+
+## Iteration 6: centring, a 3D chorus, theory clocks, the voice-driven atlas and the overview finale (v1.6.0)
+
+The author's six notes on v1.5.0 and the fixes are in [exp10](exp10_finale.md).
+
+**Checks.** Stills were rendered while each change was built:
+- the intro at 4, 9.3, 11.5 and 13.3 s;
+- the theory at 143–160 s;
+- the bridge at 185–195 s;
+- both choruses, with the layout overlay;
+- the finale every few seconds from 230 s;
+- then every card of the changed sections (38 stills) and their section ends (4 stills).
+
+**Problems found and fixed before the full render:**
+
+| Problem seen | Fix |
+|---|---|
+| The title wrapped onto two lines with wide gaps between letters | A space before a JSX comment on the same line had become a text node after every letter; removed |
+| The chorus grid filled only the left two thirds; the right third stayed empty | Fading next-position columns fill the frame right of the prompt |
+| Attention arcs between neighbouring tokens looped into scribbles | Arc-diagram shape: lift grows with the token distance, small depth tilt |
+| Stacked supernode labels of the rabbit circuit overlapped | Greedy de-overlap moves a label up while it sits on an earlier one |
+| The Dallas circuit's labels reached under the right panel slot | The grid is shifted 0.6 units left; the circuit stays inside the protected region |
+| The 82 orbiting figure titles hid the overview's tiles | The far half of each orbit fades, the text is smaller, and the titles spread out only after the burst |
+| `stage/Overview.tsx` and `stage/overview.ts` resolved to the same module | Windows paths are case-insensitive; the component became `OverviewLayer.tsx` |
+
+Render 13 has no error or warning lines in its run log apart from the known `THREE.Clock` notice, and the verify stage reports no problems.
 
 ## Learnings
 

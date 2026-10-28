@@ -149,3 +149,20 @@ def test_lyric_tokens_match_the_written_lyrics():
     lines = [ln for sec in parse_lyrics((ROOT / "content" / "lyrics.txt").read_text(encoding="utf-8")) for ln in sec.lines]
     assert {str(ln.index): len(ln.words) for ln in lines} == {k: len(v) for k, v in tokens.items()}
     assert all(ids for v in tokens.values() for ids in v)  # every word has at least one token
+
+
+def test_theory_blocks_finish_their_figures():
+    """exp10 H2: every theory block is open long enough for its figure's animation (ANIM_S in TheoryScene.tsx), run at
+    most MAX_SPEED x faster and leaving SEE_S of the finished figure; block i is open until block i+1 rises, the
+    last one until all five settle on "Predict"."""
+    import re  # constants from the TypeScript
+    src = (ROOT / "video" / "src" / "scenes" / "TheoryScene.tsx").read_text(encoding="utf-8")
+    anim = {k: float(v) for k, v in re.findall(r"(\w+): ([\d.]+)", re.search(r"export const ANIM_S = \{(.*?)\}", src).group(1))}
+    see, cap = (float(re.search(rf"export const {n} = ([\d.]+);", src).group(1)) for n in ("SEE_S", "MAX_SPEED"))
+    tl = json.loads((ROOT / "video" / "public" / "timeline.json").read_text(encoding="utf-8"))
+    sec = next(s for s in tl["sections"] if s["scene"] == "theory")
+    blocks = [v for v in tl["vignettes"] if v["sectionIndex"] == sec["index"] and v["lane"] == "scene"]  # in start order
+    settle = next(w["startS"] for l in tl["lines"] if l["sectionIndex"] == sec["index"] for w in l["words"] if w["text"].lower().startswith("predict"))
+    assert [b["id"] for b in blocks] == ["saxe", "nngp", "formula", "weightDecay", "collapse"]
+    for b, end in zip(blocks, [b["startS"] for b in blocks[1:]] + [settle]):
+        assert anim[b["id"]] / (end - b["startS"] - see) <= cap, (b["id"], end - b["startS"])  # the sped-up figure finishes

@@ -9,9 +9,9 @@
  */
 import type {Section, Timeline, Vignette} from '../lib/timeline';
 import {ladderRung, rungAnchor} from '../scenes/LadderScene';
-import {FIELDS, projectStar} from '../scenes/AtlasScene';
+import {FIELDS, projectStar, sphereGrow} from '../scenes/AtlasScene';
 import {landscapeAnchor} from '../scenes/LandscapeScene';
-import {CHORUS_NODES, chorusNode} from '../scenes/ChorusScene';
+import {chorusAnchor} from '../scenes/ChorusScene';
 import {MANIFOLD_OF, manifoldAnchor} from '../scenes/ManifoldsScene';
 import {PLOT} from '../scenes/TheoryScene';
 
@@ -32,7 +32,7 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 			const q = landscapeAnchor(v.id, t - section.startS, Math.min(1, (t - section.startS) / (section.endS - section.startS)));
 			return {x: q.x, y: q.y, dock: PAST}; // the surface point the figure explains
 		case 'chorus': {
-			const n = chorusNode(hash(`${v.id}${v.startS}`) % CHORUS_NODES); // a node of the network
+			const n = chorusAnchor(tl, section, t, hash(`${v.id}${v.startS}`)); // a (token, layer) cell of the 3D network
 			return {x: n.x, y: n.y, dock: {kind: 'thumb', x: n.x, y: n.y, s: 0.12}};
 		}
 		case 'ladder': {
@@ -57,7 +57,7 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 			const f = FIELDS.findIndex(([, re]) => re !== null && re.test(v.title)); // the star of the sung field
 			const local = t - section.startS;
 			if (f >= 0) {
-				const p = projectStar(f, local);
+				const p = projectStar(f, local, sphereGrow(tl, section, t)); // the star as drawn, at the voice's size
 				return {x: p.x, y: p.y, dock: {kind: 'thumb', x: p.x + 70, y: p.y + 42, s: 0.11 + 0.05 * p.s}};
 			}
 			return {x: 960, y: 400, dock: PAST}; // cards with no star (carbon · silicon · stars) belong to the whole sphere

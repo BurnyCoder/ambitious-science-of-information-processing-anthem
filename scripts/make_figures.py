@@ -259,9 +259,51 @@ def fig_exp09() -> None:
     plt.close(fig)
 
 
-SHOWCASE = [(15.5, "intro: the title became its GPT-2 tokens"), (53.7, "pre-chorus: panels wired to the surface's own saddle and basins"),
-            (95.5, "verse 2: the ladder stays visible; figures wired to their rungs"), (146.0, "verse 3: 'Limits' opens its block as it is sung"),
-            (190.0, "bridge: ONE SCIENCE OF INFORMATION stands alone"), (221.0, "outro: the flying rewind through the whole video")]  # (song time, caption; ASCII: PIL's default font)
+def fig_exp10() -> None:
+    """Local: exp10, (a) paired log2 PNG-size ratio v1.6.0 / v1.5.0 over the song (chorus frames = H3, finale frames =
+    H4, the rest = H5 with its margin), (b) horizontal offset of the bright-pixel centroid from the frame centre (H1),
+    (c) the bridge's vocal envelope and the sphere scale it drives (same formula as AtlasScene's sphereGrow).
+    Global: what reports/exp10_finale.md tests and describes."""
+    d = json.loads((DATA / "exp10_finale.json").read_text(encoding="utf-8"))
+    tl = json.loads((ROOT / "video" / "public" / "timeline.json").read_text(encoding="utf-8"))
+    fig, (a, b, c) = plt.subplots(1, 3, figsize=(17, 3.6), gridspec_kw={"width_ratios": [1.8, 0.7, 1]})
+    times, r, sec = np.array(d["times"]), np.array(d["log2Ratio"]), np.array(d["section"])
+    chorus = np.array([tl["sections"][k]["scene"] == "chorus" for k in sec])
+    rest = ~chorus & (times < d["H5"]["overviewStartS"])
+    a.plot(times[rest], r[rest], ".", ms=3, color="C0", label=f"elsewhere (H5): median {d['H5']['median']:+.2f}")
+    a.plot(times[chorus], r[chorus], ".", ms=5, color="C1", label=f"choruses (H3): median {d['H3']['median']:+.2f}")
+    a.plot(d["H4"]["times"], d["H4"]["log2Ratio"], ".", ms=6, color="C2", label=f"finale (H4): median {d['H4']['median']:+.2f}")
+    a.axhline(0, color="grey", lw=0.8)
+    a.axhline(-d["H5"]["margin"], color="C3", lw=1, ls="--", label=f"H5 margin −{d['H5']['margin']}")
+    a.set(xlabel="song time (s)", ylabel="log₂(PNG bytes v1.6.0 / v1.5.0)", title="visual detail, paired frames")
+    a.legend(fontsize=7, loc="lower left")
+    bands = [k for k in d["H1"] if k != "pass"]
+    x = np.arange(len(bands))
+    b.bar(x - 0.2, [d["H1"][k]["v150CentroidX"] - 960 for k in bands], 0.4, color="C3", label="v1.5.0")
+    b.bar(x + 0.2, [d["H1"][k]["offsetPx"] for k in bands], 0.4, color="C2", label="v1.6.0")
+    for i, k in enumerate(bands):
+        b.add_patch(plt.Rectangle((i - 0.45, -d["H1"][k]["tolerancePx"]), 0.9, 2 * d["H1"][k]["tolerancePx"], color="grey", alpha=0.2))
+    b.set(xticks=x, xticklabels=[f"{k} @ {d['H1'][k]['t']} s" for k in bands], ylabel="centroid x − 960 (px)", title="centring (H1; grey = tolerance)")
+    b.legend(fontsize=8)
+    voice = json.loads((ROOT / "video" / "public" / "vignettes" / "vocal_energy.json").read_text(encoding="utf-8"))
+    br = next(s for s in tl["sections"] if s["scene"] == "atlas")
+    one = next(w["startS"] for l in tl["lines"] if l["sectionIndex"] == br["index"] for w in l["words"] if "science" in w["text"].lower())
+    t = np.arange(int(br["startS"] * voice["fps"]), int(br["endS"] * voice["fps"])) / voice["fps"]
+    env = np.array(voice["energy"])[(t * voice["fps"]).round().astype(int)]
+    k = np.clip((t - one) / 0.4, 0, 1)
+    c.plot(t, env, color="C4", lw=0.8, label="vocal envelope (0-1)")
+    c.plot(t, 1 + (0.15 + 0.45 * k * k * (3 - 2 * k)) * env, color="C1", lw=1.4, label="sphere scale")
+    c.axvline(one, color="grey", lw=0.8, ls="--")
+    c.set(xlabel="song time (s)", title='bridge: the atlas follows the voice ("science" dashed)')
+    c.legend(fontsize=8, loc="upper left")
+    fig.tight_layout()
+    fig.savefig(FIG / "fig9_exp10.png", dpi=130)
+    plt.close(fig)
+
+
+SHOWCASE = [(9.3, "intro: token and title centred"), (61.0, "chorus: the model at work in 3D, a real circuit lit"),
+            (143.3, "verse 3: solvable settings finishes inside its block"), (193.0, "bridge: nothing dims, the graph swells with the voice"),
+            (221.0, "outro: the flying rewind through the whole video"), (235.3, "outro: everything at once, celebrating")]  # (song time, caption; ASCII: PIL's default font)
 
 
 def readme_images() -> None:
@@ -296,6 +338,8 @@ if __name__ == "__main__":
         fig_exp08()
     if (DATA / "exp09_density.json").exists() and (DATA / "exp09_unified.json").exists():  # written by the exp09 scripts
         fig_exp09()
+    if (DATA / "exp10_finale.json").exists():  # written by scripts/validate_finale.py
+        fig_exp10()
     if (ROOT / "out" / "anthem.mp4").exists():  # the README images come from the rendered video
         readme_images()
     print("figures written to", FIG)

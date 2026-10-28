@@ -3,7 +3,8 @@
  * Local: stacks background -> spectrum ring -> the world (equation dust, the scene of the moment, its figure panels and
  * the lyrics; World.tsx) -> beat/cut flashes -> HUD -> citation ticker, and plays the song. During the outro the world
  * is replaced by the rewind: frozen copies of earlier moments (stage/rewind.ts), each new cut flying in while the
- * previous frame zooms past the camera, under the live outro lyrics and the outro's figures as headline plates.
+ * previous frame zooms past the camera, under the live outro lyrics and the outro's figures as headline plates. Where
+ * the rewind lands, the overview (stage/OverviewLayer.tsx) bursts out of the token under the live World (the statement).
  * Global: rendered by `remotion render ... Anthem`; everything is derived from the
  * timeline prop that Root.tsx's calculateMetadata loads from public/timeline.json.
  * Sources: https://www.remotion.dev/docs/freeze , https://www.remotion.dev/docs/media/audio
@@ -18,6 +19,7 @@ import {KineticLyrics} from './components/KineticLyrics'; // karaoke (live, over
 import {World, sectionAt} from './World'; // the video at a frame
 import {rewindAt, rewindPlan, type Copy} from './stage/rewind'; // the outro's rewind schedule
 import {cardsOn} from './stage/shots'; // the outro's figures (headline plates)
+import {Overview} from './stage/OverviewLayer'; // everything at once, after the rewind
 import {sceneLayout} from './stage/layout'; // lyric band per scene
 import {SCENES} from './scenes'; // HUD captions
 
@@ -49,6 +51,7 @@ export const Anthem: React.FC<AnthemProps> = ({timeline, debugLayout}) => {
 		<AbsoluteFill style={{background: COLORS.bg}}>
 			<Background tl={tl} t={t} />
 			<SpectrumRing tl={tl} opacity={sceneLayout(section.scene).band === 'bigLyrics' ? 0.45 : 0.22} />
+			{plan && t >= plan.end ? <Overview tl={tl} start={plan.end} /> : null}
 			{copies.length ? copies.map((c) => <RewindCopy key={c.key} tl={tl} c={c} fps={fps} />) : <World tl={tl} debugLayout={debugLayout} />}
 			{plates.map(({v, on}) => ( // "The mathematics of AI / of intelligence / of information itself / We must now"
 				<div key={v.startS} style={{position: 'absolute', top: 96, width: '100%', textAlign: 'center', opacity: on, transform: `scale(${0.9 + 0.1 * on})`}}>

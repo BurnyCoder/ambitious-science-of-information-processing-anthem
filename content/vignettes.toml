@@ -517,7 +517,7 @@ url = "https://arxiv.org/abs/2310.02207"
 [[vignette]]
 id = "saxe"
 section = "verse 3"
-trigger = "^solve$"
+trigger = "^there$"  # first word of "There will be a theory! Settings we can solve": its block needs ~3 s
 lane = "scene"
 title = "Solvable settings"
 text = "deep linear nets learn one mode at a time, strongest first"

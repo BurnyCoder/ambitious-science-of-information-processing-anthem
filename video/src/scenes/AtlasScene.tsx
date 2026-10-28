@@ -6,13 +6,15 @@
  * (a formula card the scene draws itself) grows out of the star's own label into a plate with the formula, its meaning
  * and the citation, and shrinks back when its time is over; cards with no star (invariants, bounds, every level) take
  * the free corners. Every card leaves before "science" ([[clear]] in content/vignettes.toml), so the amber statement
- * stands alone, with the closing card ("the same unit, the bit...") as its own subtitle.
+ * stands alone, with the closing card ("the same unit, the bit...") as its own subtitle. Nothing dims: the sphere
+ * breathes with the singing voice and swells with it from "One science of information!" (sphereGrow).
  * Global: the song's thesis: many lenses (linear algebra ... category theory) -> one atlas of
  * laws, invariants, bounds and mechanisms across biological and artificial systems.
  */
 import React, {useMemo} from 'react'; // JSX + memo
 import {AbsoluteFill, random} from 'remotion'; // layer + RNG
-import {beatPulse, wordTime} from '../lib/timeline'; // timing
+import {beatPulse, featureAt, wordTime, type Section, type Timeline} from '../lib/timeline'; // timing + vocal envelope
+import voice from '../../public/vignettes/vocal_energy.json'; // per-frame vocal RMS of the take (scripts/vocal_energy.py)
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
 import {cardsOn} from '../stage/shots'; // the cards this scene draws itself
 import {sceneLayout} from '../stage/layout'; // the bridge accent
@@ -53,20 +55,28 @@ const R = 0.62, CY = 400; // sphere size and centre: leaves the margins to the f
 const STATEMENT_Y = 625; // top of ONE SCIENCE OF INFORMATION (layout.json protects this band)
 /** Local: screen position, perspective scale and depth of field f's star, `local` seconds into the bridge.
  * Global: drawn here; stage/anchors.ts dives cards out of (and docks them next to) the same stars. */
-export const projectStar = (f: number, local: number) => {
+export const projectStar = (f: number, local: number, grow = 1) => {
 	const [x, y, z] = SPHERE[f];
 	const rot = local * 0.12; // slow rotation about Y
 	const xr = x * Math.cos(rot) + z * Math.sin(rot);
 	const zr = -x * Math.sin(rot) + z * Math.cos(rot);
 	const s = 1 / (1.9 - zr * 0.7); // perspective scale (front bigger)
-	return {x: 960 + xr * 1050 * s * R, y: CY + y * 560 * s * R, s, front: zr}; // the sphere sits above the closing statement
+	return {x: 960 + xr * 1050 * s * R * grow, y: CY + y * 560 * s * R * grow, s, front: zr}; // the sphere sits above the closing statement
+};
+
+/** Local: the sphere's size at t: 1 + gain x the vocal envelope, gain 0.15 through the bridge (breathing) rising to 0.6
+ * on "science" (the graph of fields swells with the voice). Global: drawn here and used by stage/anchors.ts. */
+export const sphereGrow = (tl: Timeline, section: Section, t: number) => {
+	const oneAt = wordTime(tl, section, /science/i) ?? section.endS; // "One science of information!"
+	return 1 + (0.15 + 0.45 * smooth((t - oneAt) / 0.4)) * featureAt(voice.energy, voice.fps, t);
 };
 
 export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {t, local, length} = useSceneClock(section); // time
 	const pulse = beatPulse(tl.beats, t); // beat kick
 	const base = SPHERE; // fibonacci-sphere points: even coverage
-	const pts = FIELDS.map((_, f) => projectStar(f, local)); // rotate + perspective project
+	const grow = sphereGrow(tl, section, t); // follows the voice
+	const pts = FIELDS.map((_, f) => projectStar(f, local, grow)); // rotate + perspective project
 	const levelAt = wordTime(tl, section, /level/i) ?? section.startS + 0.7 * length; // ignite the rest
 	const lightT = FIELDS.map(([, re], i) => (re ? wordTime(tl, section, re) : null) ?? levelAt + (i % 8) * 0.12); // per star
 	const lit = lightT.map((s) => smooth((t - s) / 0.3)); // 0..1
@@ -74,7 +84,6 @@ export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 		.filter(({j}) => j > i).sort((p, q) => p.d - q.d).slice(0, 3).map(({j}) => [i, j] as [number, number])), [base]); // 3-NN graph
 	const oneAt = wordTime(tl, section, /science/i) ?? section.startS + 0.9 * length; // finale text
 	const atlasAt = wordTime(tl, section, /atlas/i) ?? section.startS + 0.55 * length; // atlas tagline
-	const dimNet = 1 - 0.6 * smooth((t - oneAt) / 0.4); // fade the network behind the closing statement
 	const accent = sceneLayout('atlas').accent; // violet: amber is the statement's alone
 	const on = cardsOn(tl.vignettes, section.index, t); // the formula cards this scene draws
 	const starOf = (title: string) => FIELDS.findIndex(([, re]) => re !== null && re.test(title)); // field of a card
@@ -87,22 +96,22 @@ export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 	const loose = chips.filter((c) => c.f < 0); // cards without a star: the free corners
 	return (
 		<AbsoluteFill>
-			<svg width={1920} height={1080} style={{position: 'absolute', opacity: dimNet}}>
-				{links.map(([i, j], k) => <line key={k} x1={pts[i].x} y1={pts[i].y} x2={pts[j].x} y2={pts[j].y} stroke={COLORS.cyan} strokeWidth={2}
-					opacity={0.6 * Math.min(lit[i], lit[j])} />)}
+			<svg width={1920} height={1080} style={{position: 'absolute'}}>
+				{links.map(([i, j], k) => <line key={k} x1={pts[i].x} y1={pts[i].y} x2={pts[j].x} y2={pts[j].y} stroke={COLORS.cyan}
+					opacity={0.6 * Math.min(lit[i], lit[j])} strokeWidth={2 * grow} />)}
 				{pts.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={(4 + 8 * lit[i] * (1 + 0.4 * pulse)) * p.s * 1.4}
 					fill={lit[i] > 0.5 ? COLORS.amber : COLORS.violet} opacity={0.3 + 0.7 * lit[i]} />)}
 			</svg>
 			{pts.map((p, i) => (
 				<div key={i} style={{position: 'absolute', left: p.x + 14, top: p.y - 14, fontFamily: FONTS.body, fontWeight: 600, fontSize: 15 + 10 * p.s,
-					color: COLORS.ink, opacity: dimNet * lit[i] * (0.45 + 0.55 * (p.front + 1) / 2) * (1 - grown[i]), whiteSpace: 'nowrap', textShadow: glow(COLORS.amber, 0.25)}}>
+					color: COLORS.ink, opacity: lit[i] * (0.45 + 0.55 * (p.front + 1) / 2) * (1 - grown[i]), whiteSpace: 'nowrap', textShadow: glow(COLORS.amber, 0.25)}}>
 					{FIELDS[i][0]}
 					<div style={{fontFamily: FONTS.mono, fontWeight: 400, fontSize: 11 + 5 * p.s, color: COLORS.amber}}>{FORMULAS[FIELDS[i][0]]}</div>
 				</div>
 			))}
 			{[...chips.filter((c) => c.f >= 0).map((c) => ({c, x: pts[c.f].x + 16, y: pts[c.f].y - 18})),
 				...loose.map((c, j) => ({c, x: j % 2 ? 1500 : 30, y: 90 + 90 * Math.floor(j / 2)}))].map(({c, x, y}) => ( // the star's label grown into its figure
-				<div key={c.v.startS} style={{position: 'absolute', left: Math.min(x, 1900 - 420), top: y, maxWidth: 420, padding: '8px 12px', borderRadius: 10, opacity: c.on * dimNet,
+				<div key={c.v.startS} style={{position: 'absolute', left: Math.min(x, 1900 - 420), top: y, maxWidth: 420, padding: '8px 12px', borderRadius: 10, opacity: c.on,
 					background: 'rgba(6,8,22,0.82)', border: `1.5px solid ${accent}`, boxShadow: `0 0 18px ${accent}55`, transformOrigin: 'left top', transform: `scale(${0.7 + 0.3 * c.on})`}}>
 					<div style={{fontFamily: FONTS.display, fontWeight: 700, fontSize: 18, color: COLORS.ink, textShadow: glow(accent, 0.5)}}>{c.v.title}</div>
 					{c.v.text.split('\n').map((l, k) => <div key={k} style={{fontFamily: FONTS.mono, fontSize: k ? 12 : 16, color: k ? COLORS.dim : COLORS.ink, marginTop: 3}}>{l}</div>)}
@@ -113,7 +122,8 @@ export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 				an atlas of laws · invariants · bounds · effective theories · mechanisms — at every level, every scale
 			</div>
 			<div style={{position: 'absolute', top: STATEMENT_Y, width: '100%', textAlign: 'center', fontFamily: FONTS.display, fontWeight: 900, fontSize: 84, color: COLORS.ink,
-				textShadow: glow(COLORS.amber, 1.2), opacity: smooth((t - oneAt) / 0.4), transform: `scale(${1.2 - 0.2 * smooth((t - oneAt) / 0.4)})`}}>
+				textShadow: `${glow(COLORS.amber, 1.2)}, 0 0 14px #05060f, 0 0 30px #05060f`, WebkitTextStroke: '3px #05060f', paintOrder: 'stroke fill', // a dark outline keeps it legible over the lit graph
+				opacity: smooth((t - oneAt) / 0.4), transform: `scale(${1.2 - 0.2 * smooth((t - oneAt) / 0.4)})`}}>
 				ONE SCIENCE OF INFORMATION
 				{closing ? <div style={{fontFamily: FONTS.body, fontWeight: 600, fontSize: 26, color: COLORS.amber, textShadow: 'none', opacity: closing.on, marginTop: 4}}>
 					{closing.v.text.split('\n')[0]}<span style={{fontFamily: FONTS.mono, fontSize: 14, color: COLORS.dim}}> · {closing.v.cite}</span>
