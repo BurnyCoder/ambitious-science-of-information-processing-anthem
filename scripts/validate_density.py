@@ -10,7 +10,7 @@ It measures detail, not quality or legibility. Writes reports/data/<name>.json.
 Sources: compression-based measures as predictors of rated visual complexity, Machado et al. 2015, "Computerized
 measures of visual complexity", Acta Psychologica 160:43-57, https://doi.org/10.1016/j.actpsy.2015.06.005 ;
 ffmpeg image2pipe https://ffmpeg.org/ffmpeg-formats.html#image2pipe ; bootstrap helpers in analysis/stats.py.
-Usage: uv run python -I scripts/validate_density.py [old.mp4] [new.mp4] [--name exp07_density] [--margin M]
+Usage: uv run python -I scripts/validate_density.py [old.mp4] [new.mp4] [--name exp07_density] [--margin M] [--until S]
        exp08: uv run python -I scripts/validate_density.py out/v1.3.0/we-will-know-anthem.mp4 out/anthem.mp4 --name exp08_density --margin 0.10
 """
 
@@ -44,12 +44,13 @@ def main() -> None:
     ap.add_argument("new", nargs="?", type=Path, default=ROOT / "out" / "anthem.mp4")
     ap.add_argument("--name", default="exp07_density", help="output reports/data/<name>.json and log prefix")
     ap.add_argument("--margin", type=float, default=None, help="non-inferiority margin in log2 units (default: superiority test)")
+    ap.add_argument("--until", type=float, default=None, help="only frames before this time (exp09 excludes the rewound outro)")
     args = ap.parse_args()
     setup_logging(ROOT / "logs", prefix=args.name)
     log = logging.getLogger(args.name.split("_")[0])  # exp07 / exp08
     old, new = args.old, args.new
     tl = json.loads((ROOT / "video" / "public" / "timeline.json").read_text(encoding="utf-8"))
-    times = np.arange(1.0, tl["durationS"] - 1.0, STEP_S)  # same timestamps in both videos
+    times = np.arange(1.0, min(args.until or 1e9, tl["durationS"] - 1.0), STEP_S)  # same timestamps in both videos
     starts = [s["startS"] for s in tl["sections"]]
     section = [int(np.searchsorted(starts, t, side="right") - 1) for t in times]  # cluster of each frame
     a = np.array([png_bytes(old, t) for t in times], dtype=float)
@@ -59,7 +60,7 @@ def main() -> None:
     secondary = median_ci(r, n_resamples=5000, seed=0)  # frames resampled
     per_section = {f"{k + 1:02d} {tl['sections'][k]['label']} ({tl['sections'][k]['scene']})": round(float(np.median(r[np.array(section) == k])), 3)  # numbered: repeated labels stay distinct
                    for k in sorted(set(section))}
-    result = {"old": str(old.name), "new": str(new.name), "frames": len(times), "stepS": STEP_S,
+    result = {"old": str(old.name), "new": str(new.name), "frames": len(times), "stepS": STEP_S, "untilS": args.until,
               "medianBytesOld": float(np.median(a)), "medianBytesNew": float(np.median(b)),
               "medianLog2Ratio": primary[0], "ci95SectionBootstrap": primary[1:], "ci95FrameBootstrap": secondary[1:],
               "framesNewLarger": int((r > 0).sum()), "perSectionMedianLog2Ratio": per_section,

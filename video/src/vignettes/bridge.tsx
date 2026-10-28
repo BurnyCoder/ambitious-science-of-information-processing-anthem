@@ -2,7 +2,7 @@
  * Bridge cards with drawings (the formula cards of the bridge use the generic card).
  * Local: mp (live Marchenko–Pastur density + released WeightWatcher heavy-tail exponents per GPT-2 small layer),
  * category (a commutative square), pearl (the three rungs of the ladder of causation), neuronIcon / chip /
- * hydrogen (carbon, silicon, and the hydrogen spin-flip symbol of the Pioneer plaque).
+ * hydrogen (carbon, silicon, and the hydrogen spin-flip symbol of the Pioneer plaque), drawn side by side as substrates.
  * Global: registered in ./index.ts. Sources: Marchenko & Pastur 1967; Martin & Mahoney 2021 (ww-trends-2020 CSV);
  * thresholds from the WeightWatcher README (https://github.com/CalculatedContent/WeightWatcher); Gavranović et al. 2024; Pearl & Mackenzie 2018; Azevedo et al. 2009; NVIDIA H100 whitepaper; Sagan et al. 1972.
  */
@@ -117,5 +117,27 @@ export const Hydrogen: React.FC<BodyProps> = ({local, w, h, accent}) => {
 			<text x={w * 0.55} y={h * 0.38} fill={COLORS.ink} fontFamily={FONTS.display} fontSize={28}>1420.405 MHz</text>
 			<text x={w * 0.55} y={h * 0.38 + 24} fill={COLORS.dim} fontFamily={FONTS.mono} fontSize={13}>λ ≈ 21 cm, t ≈ 0.7 ns</text>
 		</svg>
+	);
+};
+
+/** Carbon, silicon and the stars side by side, each revealed when its word is sung (the three bodies above).
+ * Local: the merged "substrates" card of v1.5.0; numbers and sources as in neuronIcon / chip / hydrogen. */
+export const Substrates: React.FC<BodyProps> = (p) => {
+	const line = p.tl.lines.find((l) => l.index === p.v.lineIndex); // "In carbon or in silicon, or something from the stars"
+	const at = (re: RegExp) => line?.words.find((w) => re.test(w.text))?.startS ?? p.v.startS; // when each substrate is sung
+	const cols: [React.FC<BodyProps>, number, string][] = [[NeuronIcon, at(/carbon/i), '86 billion neurons'], [Chip, at(/silicon/i), '80 billion transistors'],
+		[Hydrogen, at(/stars/i), 'hydrogen line, 1420.405 MHz']];
+	const w = p.w / 3; // one column each
+	return (
+		<div style={{position: 'absolute', inset: 0}}>
+			{cols.map(([Body, s, label], i) => (
+				<div key={i} style={{position: 'absolute', left: i * w, top: 0, width: w - 8, height: p.h, overflow: 'hidden', opacity: smooth((p.t - s + 0.15) / 0.4)}}>
+					<div style={{width: 360, height: 220, transformOrigin: 'left top', transform: `scale(${(w - 8) / 360})`}}> {/* each body at its own proportions */}
+						<Body {...p} local={p.t - s} w={360} h={220} />
+					</div>
+					<div style={{position: 'absolute', bottom: 0, width: '100%', textAlign: 'center', fontFamily: FONTS.mono, fontSize: 13, color: COLORS.ink}}>{label}</div>
+				</div>
+			))}
+		</div>
 	);
 };

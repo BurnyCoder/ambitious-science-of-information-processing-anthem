@@ -26,7 +26,7 @@ export const RemotionRoot: React.FC = () => (
 		height={1080}
 		fps={30}
 		durationInFrames={300}
-		defaultProps={{timelineFile: 'timeline.json', timeline: null} satisfies AnthemProps}
+		defaultProps={{timelineFile: 'timeline.json', timeline: null, debugLayout: false} satisfies AnthemProps}
 		calculateMetadata={calculateMetadata}
 	/>
 );

@@ -13,7 +13,7 @@ import {GoldenGate, GraphCalc, GraphDallas, GraphGemma, GraphRabbit, Ioi, Patchi
 import {DayCircle, Encyclopedia, GrokClock, NeuronFeature, Othello, ParamDecomp, Refusal, Rome, Shoggoth} from './verse2';
 import {Bsf, FunctionVector, Polysemantic, ProbeR2, Superposition, Truth, WorldMap} from './prechorus2';
 import {Collapse, Gpt4, Nngp, Saxe, WeightDecay} from './verse3';
-import {Category, Chip, Hydrogen, Mp, NeuronIcon, Pearl} from './bridge';
+import {Category, Mp, Pearl, Substrates} from './bridge';
 import {Actadd, Arc, Checklist, Dag, KProgram, Milestones, Tokens} from './finale';
 
 export type VignetteEntry = {Body: React.FC<BodyProps>; showText?: boolean}; // registry row
@@ -27,7 +27,7 @@ const bodies: Record<string, React.FC<BodyProps>> = {
 	shoggoth: Shoggoth, encyclopedia: Encyclopedia, rome: Rome, graphRabbit: GraphRabbit,
 	superposition: Superposition, polysemantic: Polysemantic, bsf: Bsf, functionVector: FunctionVector, truth: Truth, worldMap: WorldMap, probeR2: ProbeR2,
 	saxe: Saxe, nngp: Nngp, weightDecay: WeightDecay, collapse: Collapse, gpt4: Gpt4,
-	mp: Mp, category: Category, pearl: Pearl, neuronIcon: NeuronIcon, chip: Chip, hydrogen: Hydrogen,
+	mp: Mp, category: Category, pearl: Pearl, substrates: Substrates,
 	checklist: Checklist, arc: Arc, kProgram: KProgram, dag: Dag, actadd: Actadd, milestones: Milestones,
 };
 

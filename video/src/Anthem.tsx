@@ -1,67 +1,68 @@
 /**
  * The music video composition.
- * Local: stacks background -> equation dust -> spectrum ring -> one <Sequence> per song section (its scene; zoom-punched
- * on downbeats, RGB-split for 0.25 s after each cut) -> stage (figure cards diving out of the scene objects; the camera pushes toward
- * the hero's object) -> giant words (chorus-type scenes, lower third) or karaoke overlay -> beat/cut flashes -> HUD, and plays the song.
+ * Local: stacks background -> spectrum ring -> the world (equation dust, the scene of the moment, its figure panels and
+ * the lyrics; World.tsx) -> beat/cut flashes -> HUD -> citation ticker, and plays the song. During the outro the world
+ * is replaced by the rewind: frozen copies of earlier moments (stage/rewind.ts), each new cut flying in while the
+ * previous frame zooms past the camera, under the live outro lyrics and the outro's figures as headline plates.
  * Global: rendered by `remotion render ... Anthem`; everything is derived from the
  * timeline prop that Root.tsx's calculateMetadata loads from public/timeline.json.
- * Sources: https://www.remotion.dev/docs/sequence , https://www.remotion.dev/docs/media/audio
+ * Sources: https://www.remotion.dev/docs/freeze , https://www.remotion.dev/docs/media/audio
  */
 import React from 'react'; // JSX
-import {AbsoluteFill, Sequence, random, staticFile, useCurrentFrame, useVideoConfig} from 'remotion'; // timeline primitives + seeded jitter
+import {AbsoluteFill, Freeze, staticFile, useCurrentFrame, useVideoConfig} from 'remotion'; // frame clock + freeze
 import {Audio} from '@remotion/media'; // frame-accurate audio (extracted with Mediabunny when rendering)
-import {beatPulse, lastIndexAtOrBefore, toFrame, type Timeline} from './lib/timeline'; // data + helpers
-import {COLORS} from './lib/theme'; // palette
-import {Background, BeatFlash, EquationDust, Hud, SpectrumRing, Ticker} from './components/Overlays'; // shared layers
-import {KineticLyrics} from './components/KineticLyrics'; // karaoke
-import {BigWords} from './components/BigWords'; // giant sung words (chorus-type scenes)
-import {StageLayer} from './stage/StageLayer'; // figure cards as dive-in hero shots
-import {focusOf, heroness, shotsAt} from './stage/shots'; // shot lifecycle + camera focus
-import {anchorOf} from './stage/anchors'; // where the hero comes from
-import {SCENES} from './scenes'; // scene registry
+import type {Timeline} from './lib/timeline'; // data
+import {COLORS, FONTS, glow} from './lib/theme'; // palette
+import {Background, BeatFlash, Hud, SpectrumRing, Ticker} from './components/Overlays'; // shared layers
+import {KineticLyrics} from './components/KineticLyrics'; // karaoke (live, over the rewind)
+import {World, sectionAt} from './World'; // the video at a frame
+import {rewindAt, rewindPlan, type Copy} from './stage/rewind'; // the outro's rewind schedule
+import {cardsOn} from './stage/shots'; // the outro's figures (headline plates)
+import {sceneLayout} from './stage/layout'; // lyric band per scene
+import {SCENES} from './scenes'; // HUD captions
 
-export type AnthemProps = {timelineFile: string; timeline: Timeline | null}; // composition props
+export type AnthemProps = {timelineFile: string; timeline: Timeline | null; debugLayout?: boolean}; // composition props (debugLayout: stills.mjs --layout)
 
-export const Anthem: React.FC<AnthemProps> = ({timeline}) => {
+/** Local: one frozen copy of the video at its source moment, flying (scale), fading, blurred and RGB-split.
+ * Global: the rewind's zoom-through transitions. */
+const RewindCopy: React.FC<{tl: Timeline; c: Copy; fps: number}> = ({tl, c, fps}) => (
+	<AbsoluteFill style={{transform: `scale(${c.scale})`, opacity: c.opacity,
+		filter: [c.blur > 0.05 ? `blur(${c.blur}px)` : '', c.split > 0.02 ? `drop-shadow(${14 * c.split}px 0 0 rgba(255,63,209,0.8)) drop-shadow(${-14 * c.split}px 0 0 rgba(34,228,255,0.8))` : ''].join(' ') || undefined}}>
+		<Freeze frame={Math.max(0, Math.round(c.src * fps))}>
+			<World tl={tl} lyrics={false} />
+		</Freeze>
+	</AbsoluteFill>
+);
+
+export const Anthem: React.FC<AnthemProps> = ({timeline, debugLayout}) => {
 	const frame = useCurrentFrame(); // absolute frame
 	const {fps} = useVideoConfig(); // fps from calculateMetadata
 	if (!timeline) return <AbsoluteFill style={{background: COLORS.bg}} />; // calculateMetadata not resolved yet
 	const tl = timeline; // shorthand
 	const t = frame / fps; // absolute seconds
-	const si = Math.max(0, lastIndexAtOrBefore(tl.sections.map((s) => s.startS), t)); // current section
-	const section = tl.sections[si]; // its record
-	const entry = SCENES[section.scene] ?? SCENES.default; // its scene
-	const punch = 1 + (entry.bigLyrics ? 0.03 : 0.012) * beatPulse(tl.downbeats, t, 0.15); // zoom kick on each bar
-	const glitch = section.index > 0 ? Math.max(0, 1 - (t - section.startS) / 0.25) : 0; // 1 -> 0 over 0.25 s after a cut
-	const jitter = glitch ? (random(`glitch${frame}`) - 0.5) * 36 * glitch : 0; // seeded horizontal shake
-	const shots = shotsAt(tl.vignettes, tl.sections, t); // every card on stage now
-	const staged = shots.map((s) => ({shot: s, anchor: anchorOf(tl, tl.sections.find((x) => x.index === s.v.sectionIndex) ?? section, s.v, s.k, t)})); // once per frame
-	const weights = shots.map(heroness); // how much each card is the hero
-	const push = Math.max(0, ...weights); // 0..1: how far the camera is pushed into the hero's object
-	const focus = focusOf(staged.flatMap(({anchor}, i) => (weights[i] > 0 ? [{...anchor, w: weights[i]}] : []))); // camera aims at the heroes' objects
-	const pulse = beatPulse(tl.beats, t); // beat kick for the cards
-	const lead = section.scene === 'finale' ? COLORS.amber : section.occurrence % 2 === 1 ? COLORS.cyan : COLORS.magenta; // giant-word colour
+	const section = sectionAt(tl, t); // the live section (the song's)
+	const plan = rewindPlan(tl); // the outro's rewind (a few hundred numbers; recomputed per frame, deterministic)
+	const copies = plan ? rewindAt(plan, t) : []; // frozen copies on screen now
+	const shown = copies.length ? sectionAt(tl, copies[0].src) : section; // what the HUD reports: the moment being rewound
+	const plates = copies.length ? cardsOn(tl.vignettes, section.index, t).slice(-1) : []; // the outro's newest figure, as a headline plate
 	return (
 		<AbsoluteFill style={{background: COLORS.bg}}>
 			<Background tl={tl} t={t} />
-			<EquationDust tl={tl} t={t} section={section} />
-			<SpectrumRing tl={tl} opacity={entry.bigLyrics ? 0.45 : 0.22} />
-			<AbsoluteFill style={{transform: `translateX(${jitter}px) scale(${punch * (1 + 0.08 * push)})`, transformOrigin: `${focus.x}px ${focus.y}px`,
-				filter: `brightness(${1 - 0.28 * push})` + (glitch ? ` drop-shadow(${10 * glitch}px 0 0 rgba(255,63,209,0.85)) drop-shadow(${-10 * glitch}px 0 0 rgba(34,228,255,0.85))` : '')}}>
-			{tl.sections.map((s) => {
-				const from = toFrame(s.startS, fps); // first frame of this section
-				const Scene = (SCENES[s.scene] ?? SCENES.default).component; // its component
-				return (
-					<Sequence key={s.index} from={from} durationInFrames={Math.max(1, toFrame(s.endS, fps) - from)} name={`${s.label} · ${s.scene}`} premountFor={fps}>
-						<Scene tl={tl} section={s} />
-					</Sequence>
-				);
-			})}
-			</AbsoluteFill>
-			<StageLayer tl={tl} staged={staged} t={t} big={Boolean(entry.bigLyrics)} pulse={pulse} />
-			{entry.bigLyrics ? <BigWords tl={tl} t={t} color={lead} y={262} maxSize={150} /> : <KineticLyrics tl={tl} t={t} />}
+			<SpectrumRing tl={tl} opacity={sceneLayout(section.scene).band === 'bigLyrics' ? 0.45 : 0.22} />
+			{copies.length ? copies.map((c) => <RewindCopy key={c.key} tl={tl} c={c} fps={fps} />) : <World tl={tl} debugLayout={debugLayout} />}
+			{plates.map(({v, on}) => ( // "The mathematics of AI / of intelligence / of information itself / We must now"
+				<div key={v.startS} style={{position: 'absolute', top: 96, width: '100%', textAlign: 'center', opacity: on, transform: `scale(${0.9 + 0.1 * on})`}}>
+					<span style={{display: 'inline-block', padding: '10px 26px', borderRadius: 14, background: 'rgba(6,8,22,0.82)', border: `2px solid ${COLORS.cyan}`}}>
+						<div style={{fontFamily: FONTS.display, fontWeight: 900, fontSize: 44, color: COLORS.ink, textShadow: glow(COLORS.cyan, 0.8)}}>{v.title}</div>
+						<div style={{fontFamily: FONTS.mono, fontSize: 24, color: COLORS.amber}}>{v.text.split('\n')[0]}</div>
+						<div style={{fontFamily: FONTS.mono, fontSize: 13, color: COLORS.dim}}>{v.cite}</div>
+					</span>
+				</div>
+			))}
+			{copies.length ? <KineticLyrics tl={tl} t={t} /> : null}
 			<BeatFlash tl={tl} t={t} section={section} />
-			<Hud tl={tl} t={t} section={section} caption={entry.caption} />
+			<Hud tl={tl} t={copies.length ? copies[0].src : t} section={shown}
+				caption={copies.length ? `◀◀ REWIND · ${(SCENES[shown.scene] ?? SCENES.default).caption}` : (SCENES[section.scene] ?? SCENES.default).caption} />
 			<Ticker tl={tl} t={t} section={section} />
 			<Audio src={staticFile(tl.audio)} />
 		</AbsoluteFill>

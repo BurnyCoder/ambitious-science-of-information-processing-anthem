@@ -19,8 +19,13 @@ import world from '../../public/vignettes/world.json'; // [lon, lat] of real pla
 import type {SceneProps} from './types'; // contract
 
 const PER = 700; // points per schematic manifold
-/** Local: screen x of the ring, the helix and the globe (camera at z = 19, fov 50). Global: stage/anchors.ts. */
-export const MANIFOLD_X = [472, 960, 1448];
+/** Local: the scene camera at `progress` 0..1: aimed above the clouds, so they sit in the lower half of the frame and the
+ * figure panels above them never cover them (stage/layout.json). Global: shared by the scene and manifoldAnchor. */
+const camAt = (progress: number): [number, number, number] => [0, 5.5, 22 - progress * 3];
+const TARGET: [number, number, number] = [0, 2.5, 0]; // look-at point
+const CENTERS: [number, number, number][] = [[-8, 0, 0], [0, 0, 0], [8, 0, 0]]; // ring, helix, globe
+/** Local: screen point of manifold m's centre. Global: stage/anchors.ts wires each figure to its manifold. */
+export const manifoldAnchor = (m: number, progress: number) => projectToScreen(CENTERS[m], camAt(progress), TARGET, 50);
 /** Local: which manifold each card dives out of. Global: stage/anchors.ts (other cards: by order). */
 export const MANIFOLD_OF: Record<string, number> = {superposition: 0, polysemantic: 0, bsf: 1, functionVector: 1, truth: 1, worldMap: 2, probeR2: 2, formula: 2};
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // the ring's 12 clusters
@@ -38,10 +43,12 @@ const sample = (m: number, k: number): [number, number, number] => {
 export const ManifoldsScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {frame, t, local, progress} = useSceneClock(section); // time
 	const pulse = beatPulse(tl.beats, t); // beat kick
-	const fvAt = wordTime(tl, section, /function/i) ?? section.startS + 4; // "function vectors" sung
-	const noiseAt = wordTime(tl, section, /noise/i) ?? section.startS + 1; // superposition pentagon appears
-	const truthAt = wordTime(tl, section, /thought/i) ?? section.startS + 7; // the truth split
-	const biggerAt = wordTime(tl, section, /bigger/i) ?? section.startS + 0.6 * (section.endS - section.startS); // scale steps begin
+	const cardAt = (title: RegExp, word: RegExp, fallback: number) => tl.vignettes.find((v) => v.sectionIndex === section.index && title.test(v.title))?.startS
+		?? wordTime(tl, section, word) ?? section.startS + fallback; // the scene's own figures are timed by their cards
+	const fvAt = cardAt(/^Function vectors/, /function/i, 4); // "function vectors": the antonym stream
+	const noiseAt = cardAt(/superposition/i, /noise/i, 1); // superposition pentagon appears
+	const truthAt = cardAt(/direction for truth/, /thought/i, 7); // the truth split
+	const biggerAt = cardAt(/bigger they get/, /bigger/i, 0.6 * (section.endS - section.startS)); // scale steps begin
 	const step = Math.min(2, Math.max(0, Math.floor((t - biggerAt) / 1.3))); // 7B -> 13B -> 70B
 	const truth = smooth((t - truthAt) / 0.6); // 0..1
 	const counts = [PER, PER, world.places.length]; // points per manifold
@@ -50,7 +57,6 @@ export const ManifoldsScene: React.FC<SceneProps> = ({tl, section}) => {
 		const n = counts.reduce((a, b) => a + b, 0);
 		const pos = new Float32Array(n * 3);
 		const col = new Float32Array(n * 3);
-		const centers: [number, number, number][] = [[-8, 0, 0], [0, 0, 0], [8, 0, 0]]; // three manifolds side by side
 		const colors = [COLORS.cyan, COLORS.magenta, COLORS.lime];
 		let i = 0; // write cursor
 		for (let m = 0; m < 3; m++) {
@@ -60,7 +66,7 @@ export const ManifoldsScene: React.FC<SceneProps> = ({tl, section}) => {
 				const e = [0, 1, 2].map((d) => (random(`n${m}-${k}-${d}`) - 0.5) * 2 * blur); // fixed noise direction, shrinking
 				const xr = (x + e[0]) * Math.cos(rot) + (z + e[2]) * Math.sin(rot); // rotate about Y
 				const zr = -(x + e[0]) * Math.sin(rot) + (z + e[2]) * Math.cos(rot);
-				pos.set([centers[m][0] + xr, centers[m][1] + y + e[1], centers[m][2] + zr], i);
+				pos.set([CENTERS[m][0] + xr, CENTERS[m][1] + y + e[1], CENTERS[m][2] + zr], i);
 				const side = m === 1 && truth > 0 ? (x > 0 ? COLORS.lime : COLORS.magenta) : colors[m]; // helix splits into true / false
 				col.set(rgb(side, 0.5 + 0.6 * (1 - blur / 1.64) + 0.3 * pulse), i); // crisper = brighter
 			}
@@ -75,7 +81,7 @@ export const ManifoldsScene: React.FC<SceneProps> = ({tl, section}) => {
 		const c = new Float32Array(Array.from({length: 6}, () => rgb(COLORS.amber, 1.5)).flat());
 		return {p, c};
 	}, [fv]);
-	const cam: [number, number, number] = [0, 2.5, 19 - progress * 3]; // camera, shared with the label projection
+	const cam = camAt(progress); // camera, shared with the label projection
 	const pent = smooth((t - noiseAt) / 0.6); // superposition: 5 features in the ring's 2D plane, a pentagon
 	const pentagon = useMemo(() => {
 		const p: number[] = [];
@@ -90,25 +96,26 @@ export const ManifoldsScene: React.FC<SceneProps> = ({tl, section}) => {
 	const ringLabels = MONTHS.map((mo, i) => { // month labels on the ring's clusters, spinning with it
 		const a = (i / 12) * Math.PI * 2, rot = local * 0.35;
 		const x = Math.cos(a) * 3.6, z = 0;
-		return {mo, ...projectToScreen([-8 + x * Math.cos(rot) + z * Math.sin(rot), Math.sin(a) * 3.6, -x * Math.sin(rot) + z * Math.cos(rot)], cam, [0, 0, 0], 50)};
+		return {mo, ...projectToScreen([-8 + x * Math.cos(rot) + z * Math.sin(rot), Math.sin(a) * 3.6, -x * Math.sin(rot) + z * Math.cos(rot)], cam, TARGET, 50)};
 	});
 	const pair = antonyms[Math.floor(Math.max(0, t - fvAt) / 0.7) % antonyms.length]; // antonym pairs streaming along the function vector
-	const tip = projectToScreen([-8 + 4.5 * fv, 3.5 * fv, 2 * fv], cam, [0, 0, 0], 50);
+	const tip = projectToScreen([-8 + 4.5 * fv, 3.5 * fv, 2 * fv], cam, TARGET, 50);
+	const helixTop = projectToScreen([0, 4.3, 0], cam, TARGET, 50), globeFoot = projectToScreen([8, 3.5, 0], cam, TARGET, 50); // labels on their manifolds (the R² one above the globe)
 	return (
 		<AbsoluteFill>
 			<Stage fov={50}>
-				<CameraRig position={cam} target={[0, 0, 0]} />
+				<CameraRig position={cam} target={TARGET} />
 				<GlowLines positions={pentagon.p} colors={pentagon.c} opacity={pent} />
 				<GlowPoints positions={pos} colors={col} size={0.26} />
 				<GlowLines positions={arrow.p} colors={arrow.c} opacity={fv} />
 			</Stage>
 			<svg width={1920} height={1080} style={{position: 'absolute'}}>
 				{ringLabels.map((l) => <text key={l.mo} x={l.x} y={l.y} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={15} textAnchor="middle" opacity={0.75 * (1 - pent * 0.4)}>{l.mo}</text>)}
-				{[['1900', 0.95], ['1950', 0.6], ['2000', 0.25], ['2050', -0.1]].map(([yr, h]) => { const q = projectToScreen([2.3, (h as number) * 3.5, 0], cam, [0, 0, 0], 50);
+				{[['1900', 0.95], ['1950', 0.6], ['2000', 0.25], ['2050', -0.1]].map(([yr, h]) => { const q = projectToScreen([2.3, (h as number) * 3.5, 0], cam, TARGET, 50);
 					return <text key={yr as string} x={q.x} y={q.y} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={15} opacity={0.7}>{yr as string}</text>; })}
 				<text x={tip.x + 14} y={tip.y - 8} fill={COLORS.amber} fontFamily={FONTS.mono} fontSize={22} opacity={fv} style={{textShadow: glow(COLORS.amber, 0.4)}}>{pair.input} + v → {pair.output}</text>
-				<text x={960} y={190} fill={COLORS.lime} fontFamily={FONTS.mono} fontSize={18} textAnchor="middle" opacity={truth}>true | false</text>
-				<text x={1448} y={230} fill={COLORS.ink} fontFamily={FONTS.display} fontSize={22} textAnchor="middle" opacity={smooth((t - biggerAt) / 0.4)} style={{textShadow: glow(COLORS.lime, 0.5)}}>
+				<text x={helixTop.x} y={helixTop.y} fill={COLORS.lime} fontFamily={FONTS.mono} fontSize={18} textAnchor="middle" opacity={truth}>true | false</text>
+				<text x={globeFoot.x} y={globeFoot.y} fill={COLORS.ink} fontFamily={FONTS.display} fontSize={22} textAnchor="middle" opacity={smooth((t - biggerAt) / 0.4)} style={{textShadow: glow(COLORS.lime, 0.5)}}>
 					{SCALES[step][0]} · probe R² {SCALES[step][1].toFixed(3)}
 				</text>
 			</svg>

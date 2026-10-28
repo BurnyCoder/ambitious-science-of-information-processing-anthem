@@ -1,0 +1,54 @@
+{
+ "cards": 82,
+ "panels": 50,
+ "sceneDrawn": 32,
+ "H1": {
+  "pass": true,
+  "minPanelSeconds": 2.76,
+  "cutLimited": 1,
+  "medianPanelSeconds": 5.81
+ },
+ "H2": {
+  "pass": true,
+  "maxPanelsAtOnce": 2
+ },
+ "H3": {
+  "pass": true,
+  "overlaps": []
+ },
+ "H4": {
+  "pass": false,
+  "times": [
+   13.0,
+   14.0,
+   15.0,
+   16.0,
+   17.0,
+   18.0
+  ],
+  "log2RatioVsV130": [
+   -0.577,
+   -0.582,
+   -0.555,
+   -0.574,
+   -0.592,
+   -0.587
+  ],
+  "median": -0.58
+ },
+ "descriptive": {
+  "v140HeroSeconds": {
+   "median": 2.22,
+   "under2s": 41,
+   "cards": 86
+  },
+  "v150ShownSeconds": {
+   "median": 6.0,
+   "under2s": 1,
+   "cards": 82,
+   "panelUnder3s": 2
+  },
+  "v140HeroOverProtectedShare": 1.0,
+  "v150PanelOverProtectedShare": 0.0
+ }
+}

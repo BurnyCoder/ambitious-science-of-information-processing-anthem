@@ -1,21 +1,17 @@
 /**
- * Shot lifecycle of the figure cards: a pure function of time.
- * Local: every placed card (timeline.json "vignettes") goes through four phases:
- *  - emerge: 0.4 s out of the scene object its lyric names;
- *  - hero: centre stage while it is the newest card, for at most 3.2 s;
- *  - orbit: a continuous rank >= 1 pushes it back in depth as newer cards arrive or its hero time runs out;
- *  - dock: 0.5 s after its end it flies back into its object and stays there until the section ends.
- *  Ranks are sums of eased steps, so cards glide between states instead of jumping. No imports at runtime,
- *  so `node --test tests/shots.test.ts` runs it.
- * Global: StageLayer draws each shot from these numbers and Anthem pushes the camera toward the hero's object
- * (focusOf), so the concrete examples live inside the scenes instead of in boxes beside them.
+ * Life of a figure card: a pure function of time (v1.5.0).
+ * Local: a panel card (lane a or b) emerges from its scene object over EMERGE_S, stays in its slot (stage/layout.json)
+ * for its whole time [startS, endS), then docks back into the object over DOCK_S and stays docked until its section
+ * ends. Nothing steals a slot: lanes never overlap (anthem/vignettes.py trims within a lane). A "scene" card is
+ * drawn by its own scene in place; cardsOn() tells the scene which of its cards are on and how far faded in.
+ * No imports at runtime, so `node --test tests/shots.test.ts` runs it; scripts/analysis/shots.py mirrors it.
+ * Global: StageLayer draws the panels from shotsAt(); scenes draw their own cards from cardsOn().
  */
 import type {Section, Vignette} from '../lib/timeline';
 
 export const EMERGE_S = 0.4; // flight out of the anchor object
-export const HERO_MAX_S = 3.2; // the general scene gets the frame back after this, even without a new card
-export const EASE_S = 0.4; // length of every rank change
-export const DOCK_S = 0.5; // flight back into the anchor object
+export const DOCK_S = 0.5; // flight back into the anchor object (or fade, for scene cards)
+export const LANES = ['a', 'b']; // lane a -> slot 0, lane b -> slot 1
 
 /** Local: Hermite smoothstep on a clamped input. Global: every eased step below. */
 const ease = (x: number): number => {
@@ -23,37 +19,27 @@ const ease = (x: number): number => {
 	return c * c * (3 - 2 * c);
 };
 
-/** Local: one card's state at t. emerge/dock in 0..1; rank 0 = hero, >= 1 = receded (continuous). */
-export type Shot = {v: Vignette; fig: number; k: number; emerge: number; rank: number; dock: number};
+/** Local: one panel's state at t. emerge/dock in 0..1; slot indexes the scene's layout slots. */
+export type Shot = {v: Vignette; fig: number; k: number; slot: number; emerge: number; dock: number};
 
-/** Local: every card of the song that is visible at t (emerging, hero, orbiting, docking or docked).
- * k is the card's index within its section (anchors use it). Global: input of StageLayer and heroPush. */
+/** Local: every panel of the song visible at t (emerging, in its slot, docking or docked); k = order in its section.
+ * Global: input of StageLayer. */
 export const shotsAt = (vignettes: Vignette[], sections: Section[], t: number): Shot[] => {
 	const out: Shot[] = [];
 	vignettes.forEach((v, i) => {
+		if (v.lane === 'scene') return; // drawn by its scene
 		const sectionEnd = sections.find((s) => s.index === v.sectionIndex)?.endS ?? v.endS; // docks live until the cut
 		if (t < v.startS || t >= Math.max(sectionEnd, v.endS + DOCK_S)) return; // not yet, or gone with its section
-		let rank = ease((t - v.startS - HERO_MAX_S) / EASE_S); // hero time ran out
-		for (const n of vignettes) {
-			if (n.sectionIndex !== v.sectionIndex || n.startS <= v.startS || n === v) continue; // only newer cards of the section push back
-			rank += ease((t - n.startS) / EASE_S) - ease((t - n.endS) / EASE_S); // a newer card arrived / left
-		}
-		const k = vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.startS < v.startS).length; // order in its section
-		out.push({v, fig: i + 1, k, emerge: ease((t - v.startS) / EMERGE_S), rank: Math.max(0, rank), dock: ease((t - v.endS) / DOCK_S)});
+		const k = vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.lane !== 'scene' && u.startS < v.startS).length; // order in its section
+		out.push({v, fig: i + 1, k, slot: LANES.indexOf(v.lane), emerge: ease((t - v.startS) / EMERGE_S), dock: ease((t - v.endS) / DOCK_S)});
 	});
 	return out;
 };
 
-/** Local: how much a shot is "the hero" right now (0..1). Global: camera push and drawing order. */
-export const heroness = (s: Shot): number => s.emerge * (1 - Math.min(1, s.rank)) * (1 - s.dock);
-
-/** Local: camera focus = the heroes' anchors averaged by heroness, with the frame centre holding whatever weight no
- * hero has. During a hand-over both heroes are near 0.5, so the focus glides between their objects instead of jumping
- * (a jump of the transform origin under a scale s moves the whole scene by (s − 1) × the jump).
- * Global: Anthem's transform-origin for the camera push. */
-export const focusOf = (points: {x: number; y: number; w: number}[], cx = 960, cy = 540): {x: number; y: number} => {
-	const sum = points.reduce((a, p) => a + p.w, 0); // total hero weight
-	const rest = Math.max(0, 1 - sum); // weight left for the frame centre
-	const total = sum + rest; // >= 1, so never divides by 0
-	return {x: (rest * cx + points.reduce((a, p) => a + p.w * p.x, 0)) / total, y: (rest * cy + points.reduce((a, p) => a + p.w * p.y, 0)) / total};
+/** Local: the "scene" cards of a section that are on at t, with `on` easing in over EMERGE_S and out over DOCK_S;
+ * k = order among the section's scene cards. Global: scenes that draw their own figures (atlas chips, theory blocks…). */
+export const cardsOn = (vignettes: Vignette[], sectionIndex: number, t: number) => {
+	const own = vignettes.filter((v) => v.lane === 'scene' && v.sectionIndex === sectionIndex); // in start order
+	return own.flatMap((v, k) => (t >= v.startS && t < v.endS + DOCK_S
+		? [{v, k, on: ease((t - v.startS) / EMERGE_S) * (1 - ease((t - v.endS) / DOCK_S))}] : []));
 };

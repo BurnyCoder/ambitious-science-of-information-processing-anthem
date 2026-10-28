@@ -6,7 +6,8 @@
  *  - ARC-style cells (the arc card's palette) drifting upward;
  *  - a frame-wide causal graph (the dag card's nodes); on "counterfactual" the arrows into "circuit" are cut by
  *    do(circuit := c′) and the change flows on to "behavior".
- * The figure cards themselves (shortest program, do()-graph, AIXI, ActAdd, ARC) dive out of the halo.
+ * The figure panels (ideal solving, ARC, AIXI, the do()-graph, ActAdd, compression) sit in the two upper corners, wired to
+ * the halo; the closing "Intentional design" card is an amber banner the scene draws itself, bridging into the outro.
  * Global: the song's definition of "fully understanding": the most compressed theory that predicts any behavior
  * and any intervention (Kolmogorov 1965; Pearl 2009; Chollet 2019).
  */
@@ -15,6 +16,7 @@ import {AbsoluteFill, random} from 'remotion'; // layer + seeded RNG
 import {beatPulse, wordTime} from '../lib/timeline'; // beat kick + lyric triggers
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
 import {BITS, PAL, PROGRAM} from '../vignettes/finale'; // the cards' own data
+import {cardsOn} from '../stage/shots'; // the cards this scene draws itself
 import type {SceneProps} from './types'; // contract
 
 const RAIN_COLS = 28; // 28 columns x 10 rows = the 280 bits
@@ -25,7 +27,7 @@ const NOTE = `   · 280 bits → ${PROGRAM.length} characters`; // compression r
 const PROG_X = 960 - ((PROG_TEXT.length + NOTE.length) * CHAR_W) / 2; // centred with its note
 const CELLS = 64; // drifting ARC cells
 /** Local: the causal graph's nodes spread over the whole frame (ids as in the dag card). */
-const DAG: Record<string, [number, number]> = {data: [170, 250], hyperparams: [960, 112], features: [330, 640], circuit: [1590, 640], behavior: [1750, 250]};
+const DAG: Record<string, [number, number]> = {data: [170, 540], hyperparams: [960, 112], features: [380, 655], circuit: [1540, 655], behavior: [1750, 540]}; // below the corner panels
 const EDGES: [string, string][] = [['data', 'features'], ['hyperparams', 'features'], ['features', 'circuit'], ['hyperparams', 'circuit'], ['circuit', 'behavior']];
 
 export const FinaleScene: React.FC<SceneProps> = ({tl, section}) => {
@@ -34,6 +36,7 @@ export const FinaleScene: React.FC<SceneProps> = ({tl, section}) => {
 	const at = (re: RegExp, frac: number) => wordTime(tl, section, re) ?? section.startS + frac * (section.endS - section.startS); // lyric trigger
 	const collapse = smooth((t - at(/shortest/i, 0.25) - 0.3) / 1.4); // bits fly into the program
 	const iv = smooth((t - at(/counterfactual/i, 0.45)) / 0.5); // do() applied
+	const banner = cardsOn(tl.vignettes, section.index, t).find((c) => c.v.title === 'Intentional design'); // the closing card
 	const progAt = (i: number) => PROG_X + (5 + (i % 20)) * CHAR_W; // bit i lands on its character of the period inside p = "..."
 	return (
 		<AbsoluteFill>
@@ -73,6 +76,10 @@ export const FinaleScene: React.FC<SceneProps> = ({tl, section}) => {
 						stroke={COLORS.amber} strokeWidth={3} opacity={0.18 + 0.2 * pulse} />;
 				})}
 			</svg>
+			{banner ? <div style={{position: 'absolute', top: 575, width: '100%', textAlign: 'center', opacity: banner.on, transform: `scale(${0.9 + 0.1 * banner.on})`}}>
+				<div style={{fontFamily: FONTS.display, fontWeight: 900, fontSize: 40, color: COLORS.ink, textShadow: glow(COLORS.amber, 0.9)}}>INTENTIONAL DESIGN</div>
+				<div style={{fontFamily: FONTS.mono, fontSize: 18, color: COLORS.amber}}>{banner.v.text} · {banner.v.cite}</div>
+			</div> : null}
 		</AbsoluteFill>
 	);
 };

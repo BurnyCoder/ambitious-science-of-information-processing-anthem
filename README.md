@@ -13,10 +13,17 @@ An original song plus a music video in which **every frame is drawn in code**. T
     - Epoch AI's model and Chinchilla data, Nakkiran et al.'s double descent;
     - Gurnee & Tegmark's places, Goodfire's block-sparse-featurizer figure.
   - See [docs/vignettes.md](docs/vignettes.md) and [experiment 7](reports/exp07_provenance.md).
-- **Hero shots (v1.4.0):** the cards now live inside the scenes. Each one dives out of the scene object its lyric names (a ladder rung, a theory pillar, an atlas star, a chorus circuit node) and takes centre stage without a frame while the camera pushes toward that object. It then docks back into it. The scenes keep their general pictures (the layer tunnel, the loss landscape, the circuit network, the ladder, the pillars, the atlas) and draw concrete examples inside them. See [docs/scenes.md](docs/scenes.md) and [experiment 8](reports/exp08_integration.md).
+- **Figures as part of the scenes (v1.5.0):** each scene owns its figures.
+  - **Panels.** At most two per scene, in slots its layout reserves away from its key objects. Each stays for its whole time (≥ 3 s) and is wired to the rung, star, basin or node it explains.
+  - **Drawn in place.** Ideas the scene can show itself are drawn inside it: an atlas star's label grows into its formula, and the theory blocks open to their plots as each direction is sung.
+  - **The general pictures stay.** Nothing dims or covers the layer tunnel, the gradient-descent landscape, the circuit network, the ladder, the point clouds, the blocks or the atlas.
+  - **The rewind.** The outro is a flying, accelerating rewind through the whole video, landing on the opening token.
+  
+  See [docs/scenes.md](docs/scenes.md) and [experiment 9](reports/exp09_unified.md).
 - **One-line lyric edit:** the word "mind" was taken out of Verse 1 ("And out of it a **thing** that learns to answer why"). Only that part was re-sung, with Suno's replace-section. The line was fixed, but Suno regenerated about 30 s of audio rather than the requested 11.6 s window, and it shifted the file by 17 ms. See [experiment 6](reports/exp06_lyric_edit.md).
 
-**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.4.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.4.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.4.0): the figure cards staged inside the scenes as hero shots. Older cuts:
+**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.5.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.5.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.5.0): figures as part of their scenes, and the rewind finale. Older cuts:
+- [v1.4.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.4.0): figure cards as centre hero shots over a dimmed scene.
 - [v1.3.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.3.0): the same 86 cards in corner boxes beside the scenes.
 - [v1.2.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.2.0): the edited lyric with corrected onsets, no figure cards.
 - [v1.1.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.1.0): the original lyric, corrected onsets.
@@ -30,13 +37,22 @@ An original song plus a music video in which **every frame is drawn in code**. T
 | **Verse 2: ladder of abstraction** | **Verse 3: theory of deep learning** | **Bridge: atlas of the math** | **Final chorus: ideal solving** |
 | ![ladder](docs/img/s05_ladder.jpg) | ![theory](docs/img/s08_theory.jpg) | ![atlas](docs/img/s09_atlas.jpg) | ![finale](docs/img/s10_finale.jpg) |
 
-Concrete examples inside the general scenes (frames of the v1.4.0 video):
+Figures inside the general scenes (frames of the v1.5.0 video):
 
 ![Six frames of v1.4.0: GPT-2 token ids of the sung line in the layer tunnel; the loss surface with its own saddle, basins and the released grokking and double-descent curves; the chorus circuit over the traced prompt ending in Austin; the encyclopedia filing the ladder's figures; five theory pillars filled by their plots; the do()-intervention graph and the bit string collapsing into its program](docs/img/stage.jpg)
 
-Twelve of the 86 figure cards, all drawn from released data:
+Twelve figure cards, all drawn from released data (shown as in v1.3.0):
 
 ![Twelve figure cards drawn from released data: attribution graph, grokking curves and Fourier spectrum, induction scores, refusal scores, world places, model scale, double descent, block-sparse featurizers, superposition, weekday latents, a Neuronpedia feature](docs/img/cards.jpg)
+
+**Highlights of v1.5.0** ([experiment 9](reports/exp09_unified.md)):
+- **Figures stay long enough to read.** The median time on screen is 6.0 s (v1.4.0: 2.2 s as the hero). 1 of 82 figures is shown under 2 s, against 41 of 86 before.
+- **No figure covers a scene's key object.** v1.4.0's hero covered one the whole time it was up. In v1.5.0 a panel never covers one: every slot is checked against each scene's protected regions.
+- **Detail kept.** Before the outro, frames are not less detailed than v1.4.0: median log₂ PNG-size ratio +0.033, 95 % CI [−0.047, +0.102]. Verse 1 +0.21, the landscape +0.10.
+- **Negative findings.**
+  - The pre-registered check of the 0:14 window failed on the first render: it was fuller than v1.4.0 but about 0.58 log₂ below v1.3.0. After a post-hoc fix (verse 1's layers fly out behind the tokens card), the final video is at −0.09, much fuller than v1.4.0 but still short of the criterion.
+  - The bridge lost detail (−0.22): its 21 formula cards became star labels that grow two at a time.
+  - No viewer study was run.
 
 **Highlights of v1.4.0** ([experiment 8](reports/exp08_integration.md)):
 - **Inside the scenes.**
@@ -86,7 +102,7 @@ Twelve of the 86 figure cards, all drawn from released data:
      - **After the lyric edit** ([experiment 6](reports/exp06_lyric_edit.md)), Suno returned word times copied from the parent take, but the audio played 17 ms earlier. exp05's rule, re-run on the edited take, gives δ = 0.156 s (95 % CI 0.144–0.167 s), so the video uses `VIDEO_WORD_OFFSET_S=-0.156`.
 5. **Audio analysis.** librosa tracks beats on the onset-strength envelope at hop 256, which is validated on synthetic click tracks in [experiment 2](reports/exp02_beat_tracking.md). It also computes downbeats (4/4 heuristic) and per-frame RMS energy and onset strength.
 6. **Timeline.** `video/public/timeline.json` contains the sections and their scenes, the lines and words with times, the beats, and the per-frame features. Each section boundary is the section's first sung word minus 0.1 s, snapped to a beat within ±0.3 s.
-7. **Illustration track.** `content/vignettes.toml` declares 86 figure cards, at least one per sung line. Each card is placed 0.15 s before the sung word it illustrates, carries a provenance badge (released data, published numbers, live math, from the paper, schematic) and a citation. Catalog: [docs/vignettes.md](docs/vignettes.md).
+7. **Illustration track.** `content/vignettes.toml` declares 82 figure cards, at least one per sung line. Each card is placed 0.15 s before the sung word it illustrates, either as a panel in one of its scene's two layout slots or drawn by the scene itself, carries a provenance badge (released data, published numbers, live math, from the paper, schematic) and a citation. Catalog: [docs/vignettes.md](docs/vignettes.md).
    - **No experiment is re-run.** `scripts/vignette_data.py` downloads pinned files released by the original authors or well-known third parties, including:
      - Nanda et al.'s grokking run, Anthropic's attribution graphs and toy-model notebook;
      - ARENA's induction scores, Neuronpedia features, Epoch AI's model and Chinchilla data;
@@ -97,12 +113,13 @@ Twelve of the 86 figure cards, all drawn from released data:
    - a starfield and faint drifting "equation dust" (the section's card titles);
    - an audio spectrum ring;
    - one scene per section (2D SVG or Three.js), punch-zoomed on downbeats and RGB-split for 0.25 s after each cut. Each scene draws its general picture with concrete examples inside it;
-   - the stage, where the figure cards play as hero shots:
-     - a card dives out of the scene object its lyric names;
-     - it is centre stage for at most 3.2 s, while the scene layer is pushed gently toward that object;
-     - it then recedes, and docks back into the object at its end ([experiment 8](reports/exp08_integration.md));
+   - the figure panels, in the two slots the scene's layout reserves away from its key objects (`video/src/stage/layout.json`):
+     - a panel emerges from the object it explains and stays, wired to it, for its whole time;
+     - it docks back into the object at its end ([experiment 9](reports/exp09_unified.md));
+     - other figures are drawn by the scene itself;
    - a karaoke overlay, or giant kinetic words in the lower third of the choruses;
-   - beat and cut flashes, a HUD and a scrolling citation ticker.
+   - beat and cut flashes, a HUD and a scrolling citation ticker;
+   - in the outro, the rewind: Remotion `<Freeze>` copies of earlier frames, beat-cut backwards ever faster, landing on the opening token.
 9. **Verification.** ffprobe checks resolution, fps, codecs and duration against the song. ffmpeg extracts one still per section for visual inspection.
 
 ## Quickstart
@@ -156,7 +173,7 @@ flowchart LR
         X[(released artifacts<br/>pinned URL + sha256)] --> Y[video/public/vignettes/*.json]
     end
     subgraph rd["phase 3: render (Remotion, video/)"]
-        R[Root.tsx calculateMetadata] --> V[Anthem.tsx: scenes with concrete layers + stage: cards dive out of scene objects + karaoke / giant words + flashes + HUD + ticker + audio]
+        R[Root.tsx calculateMetadata] --> V[Anthem.tsx: World = scene + its figure panels in layout slots + lyrics; outro: Freeze-frame rewind + flashes + HUD + ticker + audio]
     end
     subgraph vf["phase 4: verify"]
         F[ffprobe checks + section stills]
@@ -182,10 +199,10 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
 2. **timeline**
    - Parses the lyrics into 11 sections and 58 lines, scores the cached takes, picks one, and aligns its 430 words.
    - Shifts every word by `VIDEO_WORD_OFFSET_S` (−0.156 s in `.env.example`).
-   - Analyzes the audio (about 10 s), places the 86 figure cards at their sung words (logging trims and coverage), and writes `video/public/timeline.json` plus a copy of the MP3.
+   - Analyzes the audio (about 10 s), places the 82 figure cards at their sung words (logging trims and coverage), and writes `video/public/timeline.json` plus a copy of the MP3.
 3. **render**
    - `npx remotion render … --gl=angle` bundles the project, runs `calculateMetadata` (video length = song length, 7212 frames), and renders the frames in 8 parallel headless-Chrome tabs.
-   - It then encodes H.264 + AAC to `out/anthem.mp4`. This took about 11.5 minutes for v1.4.0 (7.5 for v1.3.0) on a 16-thread desktop.
+   - It then encodes H.264 + AAC to `out/anthem.mp4`. This took about 11 minutes for v1.5.0 (7.5 for v1.3.0) on a 16-thread desktop.
 4. **verify**
    - Checks 1920×1080, 30 fps, h264/aac, and duration within 0.5 s of the song.
    - Writes `out/anthem_verify.json` and `out/stills/verify_s*.png`.
@@ -205,8 +222,9 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
   - the 280-bit string collapsing into its program.
   
   See [docs/scenes.md](docs/scenes.md).
-- **Dive-in hero shots (v1.4.0):** each figure card comes out of the scene object its lyric names: a ladder rung, a theory pillar, an atlas star, a chorus circuit node. It takes centre stage without a frame for at most 3.2 s while the camera pushes toward that object, then docks back into it.
-- **86 figure cards**, at least one per sung line, each with a provenance badge and a citation. Released data is reused, never re-generated. Concrete examples include:
+- **Figures as part of their scenes (v1.5.0):** at most two panels per scene, in slots reserved away from its key objects, each wired to the rung, star, basin or node it explains. Some figures are drawn by the scene itself: atlas star labels grow into formulas, and the theory blocks open to their plots.
+- **A flying rewind finale:** the outro beat-cuts backwards through every section and figure, faster and faster, and lands on the opening token.
+- **82 figure cards**, at least one per sung line, each with a provenance badge and a citation. Released data is reused, never re-generated. Concrete examples include:
   - Anthropic's Dallas → Austin, rabbit-rhyme and 36+59 attribution graphs, and the grokking run with its Fourier key frequencies;
   - GPT-2's induction heads, the IOI circuit and the refusal direction;
   - Chinchilla's 245 runs with two published fits, double descent, and Goodfire's block-sparse featurizer figure;

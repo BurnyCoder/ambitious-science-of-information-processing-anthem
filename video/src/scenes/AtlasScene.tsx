@@ -2,7 +2,11 @@
  * Bridge — the atlas of the mathematics of information processing.
  * Local: ~30 fields as stars on a slowly rotating sphere (projected to 2D); a star ignites
  * when its name is sung, the rest ignite at "every level, every scale"; each star links to
- * its 3 nearest neighbours once both are lit; "ONE SCIENCE OF INFORMATION" closes the scene.
+ * its 3 nearest neighbours once both are lit; "ONE SCIENCE OF INFORMATION" closes the scene. Each sung field's figure
+ * (a formula card the scene draws itself) grows out of the star's own label into a plate with the formula, its meaning
+ * and the citation, and shrinks back when its time is over; cards with no star (invariants, bounds, every level) take
+ * the free corners. Every card leaves before "science" ([[clear]] in content/vignettes.toml), so the amber statement
+ * stands alone, with the closing card ("the same unit, the bit...") as its own subtitle.
  * Global: the song's thesis: many lenses (linear algebra ... category theory) -> one atlas of
  * laws, invariants, bounds and mechanisms across biological and artificial systems.
  */
@@ -10,6 +14,8 @@ import React, {useMemo} from 'react'; // JSX + memo
 import {AbsoluteFill, random} from 'remotion'; // layer + RNG
 import {beatPulse, wordTime} from '../lib/timeline'; // timing
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
+import {cardsOn} from '../stage/shots'; // the cards this scene draws itself
+import {sceneLayout} from '../stage/layout'; // the bridge accent
 import type {SceneProps} from './types'; // contract
 
 export const FIELDS: [string, RegExp | null][] = [ // name, sung keyword (null = lit at "every level")
@@ -43,6 +49,8 @@ const SPHERE = FIELDS.map((_, f) => {
 	return [Math.cos(phi) * r, y, Math.sin(phi) * r] as [number, number, number];
 });
 
+const R = 0.62, CY = 400; // sphere size and centre: leaves the margins to the figures and the lower band to the statement
+const STATEMENT_Y = 625; // top of ONE SCIENCE OF INFORMATION (layout.json protects this band)
 /** Local: screen position, perspective scale and depth of field f's star, `local` seconds into the bridge.
  * Global: drawn here; stage/anchors.ts dives cards out of (and docks them next to) the same stars. */
 export const projectStar = (f: number, local: number) => {
@@ -51,7 +59,7 @@ export const projectStar = (f: number, local: number) => {
 	const xr = x * Math.cos(rot) + z * Math.sin(rot);
 	const zr = -x * Math.sin(rot) + z * Math.cos(rot);
 	const s = 1 / (1.9 - zr * 0.7); // perspective scale (front bigger)
-	return {x: 960 + xr * 1050 * s, y: 540 + y * 560 * s, s, front: zr}; // fits between caption and lyrics
+	return {x: 960 + xr * 1050 * s * R, y: CY + y * 560 * s * R, s, front: zr}; // the sphere sits above the closing statement
 };
 
 export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
@@ -67,6 +75,16 @@ export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 	const oneAt = wordTime(tl, section, /science/i) ?? section.startS + 0.9 * length; // finale text
 	const atlasAt = wordTime(tl, section, /atlas/i) ?? section.startS + 0.55 * length; // atlas tagline
 	const dimNet = 1 - 0.6 * smooth((t - oneAt) / 0.4); // fade the network behind the closing statement
+	const accent = sceneLayout('atlas').accent; // violet: amber is the statement's alone
+	const on = cardsOn(tl.vignettes, section.index, t); // the formula cards this scene draws
+	const starOf = (title: string) => FIELDS.findIndex(([, re]) => re !== null && re.test(title)); // field of a card
+	const starred = tl.vignettes.filter((v) => v.sectionIndex === section.index && v.lane === 'scene' && starOf(v.title) >= 0); // star figures, in sung order
+	const shrink = (v: typeof starred[number]) => { const n = starred[starred.indexOf(v) + 2]; return n ? smooth((t - n.startS) / 0.4) : 0; }; // at most two grown at once
+	const chips = on.filter((c) => c.v.title !== 'One science of information').map((c) => ({...c, f: starOf(c.v.title)}))
+		.map((c) => ({...c, on: c.f >= 0 ? c.on * (1 - shrink(c.v)) : c.on})).filter((c) => c.on > 0.01); // older stars shrink back to their labels
+	const closing = on.find((c) => c.v.title === 'One science of information'); // the statement's subtitle
+	const grown = FIELDS.map((_, i) => Math.max(0, ...chips.filter((c) => c.f === i).map((c) => c.on))); // label i grown into a figure
+	const loose = chips.filter((c) => c.f < 0); // cards without a star: the free corners
 	return (
 		<AbsoluteFill>
 			<svg width={1920} height={1080} style={{position: 'absolute', opacity: dimNet}}>
@@ -77,17 +95,29 @@ export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 			</svg>
 			{pts.map((p, i) => (
 				<div key={i} style={{position: 'absolute', left: p.x + 14, top: p.y - 14, fontFamily: FONTS.body, fontWeight: 600, fontSize: 15 + 10 * p.s,
-					color: COLORS.ink, opacity: dimNet * lit[i] * (0.45 + 0.55 * (p.front + 1) / 2), whiteSpace: 'nowrap', textShadow: glow(COLORS.amber, 0.25)}}>
+					color: COLORS.ink, opacity: dimNet * lit[i] * (0.45 + 0.55 * (p.front + 1) / 2) * (1 - grown[i]), whiteSpace: 'nowrap', textShadow: glow(COLORS.amber, 0.25)}}>
 					{FIELDS[i][0]}
 					<div style={{fontFamily: FONTS.mono, fontWeight: 400, fontSize: 11 + 5 * p.s, color: COLORS.amber}}>{FORMULAS[FIELDS[i][0]]}</div>
+				</div>
+			))}
+			{[...chips.filter((c) => c.f >= 0).map((c) => ({c, x: pts[c.f].x + 16, y: pts[c.f].y - 18})),
+				...loose.map((c, j) => ({c, x: j % 2 ? 1500 : 30, y: 90 + 90 * Math.floor(j / 2)}))].map(({c, x, y}) => ( // the star's label grown into its figure
+				<div key={c.v.startS} style={{position: 'absolute', left: Math.min(x, 1900 - 420), top: y, maxWidth: 420, padding: '8px 12px', borderRadius: 10, opacity: c.on * dimNet,
+					background: 'rgba(6,8,22,0.82)', border: `1.5px solid ${accent}`, boxShadow: `0 0 18px ${accent}55`, transformOrigin: 'left top', transform: `scale(${0.7 + 0.3 * c.on})`}}>
+					<div style={{fontFamily: FONTS.display, fontWeight: 700, fontSize: 18, color: COLORS.ink, textShadow: glow(accent, 0.5)}}>{c.v.title}</div>
+					{c.v.text.split('\n').map((l, k) => <div key={k} style={{fontFamily: FONTS.mono, fontSize: k ? 12 : 16, color: k ? COLORS.dim : COLORS.ink, marginTop: 3}}>{l}</div>)}
+					<div style={{fontFamily: FONTS.mono, fontSize: 10, color: COLORS.dim, marginTop: 4}}>{c.v.badge.toUpperCase()} · {c.v.cite}</div>
 				</div>
 			))}
 			<div style={{position: 'absolute', top: 70, width: '100%', textAlign: 'center', fontFamily: FONTS.mono, fontSize: 18, color: COLORS.dim, opacity: smooth((t - atlasAt) / 0.5)}}>
 				an atlas of laws · invariants · bounds · effective theories · mechanisms — at every level, every scale
 			</div>
-			<div style={{position: 'absolute', top: 470, width: '100%', textAlign: 'center', fontFamily: FONTS.display, fontWeight: 900, fontSize: 84, color: COLORS.ink,
+			<div style={{position: 'absolute', top: STATEMENT_Y, width: '100%', textAlign: 'center', fontFamily: FONTS.display, fontWeight: 900, fontSize: 84, color: COLORS.ink,
 				textShadow: glow(COLORS.amber, 1.2), opacity: smooth((t - oneAt) / 0.4), transform: `scale(${1.2 - 0.2 * smooth((t - oneAt) / 0.4)})`}}>
 				ONE SCIENCE OF INFORMATION
+				{closing ? <div style={{fontFamily: FONTS.body, fontWeight: 600, fontSize: 26, color: COLORS.amber, textShadow: 'none', opacity: closing.on, marginTop: 4}}>
+					{closing.v.text.split('\n')[0]}<span style={{fontFamily: FONTS.mono, fontSize: 14, color: COLORS.dim}}> · {closing.v.cite}</span>
+				</div> : null}
 			</div>
 		</AbsoluteFill>
 	);

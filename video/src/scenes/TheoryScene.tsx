@@ -1,7 +1,9 @@
 /**
  * Verse 3 — "There will be a theory!"
- * Local: the title of Simon, Kunin et al. 2026 (arXiv:2604.21691), five glowing pillars (a)-(e) that rise when their
- * direction is sung and are filled by that direction's figure card docking into them, and a real scaling-law plot: Epoch AI's 245 runs extracted from Hoffmann et al. 2022
+ * Local: the title of Simon, Kunin et al. 2026 (arXiv:2604.21691); five blocks (a)-(e), an accordion: each rises when
+ * its direction is sung and widens to show that direction's figure inside it (a card the scene draws itself), while the
+ * earlier blocks narrow to a vertical title and a thumbnail; on "mechanics" all five settle side by side. Right: a real
+ * scaling-law plot (the "Learning mechanics" and GPT-4 figures sit in the slot above it): Epoch AI's 245 runs extracted from Hoffmann et al. 2022
  * (loss vs parameters, colored by training compute) with the iso-FLOP curves L(N, C/6N) of two published
  * parametric fits (Hoffmann et al. solid, Epoch's re-fit dashed) and their compute-optimal minima, the last one
  * marked "predicted before training". A FALSIFIABLE stamp lands on "falsifiable".
@@ -14,16 +16,19 @@ import {wordTime} from '../lib/timeline'; // keyword timing
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
 import {chinchillaLoss} from '../lib/mathviz'; // L(N, D)
 import chin from '../../public/vignettes/chinchilla.json'; // points + both fits
+import {cardsOn} from '../stage/shots'; // the cards this scene draws itself
+import {CardFace} from '../stage/Shot'; // their face
 import type {SceneProps} from './types'; // contract
 
 const BUDGETS = [1e19, 1e20, 1e21]; // iso-FLOP budgets drawn (FLOPs)
-/** Local: the five directions of arXiv:2604.21691 and the sung word that lights each pillar. Global: also matched against
- * card titles in stage/anchors.ts, so each direction's card docks into its own pillar. */
-export const DIRECTIONS: [string, RegExp][] = [['solvable settings', /solve/i], ['tractable limits', /limits|infinity/i], ['simple laws', /laws|scaling/i],
-	['hyperparameters', /hyperparameter/i], ['universal behaviors', /universal/i]];
-/** Local: pillar boxes [x, y, w, h]. Global: drawn here; stage/anchors.ts docks each direction's card into its pillar. */
-export const PILLARS: [number, number, number, number][] = DIRECTIONS.map((_, i) => [56 + i * 200, 236, 184, 610]);
-const BOX = {x: 1110, y: 520, w: 760, h: 330}; // plot area (right half, below where the sixth card docks)
+/** Local: the five directions of arXiv:2604.21691; each block shows the scene card whose title names its direction. */
+const DIRECTIONS = ['solvable settings', 'tractable limits', 'simple laws', 'hyperparameters', 'universal behaviors'];
+const BLOCKS = {x: 40, y: 230, w: 1040, h: 520, gap: 10, narrow: 70}; // accordion area (left), inside layout.json's protected region
+const WIDE = BLOCKS.w - 4 * (BLOCKS.narrow + BLOCKS.gap); // the open block: 720 px
+const ease = (x: number) => smooth(x); // shorthand
+/** Local: plot area (right half, under the panel slot). Global: drawn here; stage/anchors.ts wires the slot's figures to it. */
+export const PLOT = {x: 1110, y: 520, w: 760, h: 330};
+const BOX = PLOT; // plot area
 const Ns = Array.from({length: 80}, (_, i) => 10 ** (7.7 + i * (10.3 - 7.7) / 79)); // 5e7 .. 2e10 parameters
 const px = (N: number) => BOX.x + ((Math.log10(N) - 7.7) / 2.6) * BOX.w; // log N -> screen x
 const py = (L: number) => BOX.y + BOX.h - ((L - 2) / 3) * BOX.h; // loss 2..5 -> screen y
@@ -40,7 +45,14 @@ export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 		return {C, name, pts, best: pts.reduce((a, b) => (b[1] < a[1] ? b : a))}; // best = compute-optimal N for this budget
 	}));
 	const target = curves.find((c) => c.C === 1e21 && c.name === 'hoffmann')!.best; // the largest budget's optimum
-	const lit = DIRECTIONS.map(([, re], i) => smooth((t - (wordTime(tl, section, re) ?? section.startS + (i + 1) * length / 7)) / 0.5)); // pillar i rises when sung
+	const own = cardsOn(tl.vignettes, section.index, t); // the direction cards on now (drawn here)
+	const cards = DIRECTIONS.map((d) => tl.vignettes.find((v) => v.sectionIndex === section.index && v.lane === 'scene' && v.title.toLowerCase().includes(d))); // block i's card
+	const startOf = (i: number) => cards[i]?.startS ?? section.startS + (i + 1) * length / 7; // when block i is sung
+	const lit = DIRECTIONS.map((_, i) => ease((t - startOf(i)) / 0.5)); // block i rises when sung
+	const settle = ease((t - (wordTime(tl, section, /mechanics/i) ?? section.startS + 0.6 * length)) / 0.6); // all five side by side
+	const open = DIRECTIONS.map((_, i) => ease((t - startOf(i)) / 0.5) * (i < 4 ? 1 - ease((t - startOf(i + 1)) / 0.5) : 1)); // newest is open
+	const widths = open.map((o) => (BLOCKS.narrow + (WIDE - BLOCKS.narrow) * o) * (1 - settle) + ((BLOCKS.w - 4 * BLOCKS.gap) / 5) * settle);
+	const lefts = widths.map((_, i) => BLOCKS.x + widths.slice(0, i).reduce((a, b) => a + b + BLOCKS.gap, 0));
 	return (
 		<AbsoluteFill>
 			<div style={{position: 'absolute', left: 60, top: 92, fontFamily: FONTS.display, fontWeight: 900, fontSize: 34, color: COLORS.ink, textShadow: glow(COLORS.cyan, 0.6), opacity: smooth(local / 0.6)}}>
@@ -49,13 +61,24 @@ export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 					five directions: Simon, Kunin et al. 2026 · arXiv:2604.21691 · “learning mechanics”
 				</div>
 			</div>
-			{PILLARS.map(([x, y, w, h], i) => ( // glowing columns that the docked cards fill
-				<div key={i} style={{position: 'absolute', left: x, top: y + h * (1 - lit[i]), width: w, height: h * lit[i], borderRadius: 10,
-					background: 'linear-gradient(0deg, rgba(34,228,255,0.02), rgba(34,228,255,0.16))', border: `2px solid ${COLORS.cyan}`, boxShadow: `0 0 26px rgba(34,228,255,${0.25 * lit[i]})`}}>
-					<div style={{position: 'absolute', top: 10, width: '100%', textAlign: 'center', fontFamily: FONTS.display, fontWeight: 700, fontSize: 17, color: COLORS.ink,
-						textShadow: glow(COLORS.cyan, 0.4), opacity: lit[i]}}>{['(a)', '(b)', '(c)', '(d)', '(e)'][i]} {DIRECTIONS[i][0]}</div>
-				</div>
-			))}
+			{DIRECTIONS.map((name, i) => { // the accordion: each block rises when sung, opens to its figure, narrows when the next opens
+				const w = widths[i], v = cards[i], s = Math.min((w - 20) / 600, (BLOCKS.h - 70) / 350); // card scale: fills the block
+				const on = own.find((c) => c.v === v)?.on ?? (v && t > v.endS ? 1 : 0); // the figure stays in its block after its time
+				return (
+					<div key={i} style={{position: 'absolute', left: lefts[i], top: BLOCKS.y + BLOCKS.h * (1 - lit[i]), width: w, height: BLOCKS.h * lit[i], overflow: 'hidden', borderRadius: 12,
+						background: 'linear-gradient(0deg, rgba(34,228,255,0.03), rgba(34,228,255,0.14))', border: `2px solid ${COLORS.cyan}`,
+						boxShadow: `0 0 ${18 + 30 * open[i]}px rgba(34,228,255,${0.2 + 0.35 * open[i]})`}}>
+						<div style={{position: 'absolute', left: 12, top: 12, fontFamily: FONTS.display, fontWeight: 700, fontSize: w < 400 ? 15 : 20, color: COLORS.ink, whiteSpace: 'nowrap',
+							textShadow: glow(COLORS.cyan, 0.4), transformOrigin: 'left top', transform: w < 150 ? `translate(${w / 2 + 2}px, 0) rotate(90deg)` : undefined}}>
+							{'(' + 'abcde'[i] + ') ' + name}
+						</div>
+						{v ? <div style={{position: 'absolute', left: 10, top: w < 150 ? BLOCKS.h - 20 - 350 * s : Math.max(44, (BLOCKS.h - 350 * s) / 2 + 14), width: 600, transformOrigin: 'left top',
+							transform: `scale(${s})`, opacity: on}}>
+							<CardFace tl={tl} v={v} t={t} accent={COLORS.cyan} pulse={0} words={smooth((w - 300) / 120)} />
+						</div> : null}
+					</div>
+				);
+			})}
 			<svg width={1920} height={1080} style={{position: 'absolute'}}>
 				<line x1={BOX.x} y1={BOX.y} x2={BOX.x} y2={BOX.y + BOX.h} stroke={COLORS.dim} />
 				<line x1={BOX.x} y1={BOX.y + BOX.h} x2={BOX.x + BOX.w} y2={BOX.y + BOX.h} stroke={COLORS.dim} />
@@ -74,7 +97,7 @@ export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 					<text x={px(target[0])} y={py(target[1]) + 46} fill={COLORS.lime} fontFamily={FONTS.mono} fontSize={18} textAnchor="middle">10²¹ FLOPs: best N ≈ {(target[0] / 1e9).toFixed(1)}B, predicted before training</text>
 				</g>
 			</svg>
-			<div style={{position: 'absolute', left: 1130, top: 470, padding: '6px 18px', border: `4px solid ${COLORS.lime}`, borderRadius: 10, fontFamily: FONTS.display, fontSize: 28,
+			<div style={{position: 'absolute', left: 1150, top: 545, padding: '6px 18px', border: `4px solid ${COLORS.lime}`, borderRadius: 10, fontFamily: FONTS.display, fontSize: 28,
 				color: COLORS.lime, transform: `rotate(-5deg) scale(${1.6 - 0.6 * smooth((t - falsAt) / 0.2)})`, opacity: smooth((t - falsAt) / 0.2)}}>
 				FALSIFIABLE · QUANTITATIVE
 			</div>

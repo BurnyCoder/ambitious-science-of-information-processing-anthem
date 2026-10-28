@@ -14,7 +14,7 @@ from pathlib import Path  # repo paths
 
 import pytest  # approx + raises
 
-from anthem.vignettes import VignetteError, load_vignettes, place_vignettes, vignette_coverage  # units under test
+from anthem.vignettes import CLEAR_LEAD_S, VignetteError, load_vignettes, place_vignettes, vignette_coverage  # units under test
 
 ROOT = Path(__file__).resolve().parents[1]  # repo root
 
@@ -36,7 +36,7 @@ def toy_timeline() -> dict:
 def spec(*cards: dict) -> dict:
     """Local: a loaded spec with default fields.  Global: what load_vignettes() returns."""
     base = {"title": "t", "badge": "schematic", "cite": "c", "hold": 6.0, "nth": 1, "text": "", "url": ""}
-    return {"lanes": ["a"], "vignettes": [{**base, **c} for c in cards]}
+    return {"lanes": ["a"], "vignettes": [{**base, **c} for c in cards], "clears": []}
 
 
 def test_card_lands_just_before_its_trigger_word():
@@ -57,7 +57,7 @@ def test_card_never_outlives_its_section():
     late = toy_timeline()
     late["sections"][0]["endS"] = 13.5  # cut 0.5 s after "understand!" (13.0 s)
     card = place_vignettes(spec({"id": "u", "section": "chorus 1", "trigger": "understand", "lane": "a"}), late)[0]
-    assert card["endS"] - card["startS"] == pytest.approx(2.0)  # spills past the cut so it can still be read
+    assert card["endS"] == pytest.approx(13.5)  # no spill: a panel never hangs over the next scene
 
 
 def test_nth_match_and_same_lane_trimming():
@@ -66,6 +66,26 @@ def test_nth_match_and_same_lane_trimming():
     a, b = place_vignettes(s, toy_timeline())
     assert b["startS"] == pytest.approx(12.0 - 0.15)  # second "We" of the section
     assert a["endS"] == pytest.approx(b["startS"])  # earlier card trimmed: one card per lane at a time
+
+
+def test_scene_lane_cards_are_never_trimmed():
+    s = spec({"id": "a", "section": "chorus 1", "trigger": "^we$", "lane": "scene"},
+             {"id": "b", "section": "chorus 1", "trigger": "^we$", "nth": 2, "lane": "scene"},
+             {"id": "c", "section": "chorus 1", "trigger": "^will$", "lane": "a"})
+    a, c, b = place_vignettes(s, toy_timeline())  # sorted by start: a (9.9, clamped to the cut), c (10.35), b (11.85)
+    assert a["endS"] == pytest.approx(9.9 + 6.0)  # the scene draws it; a later scene card does not cut it short
+    assert a["lane"] == b["lane"] == "scene" and c["lane"] == "a"
+
+
+def test_clear_ends_earlier_cards_before_the_cue_word():
+    s = spec({"id": "a", "section": "chorus 1", "trigger": "^we$", "lane": "a"},
+             {"id": "z", "section": "chorus 1", "trigger": "^understand", "lane": "scene"})
+    s["clears"] = [{"section": "chorus 1", "trigger": "^understand", "nth": 1}]
+    a, z = place_vignettes(s, toy_timeline())
+    assert a["endS"] == pytest.approx(13.0 - CLEAR_LEAD_S)  # gone (docked) by the time the cue word is sung
+    assert z["endS"] == pytest.approx(13.0 - 0.15 + 6.0)  # the card on the cue itself is not cleared
+    with pytest.raises(VignetteError, match="clear"):  # a clear cue that is never sung is a typo
+        place_vignettes({**s, "clears": [{"section": "chorus 1", "trigger": "^banana$", "nth": 1}]}, toy_timeline())
 
 
 def test_unplaceable_cards_raise():
@@ -87,6 +107,10 @@ def test_load_vignettes_validates(tmp_path):
                  'lane = "zz"\ntitle = "t"\nbadge = "schematic"\ncite = "c"\n', encoding="utf-8")
     with pytest.raises(VignetteError, match="lane"):  # unknown lane name
         load_vignettes(p)
+    p.write_text(p.read_text(encoding="utf-8").replace('"zz"', '"scene"') + '\n[[clear]]\nsection = "chorus"\ntrigger = "we"\n', encoding="utf-8")
+    loaded = load_vignettes(p)  # "scene" is always a valid lane; clears load with nth = 1
+    assert loaded["vignettes"][0]["lane"] == "scene" and loaded["clears"] == [{"section": "chorus", "trigger": "we", "nth": 1}]
+    p.write_text(p.read_text(encoding="utf-8").replace('"scene"', '"zz"').split("[[clear]]")[0], encoding="utf-8")
     p.write_text(p.read_text(encoding="utf-8").replace('"zz"', '"a"').replace('"t"', '"a theory of Mind"'), encoding="utf-8")
     with pytest.raises(VignetteError, match="mind"):  # banned words are refused on screen too
         load_vignettes(p, banned=["mind"])
@@ -103,7 +127,18 @@ def test_real_cards_cover_every_sung_line_of_the_real_timeline():
     tl = json.loads((ROOT / "video" / "public" / "timeline.json").read_text(encoding="utf-8"))  # real word times
     tl["vignettes"] = place_vignettes(s, tl)  # raises if any trigger is not sung where it is placed
     assert vignette_coverage(tl) == 1.0  # pre-specified target: every sung non-backing line is illustrated
-    assert min(c["endS"] - c["startS"] for c in tl["vignettes"]) >= 1.0  # every card stays readable for >= 1 s
+    ends = {sec["index"]: sec["endS"] for sec in tl["sections"]}
+    panels = [c for c in tl["vignettes"] if c["lane"] != "scene"]
+    for c in panels:  # exp09 H1: a panel stays >= 3 s (one frame of rounding), or runs to its cut and stays >= 2.5 s
+        shown = c["endS"] - c["startS"]
+        cut_limited = abs(c["endS"] - ends[c["sectionIndex"]]) < 1e-6 and ends[c["sectionIndex"]] - c["startS"] < 3.0
+        assert shown >= (2.5 if cut_limited else 3.0 - 1 / 30), (c["id"], c["startS"], shown)
+    for c in panels:  # exp09 H2: at most two panels at once (lanes a and b)
+        assert sum(o["startS"] <= c["startS"] < o["endS"] for o in panels if o["sectionIndex"] == c["sectionIndex"]) <= 2
+    assert {c["lane"] for c in panels} <= {"a", "b"}
+    limits = next(c for c in tl["vignettes"] if c["id"] == "nngp")  # first mention: "Limits we can take ..."
+    line = next(l for l in tl["lines"] if l["index"] == limits["lineIndex"])
+    assert line["words"][0]["text"].lower().startswith("limits") and limits["startS"] <= line["words"][0]["startS"]
 
 
 def test_lyric_tokens_match_the_written_lyrics():

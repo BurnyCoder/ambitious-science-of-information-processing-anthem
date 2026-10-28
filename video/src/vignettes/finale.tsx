@@ -13,15 +13,15 @@ import {COLORS, FONTS, smooth} from '../lib/theme'; // look
 import {Graph, type BodyProps} from './primitives'; // building blocks
 import tokens from '../../public/vignettes/tokens.json'; // real GPT-2 token ids
 
-/** The title as GPT-2 sees it: byte-pair tokens and their vocabulary ids. */
-export const Tokens: React.FC<BodyProps> = ({local, w, accent}) => (
-	<div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', gap: 14, width: w}}>
+/** The title and the closing line as GPT-2 sees them: byte-pair tokens and their vocabulary ids, sized to fill the body. */
+export const Tokens: React.FC<BodyProps> = ({local, w, h, accent}) => (
+	<div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', width: w, height: h}}>
 		{tokens.slice(0, 2).map((t, r) => (
 			<div key={r} style={{display: 'flex', flexWrap: 'wrap', gap: 8}}>
 				{t.tokens.map((tok, i) => (
-					<div key={i} style={{opacity: smooth(local * 3 - r * 2 - i * 0.4), border: `2px solid ${accent}`, borderRadius: 8, padding: '4px 10px', fontFamily: FONTS.mono, color: COLORS.ink, textAlign: 'center'}}>
-						<div style={{fontSize: 18}}>{tok.replace('Ġ', '␣')}</div>
-						<div style={{fontSize: 13, color: accent}}>{t.ids[i]}</div>
+					<div key={i} style={{opacity: smooth(local * 3 - r * 2 - i * 0.4), border: `2px solid ${accent}`, borderRadius: 8, padding: '6px 10px', fontFamily: FONTS.mono, color: COLORS.ink, textAlign: 'center'}}>
+						<div style={{fontSize: r ? 22 : 30}}>{tok.replace('Ġ', '␣')}</div>
+						<div style={{fontSize: r ? 15 : 19, color: accent}}>{t.ids[i]}</div>
 					</div>
 				))}
 			</div>
@@ -106,8 +106,8 @@ export const Actadd: React.FC<BodyProps> = ({local, h, accent}) => {
 };
 
 /** Dated landmarks on one line, lighting up left to right. */
-export const MILESTONES: [number, string][] = [[1943, 'McCulloch–Pitts neuron'], [1948, 'Shannon: information'], [1958, 'perceptron'], [1986, 'backprop'], [2012, 'AlexNet'],
-	[2017, 'Transformer'], [2020, 'scaling laws'], [2022, 'induction heads'], [2024, 'Golden Gate feature'], [2025, 'attribution graphs'], [2026, 'theory of deep learning?']]; // also spiral into the outro token
+const MILESTONES: [number, string][] = [[1943, 'McCulloch–Pitts neuron'], [1948, 'Shannon: information'], [1958, 'perceptron'], [1986, 'backprop'], [2012, 'AlexNet'],
+	[2017, 'Transformer'], [2020, 'scaling laws'], [2022, 'induction heads'], [2024, 'Golden Gate feature'], [2025, 'attribution graphs'], [2026, 'theory of deep learning?']]; // dated landmarks
 export const Milestones: React.FC<BodyProps> = ({local, w, h, accent}) => {
 	const ms = MILESTONES;
 	const row = h / ms.length; // one line per landmark

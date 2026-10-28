@@ -1,7 +1,7 @@
 /**
  * Scene registry: scene id (from content/scenes.toml) -> component + HUD caption.
- * Local: one entry per visual scene; in `bigLyrics` scenes Anthem draws giant lyrics in the lower third,
- * so the bottom karaoke overlay is hidden there.
+ * Local: one entry per visual scene with its HUD caption; which lyric band a scene shows (karaoke or giant words) and
+ * where its figure panels go are in stage/layout.json.
  * Global: Anthem.tsx looks up each timeline section's `scene` here; unknown ids fall back to `default`.
  */
 import type React from 'react'; // component type
@@ -17,7 +17,7 @@ import {AtlasScene} from './AtlasScene';
 import {FinaleScene} from './FinaleScene';
 import {OutroScene} from './OutroScene';
 
-export type SceneEntry = {component: React.FC<SceneProps>; caption: string; bigLyrics?: boolean}; // registry row
+export type SceneEntry = {component: React.FC<SceneProps>; caption: string}; // registry row
 
 const Empty: React.FC<SceneProps> = () => null; // background-only fallback
 
@@ -25,12 +25,12 @@ export const SCENES: Record<string, SceneEntry> = {
 	intro: {component: IntroScene, caption: 'ONE TOKEN'},
 	layers: {component: LayersScene, caption: 'MATMUL ∘ NONLINEARITY'},
 	landscape: {component: LandscapeScene, caption: 'LOSS LANDSCAPE'},
-	chorus: {component: ChorusScene, caption: 'CIRCUITS', bigLyrics: true},
+	chorus: {component: ChorusScene, caption: 'CIRCUITS'},
 	ladder: {component: LadderScene, caption: 'LADDER OF ABSTRACTION'},
 	manifolds: {component: ManifoldsScene, caption: 'FEATURE GEOMETRY'},
 	theory: {component: TheoryScene, caption: 'LEARNING MECHANICS'},
 	atlas: {component: AtlasScene, caption: 'ATLAS OF THE MATH'},
-	finale: {component: FinaleScene, caption: 'IDEAL SOLVING', bigLyrics: true},
+	finale: {component: FinaleScene, caption: 'IDEAL SOLVING'},
 	outro: {component: OutroScene, caption: 'UNDERSTAND'},
 	default: {component: Empty, caption: ''},
 };
