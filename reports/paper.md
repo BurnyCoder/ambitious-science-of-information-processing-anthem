@@ -1,11 +1,11 @@
 ---
 title: "We Will Know: a reproducible pipeline for a code-animated, word- and beat-synchronised music video, with pre-registered validation of its timing components"
 author: "Libor Burian (independent researcher)"
-date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06) and 28 October 2026 (illustration track, exp07)"
+date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06) and 28 October 2026 (illustration track, exp07; hero shots, exp08)"
 abstract: |
   We describe and evaluate an open pipeline that turns hand-written lyrics into a four-minute music video in which every frame is drawn in code.
 
-  **Pipeline.** One Suno V6 generation, obtained through the third-party sunoapi.org API, yields two sung takes and per-word timings. A rule fixed before generation selects one take. The written lyrics are sequence-aligned to the provider's word timings. Beats are tracked with librosa. A Remotion/Three.js composition then renders ten scenes, which illustrate ambitious interpretability and a scientific theory of deep learning. On top of the scenes, 86 figure cards are each timed to the sung word they illustrate and carry a provenance badge and a citation. All visuals are pure functions of the frame number.
+  **Pipeline.** One Suno V6 generation, obtained through the third-party sunoapi.org API, yields two sung takes and per-word timings. A rule fixed before generation selects one take. The written lyrics are sequence-aligned to the provider's word timings. Beats are tracked with librosa. A Remotion/Three.js composition then renders ten scenes, which illustrate ambitious interpretability and a scientific theory of deep learning. 86 figure cards are each timed to the sung word they illustrate and carry a provenance badge and a citation. Since v1.4.0 each card dives out of the scene object its lyric names, is shown at centre stage for at most 3.2 s, and docks back into that object, while the scenes draw concrete examples inside their general pictures. All visuals are pure functions of the frame number.
 
   **What we tested.** Each component that decides *when* something happens on screen was tested against a criterion stated in advance.
 
@@ -16,6 +16,7 @@ abstract: |
   5. Every 1920×1080, 30 fps render matched the song's duration to within 0.03 s (7213 frames for the original take, 7212 for the edited one).
   6. To take one word ("mind") out of the lyrics, one line was re-sung with the provider's replace-section operation. The line was fixed: an independent recogniser now hears the new word, and coverage stayed at 430/430. A pre-registered check that the rest of the take was untouched **failed**. The provider regenerated about 30 s around an 11.6 s window, shifted the whole file by 17 ms, and returned word times copied from the parent take. Re-running exp05's rule on the edited take gave a lag of 0.156 s [0.144, 0.167], which the video now corrects.
   7. The figure cards reuse data released by the original authors or well-known third parties: 31 pinned files, with no experiment re-run. Two pre-specified consistency checks passed. The five largest Fourier frequencies of the released grokking embedding equal the paper's key frequencies, and ARENA's top induction heads include the IOI paper's. Every sung line has a card (56/56). Paired frames carry more detail than v1.2.0: median log₂ PNG-size ratio +0.26, section-bootstrap 95 % CI [+0.18, +0.42]. A fact-check removed three overclaims from our own plan.
+  8. Staging the cards inside the scenes (v1.4.0) passed its pre-registered non-inferiority test against v1.3.0. The median log₂ PNG-size ratio was −0.014, with a section-bootstrap 95 % CI of [−0.075, +0.016] against a margin of −0.10. The change was not uniform: verse 1 lost detail (−0.19) and the finale gained (+0.13). Partly, this may be the dimming of the scene behind the hero, which was not tested. A figure is the hero during 82.6 % of the sung time, covers at most 32.8 % of the frame, and 71 of the 86 cards dock into a scene object.
 
   We report these as properties of this pipeline and this song. They are not general claims about the music model.
 ---
@@ -120,10 +121,10 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 ## 3.6 Illustration track and released data (v1.3.0)
 
 **Placement.**
-- `content/vignettes.toml` declares 86 cards. Each has a trigger regex on a sung word (optionally its n-th match in the section), a named slot box, a hold time, a title, text, a provenance badge and a citation.
+- `content/vignettes.toml` declares 86 cards. Each has a trigger regex on a sung word (optionally its n-th match in the section), a lane, a title, text, a provenance badge and a citation. In v1.3.0 the lane was a named screen box (a slot). Since v1.4.0 it is only a concurrency cap: four lanes, so at most four cards are active at once (§3.7).
 - A card appears 0.15 s before its word.
 - It ends at its section's cut, unless that would leave it on screen for less than 2 s.
-- Of two cards in the same slot, the earlier ends where the later begins.
+- Of two cards in the same lane, the earlier ends where the later begins.
 - Placement fails loudly if a trigger is never sung.
 - Coverage is the share of sung non-backing lines with a card triggered by one of their words. Its pre-specified target was 1.0.
 
@@ -156,6 +157,34 @@ The derived card data comes from these sources:
 - the saved toy-superposition figure in Elhage et al.'s (2022) notebook;
 - Goodfire's block-sparse-featurizer figure;
 - the GPT-2 tokenizer.
+
+## 3.7 Hero shots and concrete layers (v1.4.0)
+
+In v1.3.0 the cards were boxes in the corners of the frame, beside the animation. In v1.4.0 they are staged inside the scenes. Each card's state is a pure function of song time t (`video/src/stage/shots.ts`), built from eased steps (smoothstep, 0.4 s):
+
+- **emerge**: rises from 0 to 1 over 0.4 s after the card's start;
+- **rank**: rises by 1 when the card's 3.2 s of hero time run out, and by 1 for each newer card of the same section that is active;
+- **dock**: rises from 0 to 1 over 0.5 s after the card's end.
+
+A card's *heroness* is emerge × (1 − min(1, rank)) × (1 − dock), and the card with the largest heroness is the hero. The drawn pose blends between four targets:
+
+- the **anchor**: the scene object the lyric names, taken from geometry the scene exports, such as the rung sung last, the theory pillar of the sung direction, or the rotating atlas star of the sung field;
+- the **hero pose**: centre stage at scale 1.8, or 1.38 in the two scenes whose giant lyrics take the lower third;
+- an **orbit pose** per rank, smaller, tilted and blurred;
+- the **dock**: a thumbnail at the anchor, or, in the three fly-through scenes, past the camera.
+
+While a hero is up, the scene layer is scaled by at most 1.08 about the hero's anchor and dimmed to 72 % brightness. The intent is that the general picture stays visible around the example rather than being replaced by it.
+
+The scenes also gained concrete layers inside their general pictures:
+- **Layer tunnel.** GPT-2 token ids of the sung line, from the pinned tokenizer.
+- **Loss surface.** The surface's own saddle and minima, found by Newton's method. The saddle's Hessian eigenvalues are −0.27 and +0.19. The sharp and flat basins have λmax 1.76 and 0.27, and both are shaken by ρ = 0.8, SAM's sharpness radius (Foret et al., 2021). The released grokking and double-descent curves are drawn as ribbons.
+- **Chorus.** The attribution graphs' real prompt tokens, ending in the model's output.
+- **Manifolds.** Month and year labels, the superposition pentagon, Todd et al.'s antonym pairs on the function vector, a true/false split (Marks & Tegmark, 2023), and the published Llama-2 world-probe R² per model size.
+- **Ladder.** An encyclopedia that files the rung figures.
+- **Finale.** The 280-bit string collapsing into its program, and a frame-wide do()-graph.
+- **Outro.** Every figure title spiralling into the token.
+
+Labels that a hero would cover are drawn as margin callouts with leader lines.
 
 # 4. Experiments and results
 
@@ -266,6 +295,9 @@ The derived card data comes from these sources:
 - The MP4's audio track is 11.0 ms later than the analysed MP3 decoding (cross-correlation, first 60 s), a third of a frame. It is reported, not corrected.
 - The automated check passed.
 - The v1.3.0 render with the illustration track has 7212 frames and a 240.405 s container duration. It took 441.3 s (244.4 MB) and passed the same checks. Before it, a still of every card (86) was inspected. That found ten layout defects, among them overlapping graph labels, a truncated bar axis and a schematic leaving its axis (exp04, iteration 3).
+- The v1.4.0 render with hero shots (render 10) has 7212 frames and a 240.405 s container duration. It took 694.1 s (263.6 MB) and passed the same checks.
+  - Stills of every card at its hero moment and of every section before its cut found seven layout defects, for example labels under the hero or above the frame top. All were fixed before rendering.
+  - A code review found a defect that no still can show: at hero hand-overs the camera-push origin jumped between two objects, moving the scene by up to about 70 px in one frame. It was fixed before render 10.
 
 ![Exp04. One frame from the middle of each section of the final video.](figures/fig1_stills.png){width=100%}
 
@@ -334,6 +366,33 @@ The fifth check uses a standard proxy for visual complexity (Machado et al., 201
 
 ![Exp07. (a) Train and test loss of the released grokking run with the paper's three phases. (b) Fourier norms of its epoch-40k embedding; green bars are the paper's key frequencies. (c) ARENA's induction scores for GPT-2 small; ringed are the top five. (d) Per-frame log₂ PNG-size ratio v1.3.0 / v1.2.0 with sections shaded.](figures/fig6_exp07.png){width=100%}
 
+## 4.8 Figure cards inside the scenes (exp08)
+
+**Pre-specified checks** (committed before the v1.4.0 render, `reports/exp08_integration.md`):
+1. The render verifies.
+2. Non-inferiority of detail against the released v1.3.0 MP4, whose sha256 equals GitHub's asset digest. The test passes if the section-bootstrap 95 % CI lower bound of the median paired log₂ PNG-size ratio is above −0.10. A margin fixed in advance and compared with the CI bound is the CONSORT form (Piaggio et al., 2012).
+3. Design checks computed from the timeline with a Python mirror of the lifecycle:
+   - hero area ≤ 0.6 of the frame;
+   - hero time ≤ 3.2 s plus half an ease;
+   - at most 4 cards active.
+
+The mirror reads its constants from the TypeScript source, and it agreed with it exactly on 2,400 samples.
+
+| Check | Result |
+|---|---|
+| 1 | **pass** (render 10, above) |
+| 2 | **pass**: −0.014 [−0.075, +0.016]; frame bootstrap [−0.043, −0.002]; 47/120 frames larger; per section from −0.191 (verse 1) to +0.133 (finale) |
+| 3 | **pass**: hero area 0.328 (0.193 with giant lyrics), longest hero 3.20 s, at most 4 active (6 in motion counting cards flying back to dock) |
+
+**Descriptive.**
+- **Hero time.** A figure is the hero (heroness ≥ 0.5) during 82.6 % of sung time and 74.6 % of the song. The scene has the frame alone for 25.4 % of the song.
+- **Coverage.** Mean nominal hero coverage over sung time is 23.3 % of the frame.
+- **Docking.** 71 of the 86 cards dock into a scene object; the 15 cards of the three fly-through scenes fly past the camera.
+
+**Interpretation, post hoc and untested.** In verse 1, the bridge and verse 2, v1.3.0 showed up to four full-brightness corner cards at once. v1.4.0 shows one hero over a scene dimmed to 72 % brightness. Dimming lowers PNG size without removing any element, so the proxy confounds detail with brightness there. An ablation with the dimming off would separate the two, and it was not run.
+
+![Exp08. (a) Per-frame log₂ PNG-size ratio v1.4.0 / v1.3.0 with sections shaded and the pre-specified margin. (b) Largest heroness over the song with the 0.5 threshold. (c) Cards docked into a scene object per section.](figures/fig7_exp08.png){width=100%}
+
 # 5. Discussion
 
 **What the evidence supports.**
@@ -343,6 +402,7 @@ The fifth check uses a standard proxy for visual complexity (Machado et al., 201
 - Its word onsets agree with an independent recogniser to about a quarter of a second (median), clearly better than chance. Most of that disagreement is a constant 0.17–0.23 s lag, around which relative timing agrees to about 0.08 s (post-hoc).
 - That lag is shared between the two systems. Against a lyrics-aware forced alignment of the separated voice, the provider is 0.137 s late on the original video take and Whisper is 0.080 s early. A pre-registered global correction of −0.137 s moved 94 % of independently hand-labelled line starts closer.
 - Concrete content can be added without re-running anyone's experiment. Released artifacts covered every "real data" card, and the two checks that could fail against the papers passed.
+- Concrete examples can be staged inside the general animation without losing measurable detail overall (exp08). The change redistributes detail between sections rather than adding it.
 - The video's line was changed with a one-call section replacement. Because the provider shifted the file and copied its old word times, the correction had to be re-estimated (−0.156 s) and could not be carried over.
 
 **What it does not support.**
@@ -352,7 +412,7 @@ The fifth check uses a standard proxy for visual complexity (Machado et al., 201
 - Any general claim about Suno's alignment accuracy. The lag differed between the two takes of one generation (0.137 vs 0.061 s), so a per-take measurement is needed, not a constant.
 - Frame-exact karaoke. The forced aligner itself sits about 0.04 s after the hand-labelled onsets, and line starts remain about 0.08 s late after the correction.
 - The beat accuracy on the actual orchestral mix, which has no ground truth.
-- Any claim that the denser video is better or easier to follow: compressed size measures detail, not quality, and no viewer study was run.
+- Any claim that the denser video is better or easier to follow: compressed size measures detail, not quality, and no viewer study was run. The same holds for the claim that hero shots integrate the examples better than corner boxes: exp08 measures the staging, not its effect on viewers.
 
 **The most useful outcome was negative.** A reasonable-looking heuristic, written to fix visible artifacts, made things worse on 43 words. Only an independent reference and a pre-stated test revealed this. The general lesson for code-animated music videos is to treat every timing transformation as an intervention and to measure it against something independent, not against the same signal it was designed from.
 
@@ -370,6 +430,10 @@ The fifth check uses a standard proxy for visual complexity (Machado et al., 201
   - Schematic cards illustrate ideas; they are not data.
   - The weight-decay comparison rests on one run per setting, with different seeds.
   - Legibility of 2–6 s cards was judged by the agent from stills, not by viewers.
+- **Hero shots (exp08).**
+  - The hero area is a nominal box, not measured pixels.
+  - The density proxy confounds detail with brightness where the scene is dimmed.
+  - The hero share (82.6 % of sung time) is a design choice for a maximalist video. It was measured but not tuned against any viewer outcome.
 - **Black-box components.** Schematic content is labelled per card. The music model and the provider are black boxes, and hootCer's definition is undocumented.
 
 # 7. Conclusion
@@ -380,7 +444,7 @@ A code-animated music video can be built as an ordinary, testable data pipeline:
 - the timing components are validated against references fixed in advance;
 - the render is deterministic and checked automatically.
 
-Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Adding concrete, cited content showed the same pattern: a fact-check of our own plan against the cited sources removed three overclaims before release. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
+Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Adding concrete, cited content showed the same pattern: a fact-check of our own plan against the cited sources removed three overclaims before release. Moving that content into the scenes did too: a code review found a camera jump that no still frame could show, and a pre-registered density check surfaced a section that lost detail, which the aggregate hides. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
 
 # References
 
@@ -399,6 +463,7 @@ Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repa
 - Epoch AI (2026). Notable AI Models dataset. <https://epoch.ai/data/ai-models> (CC BY 4.0; accessed 27 Oct 2026).
 - Goodfire (2026). block-sparse-featurizer. <https://github.com/goodfire-ai/block-sparse-featurizer> (MIT).
 - Goodfire (n.d.). We can and must solve alignment. <https://www.goodfire.com/blog/we-can-and-must-solve-alignment> (accessed 18 Oct 2026).
+- Foret, P., Kleiner, A., Mobahi, H., & Neyshabur, B. (2021). Sharpness-aware minimization for efficiently improving generalization. *ICLR 2021*. arXiv:2010.01412.
 - Gurnee, W., & Tegmark, M. (2023). Language models represent space and time. arXiv:2310.02207.
 - Hoffmann, J., et al. (2022). Training compute-optimal large language models. arXiv:2203.15556.
 - Hochreiter, S., & Schmidhuber, J. (1997). Flat minima. *Neural Computation*, 9(1), 1–42.
@@ -409,6 +474,7 @@ Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repa
 - leogao (2025, December 5). An ambitious vision for interpretability. *LessWrong*. <https://www.lesswrong.com/posts/Hy6PX43HGgmfiTaKu/an-ambitious-vision-for-interpretability>.
 - Lindsey, J., et al. (2025). On the biology of a large language model. *Transformer Circuits Thread*. <https://transformer-circuits.pub/2025/attribution-graphs/biology.html>.
 - Machado, P., Romero, J., Nadal, M., Santos, A., Correia, J., & Carballal, A. (2015). Computerized measures of visual complexity. *Acta Psychologica*, 160, 43–57.
+- Marks, S., & Tegmark, M. (2023). The geometry of truth: Emergent linear structure in large language model representations of true/false datasets. arXiv:2310.06824.
 - Martin, C. H., & Mahoney, M. W. (2021). Implicit self-regularization in deep neural networks. *JMLR*, 22(165). Data: <https://github.com/CalculatedContent/ww-trends-2020>.
 - McFee, B., Raffel, C., Liang, D., Ellis, D. P. W., McVicar, M., Battenberg, E., & Nieto, O. (2015). librosa: Audio and music signal analysis in Python. *Proc. 14th Python in Science Conference*.
 - Nakkiran, P., Kaplun, G., Bansal, Y., Yang, T., Barak, B., & Sutskever, I. (2019). Deep double descent. arXiv:1912.02292. Data: <https://gitlab.com/harvard-machine-learning/double-descent>.
@@ -418,6 +484,7 @@ Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repa
 - Pearl, J. (2009). *Causality: Models, reasoning, and inference* (2nd ed.). Cambridge University Press.
 - Pratap, V., et al. (2023). Scaling speech technology to 1,000+ languages. arXiv:2305.13516.
 - Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. (2023). Robust speech recognition via large-scale weak supervision. *ICML 2023*. arXiv:2212.04356.
+- Piaggio, G., Elbourne, D. R., Pocock, S. J., Evans, S. J. W., & Altman, D. G. (2012). Reporting of noninferiority and equivalence randomized trials: Extension of the CONSORT 2010 statement. *JAMA*, 308(24), 2594–2604.
 - Power, A., Burda, Y., Edwards, H., Babuschkin, I., & Misra, V. (2022). Grokking: Generalization beyond overfitting on small algorithmic datasets. arXiv:2201.02177.
 - Raffel, C., McFee, B., Humphrey, E. J., Salamon, J., Nieto, O., Liang, D., & Ellis, D. P. W. (2014). mir_eval: A transparent implementation of common MIR metrics. *ISMIR 2014*.
 - Simon, J., Kunin, D., Atanasov, A., Boix-Adserà, E., Bordelon, B., Cohen, J., Ghosh, N., Guth, F., Jacot, A., Kamb, M., Karkada, D., Michaud, E. J., Ottlik, B., & Turnbull, J. (2026). There will be a scientific theory of deep learning. arXiv:2604.21691.
@@ -441,6 +508,8 @@ uv run --group analysis python scripts/validate_onset_offset.py   # exp05; reuse
 uv run --group analysis python scripts/validate_lyric_edit.py     # exp06; uses the committed data/song/ of both tasks
 uv run --group analysis python -I scripts/vignette_data.py       # exp07 data phase (downloads 31 pinned files once)
 uv run python -I scripts/validate_density.py                     # exp07 density (needs the v1.2.0 MP4 in out/v1.2.0/)
+uv run python -I scripts/validate_density.py out/v1.3.0/we-will-know-anthem.mp4 out/anthem.mp4 --name exp08_density --margin 0.10
+uv run python -I scripts/validate_integration.py                 # exp08 integration measures (timeline only)
 uv run python -I scripts/make_vignette_docs.py                   # docs/vignettes.md, the card catalog
 uv run --group analysis python scripts/make_figures.py
 ```
