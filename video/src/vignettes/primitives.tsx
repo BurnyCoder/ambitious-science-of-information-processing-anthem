@@ -1,61 +1,18 @@
 /**
  * Building blocks of the figure cards.
- * Local: `Card` (the glowing frame: FIG number, provenance badge, title, body, caption, citation, with a slam-in
- * entrance and a slide-out exit) and small SVG primitives that cards compose: `Plot` (progressively drawn
+ * Local: the body contract and small SVG primitives that cards compose: `Plot` (progressively drawn
  * polylines on linear/log axes), `Heatmap`, `Graph`, `Bars` and `Formula`.
  * Global: every card in video/src/vignettes/*.tsx is a few lines on top of these, so all cards share one look
- * and every visual stays a pure function of the frame. Sources: evolvePath https://www.remotion.dev/docs/paths/evolve-path ,
+ * and every visual stays a pure function of the frame; stage/Shot.tsx stages them. Sources: evolvePath https://www.remotion.dev/docs/paths/evolve-path ,
  * random() https://www.remotion.dev/docs/random , SVG https://developer.mozilla.org/en-US/docs/Web/SVG
  */
 import React from 'react'; // JSX
-import {random} from 'remotion'; // seeded tilt
 import {evolvePath} from '@remotion/paths'; // stroke-dash animation of a path
 import type {Timeline, Vignette} from '../lib/timeline'; // card record
-import {BADGE_COLORS, COLORS, FONTS, glow, smooth} from '../lib/theme'; // look
+import {COLORS, FONTS, glow, smooth} from '../lib/theme'; // look
 
 /** Local: what every card body receives. Global: the contract of video/src/vignettes/index.ts. */
 export type BodyProps = {v: Vignette; tl: Timeline; t: number; local: number; p: number; w: number; h: number; pulse: number; accent: string};
-
-const PAD = 12; // inner padding (px)
-const HEAD = 24; // FIG / badge row
-const FOOT = 18; // citation row
-const lines = (text: string, size: number, width: number) => Math.max(1, Math.ceil((text.length * size * 0.52) / width)); // wrapped line estimate
-
-/** Local: layout of a card's text blocks for a given box. Global: tells the body how much room it has. */
-export const cardLayout = (v: Vignette, w: number, h: number, showText: boolean) => {
-	const titleSize = w < 300 ? 18 : 22; // narrow pillars get a smaller title
-	const textSize = w < 300 ? 13 : 15;
-	const titleH = lines(v.title, titleSize, w - 2 * PAD) * titleSize * 1.15;
-	const textH = showText && v.text ? lines(v.text, textSize, w - 2 * PAD) * textSize * 1.3 : 0;
-	return {titleSize, textSize, bodyW: w - 2 * PAD, bodyH: Math.max(40, h - 2 * PAD - HEAD - titleH - textH - FOOT - 14)};
-};
-
-/** Local: the card frame with entrance/exit motion. Global: drawn by VignetteLayer for every active card. */
-export const Card: React.FC<{v: Vignette; fig: number; t: number; box: [number, number, number, number]; pulse: number; accent: string; showText: boolean; children: React.ReactNode}> = ({
-	v, fig, t, box, pulse, accent, showText, children,
-}) => {
-	const [x, y, w, h] = box;
-	const enter = smooth((t - v.startS) / 0.22); // 0 -> 1 slam in
-	const leave = smooth((v.endS - t) / 0.25); // 1 -> 0 slide out
-	const tilt = (random(`tilt${v.id}${v.startS}`) - 0.5) * 4 * (1 - enter); // seeded ±2° that settles to 0
-	const {titleSize, textSize} = cardLayout(v, w, h, showText);
-	const badge = BADGE_COLORS[v.badge];
-	return (
-		<div style={{position: 'absolute', left: x, top: y, width: w, height: h, padding: PAD, boxSizing: 'border-box', display: 'flex', flexDirection: 'column',
-			background: 'linear-gradient(160deg, rgba(10,12,30,0.96), rgba(4,5,13,0.95))', border: `2px solid ${accent}`, borderRadius: 14,
-			boxShadow: `0 0 ${10 + 16 * pulse}px ${accent}66, inset 0 0 24px ${accent}22`, opacity: enter * leave,
-			transform: `translateY(${(1 - leave) * 24}px) scale(${1.12 - 0.12 * enter}) rotate(${tilt}deg)`, overflow: 'hidden'}}>
-			<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: HEAD}}>
-				<span style={{fontFamily: FONTS.display, fontWeight: 700, fontSize: w < 300 ? 11 : 14, color: accent, letterSpacing: '0.12em'}}>{w < 300 ? '' : 'FIG. '}{fig}</span>
-				<span style={{fontFamily: FONTS.mono, fontSize: w < 300 ? 9 : 12, color: COLORS.bg, background: badge, borderRadius: 9, padding: w < 300 ? '1px 5px' : '2px 9px', textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap'}}>{v.badge}</span>
-			</div>
-			<div style={{fontFamily: FONTS.body, fontWeight: 600, fontSize: titleSize, lineHeight: 1.15, color: COLORS.ink, textShadow: glow(accent, 0.25), marginTop: 2}}>{v.title}</div>
-			<div style={{flex: 1, position: 'relative', marginTop: 6, minHeight: 0}}>{children}</div>
-			{showText && v.text ? <div style={{fontFamily: FONTS.body, fontSize: textSize, lineHeight: 1.3, color: COLORS.ink, opacity: 0.86, marginTop: 4}}>{v.text}</div> : null}
-			<div style={{fontFamily: FONTS.mono, fontSize: 11, color: COLORS.dim, height: FOOT, marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{v.cite}</div>
-		</div>
-	);
-};
 
 type Series = {pts: [number, number][]; color: string; width?: number; dash?: string; label?: string}; // one polyline
 type Axis = {log?: boolean; domain: [number, number]; label?: string}; // axis config

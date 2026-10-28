@@ -10,7 +10,6 @@ import React from 'react'; // JSX
 import {AbsoluteFill} from 'remotion'; // layer
 import {beatPulse} from '../lib/timeline'; // beat kick
 import {COLORS, smooth, useSceneClock} from '../lib/theme'; // look + clock
-import {BigWords} from '../components/BigWords'; // kinetic lyrics
 import type {SceneProps} from './types'; // contract
 
 export const FinaleScene: React.FC<SceneProps> = ({tl, section}) => {
@@ -25,7 +24,6 @@ export const FinaleScene: React.FC<SceneProps> = ({tl, section}) => {
 						stroke={COLORS.amber} strokeWidth={3} opacity={0.18 + 0.2 * pulse} />;
 				})}
 			</svg>
-			<BigWords tl={tl} t={t} color={COLORS.amber} y={10} />
 		</AbsoluteFill>
 	);
 };

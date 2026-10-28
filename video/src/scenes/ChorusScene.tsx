@@ -3,20 +3,27 @@
  * Local: a layered network graph fills the frame; on every downbeat a real circuit lights up through it: the
  * strongest path (greedy max-weight edges to the output) of an attribution graph released by Lindsey et al. 2025,
  * labelled with the authors' supernode names (chorus 1: Dallas -> Austin; chorus 2: 36+59 and the rabbit couplet),
- * while the sung word slams in at giant size. The second chorus swaps the palette.
+ * while the sung word slams in at giant size (drawn by Anthem in the lower third). The second chorus swaps the palette.
  * Global: the emotional hook; "map every cause behind every behavior" = tracing circuits.
  */
-import React, {useMemo} from 'react'; // JSX + memo
+import React from 'react'; // JSX
 import {AbsoluteFill, random, useVideoConfig} from 'remotion'; // layer + RNG + size
 import {lastIndexAtOrBefore} from '../lib/timeline'; // which downbeat we are in
 import {COLORS, FONTS, glow, useSceneClock} from '../lib/theme'; // look + clock
 import graphs from '../../public/vignettes/graphs.json'; // supernode graphs (scripts/vignette_data.py)
-import {BigWords} from '../components/BigWords'; // kinetic lyrics
 import {shortLabel} from '../vignettes/chorus'; // compact supernode labels
 import type {SceneProps} from './types'; // contract
 
 const COLS = 7; // graph layers
 const ROWS = 6; // nodes per layer
+
+/** Local: screen position of grid node i (column = layer), with seeded jitter, on the 1920x1080 frame.
+ * Global: drawn here; stage/anchors.ts dives chorus cards out of these nodes. */
+export const chorusNode = (i: number) => ({
+	x: 140 + (Math.floor(i / ROWS) / (COLS - 1)) * (1920 - 280) + (random(`jx${i}`) - 0.5) * 60,
+	y: 150 + ((i % ROWS) / (ROWS - 1)) * (1080 - 300) + (random(`jy${i}`) - 0.5) * 50,
+});
+export const CHORUS_NODES = COLS * ROWS; // grid size
 
 type SG = {nodes: {label: string; output: boolean}[]; edges: {source: string; target: string; weight: number}[]}; // supernode graph
 /** Local: from each node, follow the heaviest outgoing edge until an output (max 6 hops); unique paths, strongest
@@ -45,10 +52,7 @@ export const ChorusScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {t} = useSceneClock(section); // absolute time
 	const {width, height} = useVideoConfig(); // frame size
 	const [lead, alt] = section.occurrence % 2 === 1 ? [COLORS.cyan, COLORS.magenta] : [COLORS.magenta, COLORS.cyan]; // palette per repeat
-	const nodes = useMemo(() => Array.from({length: COLS * ROWS}, (_, i) => ({ // node grid with seeded jitter
-		x: 140 + (Math.floor(i / ROWS) / (COLS - 1)) * (width - 280) + (random(`jx${i}`) - 0.5) * 60,
-		y: 150 + ((i % ROWS) / (ROWS - 1)) * (height - 300) + (random(`jy${i}`) - 0.5) * 50,
-	})), [width, height]);
+	const nodes = Array.from({length: CHORUS_NODES}, (_, i) => chorusNode(i)); // node grid with seeded jitter
 	const d = lastIndexAtOrBefore(tl.downbeats, t); // current bar index (global)
 	const named = NAMED[(section.occurrence - 1) % NAMED.length]; // this chorus's circuits
 	const pathOf = (k: number) => named[((k % named.length) + named.length) % named.length]; // bar k -> one named path
@@ -79,7 +83,6 @@ export const ChorusScene: React.FC<SceneProps> = ({tl, section}) => {
 							opacity={paths[0].alpha} style={{textShadow: glow(lead, 0.6), paintOrder: 'stroke', stroke: COLORS.bg, strokeWidth: 4}}>{shortLabel(pathOf(d)[i])}</text>
 					))}
 				</svg>
-			<BigWords tl={tl} t={t} color={lead} y={-20} />
 		</AbsoluteFill>
 	);
 };

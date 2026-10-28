@@ -2,7 +2,7 @@
  * Giant kinetic typography for chorus-type scenes.
  * Local: the word being sung fills the center of the frame (slam-in scale + glow at its
  * exact onset, beat-synced breathing), with the full line as a small caption below.
- * Global: used by ChorusScene and FinaleScene; replaces the bottom karaoke overlay there.
+ * Global: drawn by Anthem.tsx in chorus-type scenes, in the lower third under the hero shots; replaces the karaoke there.
  */
 import React from 'react'; // JSX
 import {AbsoluteFill} from 'remotion'; // full-frame layer
@@ -11,7 +11,7 @@ import {COLORS, FONTS, glow, smooth} from '../lib/theme'; // look
 
 const clean = (s: string) => s.replace(/[()]/g, '').toUpperCase(); // "(We" -> "WE"
 
-export const BigWords: React.FC<{tl: Timeline; t: number; color: string; y?: number}> = ({tl, t, color, y = 0}) => {
+export const BigWords: React.FC<{tl: Timeline; t: number; color: string; y?: number; maxSize?: number}> = ({tl, t, color, y = 0, maxSize = 210}) => {
 	const line = lineAt(tl, t); // current caption
 	if (!line) return null; // instrumental moment
 	const idx = activeWordIndex(line, t); // index of sung word
@@ -27,7 +27,7 @@ export const BigWords: React.FC<{tl: Timeline; t: number; color: string; y?: num
 				style={{
 					fontFamily: FONTS.display,
 					fontWeight: 900,
-					fontSize: Math.min(210, 1650 / (clean(word.text).length * 0.9)), // fit: Orbitron 900 ≈ 0.9 em per glyph incl. spacing
+					fontSize: Math.min(maxSize, 1650 / (clean(word.text).length * 0.9)), // fit: Orbitron 900 ≈ 0.9 em per glyph incl. spacing
 					letterSpacing: '0.04em',
 					color: COLORS.ink,
 					textShadow: glow(color, 1.1), // strong neon
