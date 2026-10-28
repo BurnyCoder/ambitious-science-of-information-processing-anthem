@@ -95,3 +95,46 @@ export const reluPattern = (net: ReluNet, x: number, y: number, depth: 1 | 2): s
 	if (depth === 2) id += '|' + net.W2.map((w, i) => (w.reduce((s, wij, j) => s + wij * h1[j], net.b2[i]) > 0 ? '1' : '0')).join('');
 	return id;
 };
+
+type F2 = (x: number, y: number) => number; // a scalar field on the plane
+
+/** Local: eigenvalues (ascending) and unit eigenvectors of a symmetric 2x2 matrix [[a, b], [b, d]], in closed form:
+ * λ = (a+d)/2 ∓ √(((a−d)/2)² + b²), v = (b, λ − a). Global: Hessian axes at the landscape's saddle.
+ * Source: https://en.wikipedia.org/wiki/Eigenvalue_algorithm#2%C3%972_matrices */
+export const sym2Eig = ([[a, b], [, d]]: number[][]) => {
+	const m = (a + d) / 2, r = Math.hypot((a - d) / 2, b); // mean and half-gap of the eigenvalues
+	const values = [m - r, m + r];
+	const vectors = values.map((l, i) => {
+		if (Math.abs(b) < 1e-15) return (a <= d) === (i === 0) ? [1, 0] : [0, 1]; // diagonal: the axes
+		const n = Math.hypot(b, l - a); // (A − λI)v = 0 → v ∝ (b, λ − a)
+		return [b / n, (l - a) / n];
+	});
+	return {values, vectors};
+};
+
+/** Local: Hessian of f at (x, y) by central second differences (truncation O(h²)).
+ * Source: https://en.wikipedia.org/wiki/Finite_difference#Multivariate_finite_differences */
+export const hessian2 = (f: F2, x: number, y: number, h = 1e-3): number[][] => {
+	const fxx = (f(x + h, y) - 2 * f(x, y) + f(x - h, y)) / h ** 2;
+	const fyy = (f(x, y + h) - 2 * f(x, y) + f(x, y - h)) / h ** 2;
+	const fxy = (f(x + h, y + h) - f(x + h, y - h) - f(x - h, y + h) + f(x - h, y - h)) / (4 * h ** 2);
+	return [[fxx, fxy], [fxy, fyy]];
+};
+
+/** Local: a point where ∇f = 0, by Newton's method p ← p − H⁻¹∇f from `start`; null if it does not converge.
+ * Global: finds the landscape's actual saddle (and minima), so their labels are computed, not placed by hand.
+ * Source: https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization */
+export const criticalPoint = (f: F2, start: [number, number], iters = 60): [number, number] | null => {
+	let [x, y] = start;
+	const h = 1e-5; // gradient step
+	for (let i = 0; i < iters; i++) {
+		const gx = (f(x + h, y) - f(x - h, y)) / (2 * h), gy = (f(x, y + h) - f(x, y - h)) / (2 * h); // ∇f
+		if (Math.hypot(gx, gy) < 1e-8) return [x, y]; // converged
+		const [[a, b], [, d]] = hessian2(f, x, y);
+		const det = a * d - b * b;
+		if (Math.abs(det) < 1e-12) return null; // singular Hessian: no Newton step
+		x -= (d * gx - b * gy) / det; // H⁻¹∇f for a 2x2 matrix
+		y -= (a * gy - b * gx) / det;
+	}
+	return null;
+};

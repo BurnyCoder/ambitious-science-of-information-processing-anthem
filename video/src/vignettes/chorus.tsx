@@ -36,9 +36,11 @@ const AttributionGraph: React.FC<BodyProps & {g: SG; out: string}> = ({g, out, l
 	);
 };
 
-export const GraphDallas: React.FC<BodyProps> = (p) => <AttributionGraph {...p} g={graphs.dallas} out="Austin" />;
-export const GraphRabbit: React.FC<BodyProps> = (p) => <AttributionGraph {...p} g={graphs.rabbit} out="rabbit" />;
-export const GraphCalc: React.FC<BodyProps> = (p) => <AttributionGraph {...p} g={graphs.calc} out="95" />;
+/** Local: the model's completion of each released prompt (from the paper). Global: these cards and the chorus token row. */
+export const OUTPUTS = {dallas: 'Austin', rabbit: 'rabbit', calc: '95'} as const;
+export const GraphDallas: React.FC<BodyProps> = (p) => <AttributionGraph {...p} g={graphs.dallas} out={OUTPUTS.dallas} />;
+export const GraphRabbit: React.FC<BodyProps> = (p) => <AttributionGraph {...p} g={graphs.rabbit} out={OUTPUTS.rabbit} />;
+export const GraphCalc: React.FC<BodyProps> = (p) => <AttributionGraph {...p} g={graphs.calc} out={OUTPUTS.calc} />;
 
 /** What Gemma-2-2B says next on the same prompt (output probabilities stored in the open graph). */
 export const GraphGemma: React.FC<BodyProps> = ({local, w, h, accent}) => (

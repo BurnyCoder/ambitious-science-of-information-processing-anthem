@@ -3,7 +3,7 @@
  * Local: saxe (live analytic deep-linear learning curves), nngp (live output histograms of random nets at growing
  * width), weightDecay (test loss of two released grokking runs with weight decay 1.0 and 0.1), collapse
  * (schematic neural collapse + edge of stability), gpt4 (schematic of GPT-4 report Fig. 1).
- * Global: registered in ./index.ts; pillars are tall, narrow slots p1..p5 (content/vignettes.toml).
+ * Global: registered in ./index.ts; each pillar card docks into its glowing pillar in TheoryScene (stage/anchors.ts).
  * Sources: Saxe et al. 2014; Neal 1996; Nanda et al. 2023 saved runs; Papyan et al. 2020; Cohen et al. 2021; OpenAI 2023.
  */
 import React from 'react'; // JSX

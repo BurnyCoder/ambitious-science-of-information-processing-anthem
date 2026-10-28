@@ -1,17 +1,20 @@
-"""Experiment 07, visual density: are v1.3.0 frames more detailed than v1.2.0 frames at the same moments?
+"""Visual density of two renders at the same moments (experiments 07 and 08).
 
 Local: decodes one frame every 2 s from both MP4s with ffmpeg, PNG-encodes each frame and records its size in
 bytes (lossless-compressed size is a standard proxy for visual complexity), then summarizes the paired
 log2(size v1.3.0 / size v1.2.0): median with a 95 % CI that resamples whole song sections (frames within a
 section are autocorrelated), plus a per-frame CI as a secondary view.
-Global context: the pre-specified "more detailed" check of reports/exp07_provenance.md; it measures detail,
-not quality or legibility. Writes reports/data/exp07_density.json.
+Global context: exp07 (v1.3.0 vs v1.2.0) pre-specified "more detailed": superiority, the CI excludes 0.
+exp08 (v1.4.0 vs v1.3.0) pre-specified "not less detailed": non-inferiority, the CI's lower bound > −margin.
+It measures detail, not quality or legibility. Writes reports/data/<name>.json.
 Sources: compression-based measures as predictors of rated visual complexity, Machado et al. 2015, "Computerized
 measures of visual complexity", Acta Psychologica 160:43-57, https://doi.org/10.1016/j.actpsy.2015.06.005 ;
 ffmpeg image2pipe https://ffmpeg.org/ffmpeg-formats.html#image2pipe ; bootstrap helpers in analysis/stats.py.
-Usage: uv run python -I scripts/validate_density.py [old.mp4] [new.mp4]
+Usage: uv run python -I scripts/validate_density.py [old.mp4] [new.mp4] [--name exp07_density] [--margin M]
+       exp08: uv run python -I scripts/validate_density.py out/v1.3.0/we-will-know-anthem.mp4 out/anthem.mp4 --name exp08_density --margin 0.10
 """
 
+import argparse  # CLI
 import json  # timeline + results
 import logging  # timestamped logs
 import subprocess  # ffmpeg
@@ -23,10 +26,9 @@ import numpy as np  # ratios
 ROOT = Path(__file__).resolve().parents[1]  # repo root
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts")]  # pipeline package + experiment helpers
 from anthem.logging_setup import log_json, setup_logging  # terminal + file logs
-from analysis.stats import cluster_median_ci, excludes_zero, median_ci  # tested bootstrap helpers
+from analysis.stats import cluster_median_ci, density_decision, median_ci  # tested bootstrap helpers + decision rule
 
 STEP_S = 2.0  # pre-specified sampling interval
-log = logging.getLogger("exp07")  # stable logger name
 
 
 def png_bytes(video: Path, t: float) -> int:
@@ -37,9 +39,15 @@ def png_bytes(video: Path, t: float) -> int:
 
 
 def main() -> None:
-    setup_logging(ROOT / "logs", prefix="exp07_density")
-    old = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "out" / "v1.2.0" / "we-will-know-anthem.mp4"
-    new = Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "out" / "anthem.mp4"
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("old", nargs="?", type=Path, default=ROOT / "out" / "v1.2.0" / "we-will-know-anthem.mp4")
+    ap.add_argument("new", nargs="?", type=Path, default=ROOT / "out" / "anthem.mp4")
+    ap.add_argument("--name", default="exp07_density", help="output reports/data/<name>.json and log prefix")
+    ap.add_argument("--margin", type=float, default=None, help="non-inferiority margin in log2 units (default: superiority test)")
+    args = ap.parse_args()
+    setup_logging(ROOT / "logs", prefix=args.name)
+    log = logging.getLogger(args.name.split("_")[0])  # exp07 / exp08
+    old, new = args.old, args.new
     tl = json.loads((ROOT / "video" / "public" / "timeline.json").read_text(encoding="utf-8"))
     times = np.arange(1.0, tl["durationS"] - 1.0, STEP_S)  # same timestamps in both videos
     starts = [s["startS"] for s in tl["sections"]]
@@ -55,11 +63,12 @@ def main() -> None:
               "medianBytesOld": float(np.median(a)), "medianBytesNew": float(np.median(b)),
               "medianLog2Ratio": primary[0], "ci95SectionBootstrap": primary[1:], "ci95FrameBootstrap": secondary[1:],
               "framesNewLarger": int((r > 0).sum()), "perSectionMedianLog2Ratio": per_section,
-              "pre_specified": "median log2 ratio > 0 with the section-bootstrap 95 % CI excluding 0",
-              "pass": bool(primary[0] > 0 and excludes_zero(primary[1:])),
+              "pre_specified": ("median log2 ratio > 0 with the section-bootstrap 95 % CI excluding 0" if args.margin is None
+                                else f"section-bootstrap 95 % CI lower bound of the median log2 ratio > -{args.margin}"),
+              "pass": density_decision(primary[0], primary[1:], args.margin),
               "times": times.tolist(), "bytesOld": a.tolist(), "bytesNew": b.tolist(), "section": section}
-    (ROOT / "reports" / "data" / "exp07_density.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
-    log_json(log, "exp07 visual density", {k: v for k, v in result.items() if k not in ("times", "bytesOld", "bytesNew", "section")})
+    (ROOT / "reports" / "data" / f"{args.name}.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
+    log_json(log, f"{args.name} visual density", {k: v for k, v in result.items() if k not in ("times", "bytesOld", "bytesNew", "section")})
 
 
 if __name__ == "__main__":

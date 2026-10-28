@@ -2,7 +2,8 @@
  * Intro: a single token glows, unfolds into an embedding vector, then the title card.
  * Local: 2D SVG/CSS; the GPT-2 token "know" (id 760, public/vignettes/tokens.json; GPT-2 small has d = 768) -> 16
  * embedding cells (cells slide out; bar lengths are illustrative seeded values, not the real weights)
- * -> "WE WILL KNOW" letter-by-letter -> subtitle and credits.
+ * -> "WE WILL KNOW" letter-by-letter -> subtitle and credits -> the title dissolves as its own GPT-2 tokens emerge
+ * as the first figure card ("every answer starts as tokens").
  * Global: first scene; sets the "information processing starts from one token" motif that the outro reverses.
  */
 import React from 'react'; // JSX
@@ -22,6 +23,8 @@ export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 	const shown = Math.floor(Math.max(0, (local - titleAt) / 0.12)); // one letter per 120 ms
 	const exit = smooth((local - (length - 1.2)) / 1.2); // last 1.2 s: zoom out
 	const tokenScale = smooth(local / 1.2) * (1 + 0.15 * pulse); // pop in, breathe on beats
+	const tokensAt = tl.vignettes.find((v) => v.sectionIndex === section.index && v.id === 'tokens')?.startS ?? Infinity; // the title's tokens card
+	const dissolve = smooth((t - tokensAt) / 0.6); // the title gives way to its tokens
 	return (
 		<AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', opacity: 1 - exit * 0.8, transform: `scale(${1 + exit * 0.3})`}}>
 			{/* token and its unfolding vector */}
@@ -41,16 +44,18 @@ export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 					{unfold < 0.5 ? '" know" = GPT-2 token 760' : '" know" (token 760) → embedding x ∈ ℝ⁷⁶⁸'}
 				</div>
 			</div>
-			{/* title card */}
-			<div style={{marginTop: 260, fontFamily: FONTS.display, fontWeight: 900, fontSize: 150, letterSpacing: '0.08em', color: COLORS.ink, textShadow: glow(COLORS.cyan, 1 + 0.5 * pulse)}}>
-				{title.slice(0, shown)}
-				<span style={{opacity: shown < title.length ? 1 : 0}}>▍</span>
-			</div>
-			<div style={{fontFamily: FONTS.body, fontSize: 36, color: COLORS.ink, opacity: smooth((local - titleAt - 2) / 1.2), marginTop: 10}}>
-				an anthem of ambitious science of information processing
-			</div>
-			<div style={{fontFamily: FONTS.mono, fontSize: 20, color: COLORS.dim, opacity: smooth((local - titleAt - 4) / 1.2), marginTop: 26}}>
-				song: Suno V6 · lyrics, code &amp; every frame: Claude · concept: Libor Burian
+			{/* title card: dissolves (letters spread and fade) as its own GPT-2 tokens emerge as the section's figure card */}
+			<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 1 - dissolve, filter: dissolve > 0 ? `blur(${6 * dissolve}px)` : undefined}}>
+				<div style={{marginTop: 260, fontFamily: FONTS.display, fontWeight: 900, fontSize: 150, letterSpacing: `${0.08 + 0.5 * dissolve}em`, color: COLORS.ink, textShadow: glow(COLORS.cyan, 1 + 0.5 * pulse)}}>
+					{title.slice(0, shown)}
+					<span style={{opacity: shown < title.length ? 1 : 0}}>▍</span>
+				</div>
+				<div style={{fontFamily: FONTS.body, fontSize: 36, color: COLORS.ink, opacity: smooth((local - titleAt - 2) / 1.2), marginTop: 10}}>
+					an anthem of ambitious science of information processing
+				</div>
+				<div style={{fontFamily: FONTS.mono, fontSize: 20, color: COLORS.dim, opacity: smooth((local - titleAt - 4) / 1.2), marginTop: 26}}>
+					song: Suno V6 · lyrics, code &amp; every frame: Claude · concept: Libor Burian
+				</div>
 			</div>
 		</AbsoluteFill>
 	);

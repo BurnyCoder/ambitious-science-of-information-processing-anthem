@@ -83,6 +83,18 @@ export const GlowLines: React.FC<{positions: Float32Array; colors: Float32Array;
 	);
 };
 
+/** Local: screen pixel of a 3D point for a camera at `pos` looking at `target` (THREE's own projection).
+ * Global: 2D labels that stick to 3D objects (landscape bars, manifold labels, tunnel mile markers).
+ * Source: https://threejs.org/docs/#api/en/math/Vector3.project */
+export const projectToScreen = (p: [number, number, number], pos: [number, number, number], target: [number, number, number], fov = 55, w = 1920, h = 1080) => {
+	const cam = new THREE.PerspectiveCamera(fov, w / h, 0.1, 500); // same intrinsics as <Stage>
+	cam.position.set(...pos);
+	cam.lookAt(...target);
+	cam.updateMatrixWorld(); // world -> camera transform
+	const v = new THREE.Vector3(...p).project(cam); // normalized device coordinates
+	return {x: (v.x + 1) / 2 * w, y: (1 - v.y) / 2 * h, visible: v.z < 1 && v.z > -1}; // pixels; behind the camera = not visible
+};
+
 /** Local: '#rrggbb' -> [r,g,b] in 0..1 scaled by intensity. Global: color math for vertex colors. */
 export const rgb = (hex: string, k = 1): [number, number, number] => {
 	const c = new THREE.Color(hex); // parses CSS hex

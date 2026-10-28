@@ -12,7 +12,7 @@ import {beatPulse, wordTime} from '../lib/timeline'; // timing
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
 import type {SceneProps} from './types'; // contract
 
-const FIELDS: [string, RegExp | null][] = [ // name, sung keyword (null = lit at "every level")
+export const FIELDS: [string, RegExp | null][] = [ // name, sung keyword (null = lit at "every level")
 	['linear algebra', /linear/i], ['calculus', /calculus/i], ['probability', /probability/i], ['information theory', /information/i],
 	['optimization', /optimization/i], ['dynamical systems', /dynamics/i], ['loss-landscape geometry', /geometry/i],
 	['statistical mechanics', /statistical/i], ['random matrix theory', /random|matrices/i], ['singular learning theory', /singular/i],
@@ -34,23 +34,31 @@ const FORMULAS: Record<string, string> = { // one iconic formula or object per l
 	'statistical learning theory': 'VC dimension', 'information geometry': 'F_ij = E[∂ᵢlog p ∂ⱼlog p]',
 };
 
+/** Local: Fibonacci-sphere positions of the fields (index permuted ×7 mod 30 so sung fields spread out). */
+const SPHERE = FIELDS.map((_, f) => {
+	const i = (f * 7) % FIELDS.length; // permute (7 coprime with 30) so sung fields spread over the sphere
+	const y = 1 - (2 * (i + 0.5)) / FIELDS.length; // -1..1
+	const r = Math.sqrt(1 - y * y); // ring radius at that height
+	const phi = i * Math.PI * (3 - Math.sqrt(5)) + random(`a${i}`) * 0.3; // golden angle + jitter
+	return [Math.cos(phi) * r, y, Math.sin(phi) * r] as [number, number, number];
+});
+
+/** Local: screen position, perspective scale and depth of field f's star, `local` seconds into the bridge.
+ * Global: drawn here; stage/anchors.ts dives cards out of (and docks them next to) the same stars. */
+export const projectStar = (f: number, local: number) => {
+	const [x, y, z] = SPHERE[f];
+	const rot = local * 0.12; // slow rotation about Y
+	const xr = x * Math.cos(rot) + z * Math.sin(rot);
+	const zr = -x * Math.sin(rot) + z * Math.cos(rot);
+	const s = 1 / (1.9 - zr * 0.7); // perspective scale (front bigger)
+	return {x: 960 + xr * 1050 * s, y: 540 + y * 560 * s, s, front: zr}; // fits between caption and lyrics
+};
+
 export const AtlasScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {t, local, length} = useSceneClock(section); // time
 	const pulse = beatPulse(tl.beats, t); // beat kick
-	const base = useMemo(() => FIELDS.map((_, f) => { // fibonacci-sphere points: even coverage
-		const i = (f * 7) % FIELDS.length; // permute (7 coprime with 30) so sung fields spread over the sphere
-		const y = 1 - (2 * (i + 0.5)) / FIELDS.length; // -1..1
-		const r = Math.sqrt(1 - y * y); // ring radius at that height
-		const phi = i * Math.PI * (3 - Math.sqrt(5)) + random(`a${i}`) * 0.3; // golden angle + jitter
-		return [Math.cos(phi) * r, y, Math.sin(phi) * r] as [number, number, number];
-	}), []);
-	const rot = local * 0.12; // slow rotation about Y
-	const pts = base.map(([x, y, z]) => { // rotate + perspective project
-		const xr = x * Math.cos(rot) + z * Math.sin(rot);
-		const zr = -x * Math.sin(rot) + z * Math.cos(rot);
-		const s = 1 / (1.9 - zr * 0.7); // perspective scale (front bigger)
-		return {x: 960 + xr * 1050 * s, y: 540 + y * 560 * s, s, front: zr}; // fits between caption and lyrics
-	});
+	const base = SPHERE; // fibonacci-sphere points: even coverage
+	const pts = FIELDS.map((_, f) => projectStar(f, local)); // rotate + perspective project
 	const levelAt = wordTime(tl, section, /level/i) ?? section.startS + 0.7 * length; // ignite the rest
 	const lightT = FIELDS.map(([, re], i) => (re ? wordTime(tl, section, re) : null) ?? levelAt + (i % 8) * 0.12); // per star
 	const lit = lightT.map((s) => smooth((t - s) / 0.3)); // 0..1

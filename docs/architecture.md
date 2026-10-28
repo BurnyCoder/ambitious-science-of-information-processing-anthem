@@ -22,7 +22,7 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
 | `take_selection.py` | Picks a take by a rule fixed before generation: highest coverage, then lowest `hootCer`. |
 | `audio_analysis.py` | Uses librosa for beats (hop 256), tempo from the median beat spacing, a 4/4 downbeat-phase heuristic, and RMS and onset strength sampled per video frame. |
 | `timeline.py` | Shifts every word by `VIDEO_WORD_OFFSET_S` (`shift_words`, clamped at 0), snaps section boundaries to beats and writes `timeline.json`. Also computes the cut-to-beat metric. |
-| `vignettes.py` | Places the illustration track. Each card in `content/vignettes.toml` starts 0.15 s before its trigger word is sung and is clipped at its section's end (unless that leaves < 2 s). Cards sharing a slot never overlap. Also computes card coverage (share of sung lines with a card). |
+| `vignettes.py` | Places the illustration track. Each card in `content/vignettes.toml` starts 0.15 s before its trigger word is sung and is clipped at its section's end (unless that leaves < 2 s). Cards sharing a lane never overlap, so the four lanes cap the cards active at once. Also computes card coverage (share of sung lines with a card). |
 | `render.py` | Builds the `npx remotion render … --gl=angle` command and streams its output into the log. |
 | `verify.py` | Runs the ffprobe acceptance checks and extracts one still per section with ffmpeg. |
 
@@ -32,15 +32,14 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
 
 ```jsonc
 {
-  "version": 2, "title": "We Will Know", "fps": 30, "audio": "anthem.mp3",
+  "version": 3, "title": "We Will Know", "fps": 30, "audio": "anthem.mp3",
   "durationS": 240.42, "durationInFrames": 7213, "tempoBpm": 129.31,
   "sections": [{"index": 0, "label": "Intro", "kind": "intro", "occurrence": 1, "scene": "intro", "startS": 0.0, "endS": 18.6}],
   "lines": [{"index": 2, "sectionIndex": 1, "text": "A matrix and a bend, …", "startS": 18.808, "endS": 22.56, "backing": false,
              "words": [{"text": "A", "startS": 18.808, "endS": 18.968, "backing": false}]}],
   "beats": [4.946, …], "downbeats": […],
   "energy": [/* one 0..1 value per video frame */], "onset": [/* same */],
-  "slots": {"lt": [40, 100, 520, 370], …},
-  "vignettes": [{"id": "matmul", "slot": "lt", "sectionIndex": 1, "lineIndex": 2, "startS": 18.66, "endS": 24.66,
+  "vignettes": [{"id": "matmul", "lane": "a", "sectionIndex": 1, "lineIndex": 2, "startS": 18.66, "endS": 24.66,
                  "title": "A matrix: the most general linear map", "text": "…", "badge": "live math", "cite": "…", "url": "…"}],
   "meta": {"taskId": "…", "takeId": "…", "alignment": {"coverage": 1.0, "repaired": 2}, "wordOffsetS": -0.137, "hootCer": 0.1546, "cutToBeatErrorS": 0.0, "vignetteCoverage": 1.0, "takeScores": […]}
 }
@@ -48,7 +47,7 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
 
 - **Section boundaries.** The first section starts at 0. Every later section starts at its first sung word minus 0.1 s, snapped to the nearest beat if one is within ±0.3 s. Each section ends where the next one starts, and the last one ends at the end of the song.
 - **Lines.** Each line runs from its first word's start to its last word's end.
-- **Cards** (`vignettes`, schema version 2) start 0.15 s before their trigger word. Each one is clipped at its section's end unless that would leave less than 2 s, and the earlier of two cards in the same slot ends where the later one starts. `badge` is one of `released data`, `published numbers`, `live math`, `from the paper`, `schematic`.
+- **Cards** (`vignettes`, schema version 3) start 0.15 s before their trigger word. Each one is clipped at its section's end unless that would leave less than 2 s, and the earlier of two cards in the same lane ends where the later one starts. Version 3 replaced v2's screen `slots` with `lane` (a concurrency cap, `a`–`d`): where a card appears is decided by the stage, not by the data. `badge` is one of `released data`, `published numbers`, `live math`, `from the paper`, `schematic`.
 - **Word times** already include `meta.wordOffsetS` (−0.137 s for the shipped take 1; see reports/exp05). Section boundaries are computed from the shifted words.
 
 ## Remotion side (`video/`)
@@ -59,17 +58,22 @@ The pipeline has four phases. `src/anthem/pipeline.py` calls each one as a funct
   - spectrum ring (`visualizeAudio`)
   - equation dust
   - one `<Sequence>` per section, each mounting `SCENES[section.scene]` (inside the punch/glitch layer)
-  - figure cards (`VignetteLayer`)
-  - karaoke overlay (hidden in `bigLyrics` scenes)
+  - the stage (`StageLayer`): figure cards as hero shots that dive out of the scene objects; the scene layer is pushed toward the hero's object (×1.08 at most, brightness 0.72)
+  - giant words in the lower third (`BigWords`, in `bigLyrics` scenes) or the karaoke overlay
   - beat/cut flashes
   - HUD
   - citation ticker
   - `<Audio>`
 - `src/lib/timeline.ts`: pure helpers such as `lineAt`, `activeWordIndex`, `beatPulse`, `wordTime` and `featureAt`. Every visual is a pure function of the frame number, which is Remotion's rendering model, so renders are deterministic.
-- `src/components/VignetteLayer.tsx` + `src/vignettes/`: the figure cards. `primitives.tsx` holds the card frame (FIG number, badge, citation, slam-in/slide-out) and SVG primitives (`Plot` drawn with `evolvePath`, `Heatmap`, `Graph`, `Bars`, `Formula`); one file per song section holds the card bodies; `index.ts` maps card ids to bodies (unknown ids fall back to the formula card). Released data comes from `public/vignettes/*.json` (written by `scripts/vignette_data.py`), live math from `src/lib/mathviz.ts`.
+- `src/stage/`: the figure cards as hero shots.
+  - `shots.ts`: the lifecycle as a pure function of t. A card emerges (0.4 s), is hero while it is the newest card for at most 3.2 s, takes an orbit rank as newer cards arrive, and docks 0.5 s after its end until its section ends. Tested in `tests/shots.test.ts`.
+  - `anchors.ts`: where each card dives out of and docks into, per scene. Geometry is imported from the scenes (`rungTimes`/`ladderRung`, `PILLARS`, `projectStar`, `chorusNode`, `MANIFOLD_X`), so anchors follow what is drawn. Fly-through scenes (intro, layers, landscape) send cards past the camera instead.
+  - `Shot.tsx`: one frameless card at its blended pose, with a kinetic title, the body, the caption and a lower third (FIG · badge · citation) over a soft radial darkening.
+  - `StageLayer.tsx`: draws docked cards first, then receded ones, then the hero.
+- `src/vignettes/`: the card bodies. `primitives.tsx` holds SVG primitives (`Plot` drawn with `evolvePath`, `Heatmap`, `Graph`, `Bars`, `Formula`); one file per song section holds the bodies; `index.ts` maps card ids to bodies (unknown ids fall back to the formula card). Released data comes from `public/vignettes/*.json` (written by `scripts/vignette_data.py`), live math from `src/lib/mathviz.ts`. Scenes reuse card data (for example the finale's bit rain uses `BITS`/`PROGRAM`, the chorus token row uses `OUTPUTS`).
 - `src/components/Overlays.tsx`: starfield, equation dust (`@remotion/noise`), spectrum ring, beat/cut flashes, HUD and the citation ticker. `Anthem.tsx` punch-zooms the scene layer on downbeats and RGB-splits it for 0.25 s after each cut.
-- `src/components/three.tsx`: `<ThreeCanvas>` wrapper, frame-driven camera rig, and additive glow points and lines. The geometry is rebuilt each frame from plain arrays.
-- `scripts/stills.mjs`: bundles once, then renders chosen frames (by default each section's midpoint) to `out/stills/`.
+- `src/components/three.tsx`: `<ThreeCanvas>` wrapper, frame-driven camera rig, additive glow points and lines, and `projectToScreen` (THREE's own camera projection) for 2D labels that stick to 3D objects. The geometry is rebuilt each frame from plain arrays.
+- `scripts/stills.mjs`: bundles once, then renders chosen frames (by default each section's midpoint) to `out/stills/`. `--vignettes` renders every card at its hero moment and `--docks` every section just before it ends.
 
 ## Design choices
 
