@@ -11,7 +11,7 @@ import type {Section, Timeline, Vignette} from '../lib/timeline';
 import {ladderRung, rungAnchor} from '../scenes/LadderScene';
 import {FIELDS, projectStar, sphereGrow} from '../scenes/AtlasScene';
 import {landscapeAnchor} from '../scenes/LandscapeScene';
-import {CHORUS_NODES, chorusNode} from '../scenes/ChorusScene';
+import {chorusAnchor} from '../scenes/ChorusScene';
 import {MANIFOLD_OF, manifoldAnchor} from '../scenes/ManifoldsScene';
 import {PLOT} from '../scenes/TheoryScene';
 
@@ -32,7 +32,7 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 			const q = landscapeAnchor(v.id, t - section.startS, Math.min(1, (t - section.startS) / (section.endS - section.startS)));
 			return {x: q.x, y: q.y, dock: PAST}; // the surface point the figure explains
 		case 'chorus': {
-			const n = chorusNode(hash(`${v.id}${v.startS}`) % CHORUS_NODES); // a node of the network
+			const n = chorusAnchor(tl, section, t, hash(`${v.id}${v.startS}`)); // a (token, layer) cell of the 3D network
 			return {x: n.x, y: n.y, dock: {kind: 'thumb', x: n.x, y: n.y, s: 0.12}};
 		}
 		case 'ladder': {
