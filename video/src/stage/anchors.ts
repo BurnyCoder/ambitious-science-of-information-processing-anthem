@@ -12,7 +12,7 @@ import {ladderRung, rungAnchor} from '../scenes/LadderScene';
 import {FIELDS, projectStar} from '../scenes/AtlasScene';
 import {CHORUS_NODES, chorusNode} from '../scenes/ChorusScene';
 import {MANIFOLD_X, MANIFOLD_OF} from '../scenes/ManifoldsScene';
-import {DIRECTIONS, PILLARS} from '../scenes/TheoryScene';
+import {PLOT} from '../scenes/TheoryScene';
 
 export type Dock = {kind: 'thumb'; x: number; y: number; s: number} | {kind: 'past'};
 export type Anchor = {x: number; y: number; dock: Dock};
@@ -46,15 +46,9 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 			const below = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.startS < v.startS && mOf(u) === m).length;
 			return {x: MANIFOLD_X[m], y: 540, dock: {kind: 'thumb', x: MANIFOLD_X[m] + (below - 1) * 125, y: 812, s: 0.19}};
 		}
-		case 'theory': {
-			const pillar = (u: Vignette) => DIRECTIONS.findIndex(([name]) => u.title.toLowerCase().includes(name)); // the direction a card shows
-			const d = pillar(v);
-			if (d >= 0) { // the five directions: out of their pillar, back into it
-				const [x, y, w, h] = PILLARS[d];
-				return {x: x + w / 2, y: y + 60, dock: {kind: 'thumb', x: x + w / 2, y: y + h / 2 + 30, s: (w - 12) / 600}};
-			}
-			const n = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.startS < v.startS && pillar(u) < 0).length; // other cards so far
-			return {x: 1490, y: 690, dock: {kind: 'thumb', x: 1300 + n * 330, y: 330, s: 0.24}}; // beside the scaling plot
+		case 'theory': { // the slot's figures (learning mechanics, GPT-4's prediction) belong to the scaling plot under them
+			const x = PLOT.x + PLOT.w * 0.62, y = PLOT.y + PLOT.h * 0.4;
+			return {x, y, dock: {kind: 'thumb', x: PLOT.x + PLOT.w - 60 - k * 90, y: PLOT.y + 40, s: 0.12}};
 		}
 		case 'atlas': {
 			const f = FIELDS.findIndex(([, re]) => re !== null && re.test(v.title)); // the star of the sung field
