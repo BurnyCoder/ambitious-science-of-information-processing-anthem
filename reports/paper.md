@@ -1,11 +1,11 @@
 ---
 title: "We Will Know: a reproducible pipeline for a code-animated, word- and beat-synchronised music video, with pre-registered validation of its timing components"
 author: "Libor Burian (independent researcher)"
-date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06) and 28 October 2026 (illustration track, exp07; hero shots, exp08; figures as part of the scenes and the rewind, exp09)"
+date: "18 October 2026; revised 27 October 2026 (lyric edit, exp06) and 28 October 2026 (illustration track, exp07; hero shots, exp08; figures as part of the scenes and the rewind, exp09; centred intro, 3D chorus, voice-driven atlas and overview finale, exp10)"
 abstract: |
   We describe and evaluate an open pipeline that turns hand-written lyrics into a four-minute music video in which every frame is drawn in code.
 
-  **Pipeline.** One Suno V6 generation, obtained through the third-party sunoapi.org API, yields two sung takes and per-word timings. A rule fixed before generation selects one take. The written lyrics are sequence-aligned to the provider's word timings. Beats are tracked with librosa. A Remotion/Three.js composition then renders ten scenes, which illustrate ambitious interpretability and a scientific theory of deep learning. 86 figure cards are each timed to the sung word they illustrate and carry a provenance badge and a citation. Since v1.4.0 each card dives out of the scene object its lyric names, is shown at centre stage for at most 3.2 s, and docks back into that object, while the scenes draw concrete examples inside their general pictures. All visuals are pure functions of the frame number.
+  **Pipeline.** One Suno V6 generation, obtained through the third-party sunoapi.org API, yields two sung takes and per-word timings. A rule fixed before generation selects one take. The written lyrics are sequence-aligned to the provider's word timings. Beats are tracked with librosa. A Remotion/Three.js composition then renders ten scenes, which illustrate ambitious interpretability and a scientific theory of deep learning. 82 figure cards (86 in v1.3.0 and v1.4.0) are each timed to the sung word they illustrate and carry a provenance badge and a citation. Since v1.5.0 each scene owns its figures: panels sit in slots reserved away from its key objects and are wired to the object they explain, or the scene draws the figure in place. The scenes draw concrete examples inside their general pictures, and the outro rewinds through the whole video into a live mosaic of every section (v1.6.0). All visuals are pure functions of the frame number.
 
   **What we tested.** Each component that decides *when* something happens on screen was tested against a criterion stated in advance.
 
@@ -18,6 +18,13 @@ abstract: |
   7. The figure cards reuse data released by the original authors or well-known third parties: 31 pinned files, with no experiment re-run. Two pre-specified consistency checks passed. The five largest Fourier frequencies of the released grokking embedding equal the paper's key frequencies, and ARENA's top induction heads include the IOI paper's. Every sung line has a card (56/56). Paired frames carry more detail than v1.2.0: median log₂ PNG-size ratio +0.26, section-bootstrap 95 % CI [+0.18, +0.42]. A fact-check removed three overclaims from our own plan.
   8. Staging the cards inside the scenes (v1.4.0) passed its pre-registered non-inferiority test against v1.3.0. The median log₂ PNG-size ratio was −0.014, with a section-bootstrap 95 % CI of [−0.075, +0.016] against a margin of −0.10. The change was not uniform: verse 1 lost detail (−0.19) and the finale gained (+0.13). Partly, this may be the dimming of the scene behind the hero, which was not tested. A figure is the hero during 82.6 % of the sung time, covers at most 32.8 % of the frame, and 71 of the 86 cards dock into a scene object.
   9. In v1.5.0 each scene owns its figures: at most two panels in slots reserved away from its key objects, and ideas the scene can draw itself drawn in place; the outro became a flying rewind through the whole video. Pre-registered layout checks passed: every panel stays ≥ 3 s (one cut-limited panel 2.76 s), at most two at once, and no slot overlaps a protected object. The median time a figure is on screen rose from 2.2 s as v1.4.0's hero to 6.0 s. Detail before the outro was not lower than v1.4.0 (+0.027 [−0.049, +0.088]). The pre-registered check that the 0:14 window is as full as v1.3.0 **failed** on the first render (−0.58 log₂). A post-hoc fix (verse 1's layers flying out behind the tokens card, part of the approved plan but skipped) brought the window to −0.09 in the released render. That is much fuller than v1.4.0 (+0.26 to +0.83) but still short of the criterion, which was not changed. Final detail before the outro: +0.033 [−0.047, +0.102].
+  10. v1.6.0 answers six notes from the author on v1.5.0, and all six pre-registered checks pass.
+      - **Centring.** The intro's title and token are now centred: bright-pixel centroids at +16 px and −37 px from the frame centre, against −95 px and −694 px in v1.5.0. The token passes its ±38 px tolerance by only 1.3 px.
+      - **Choruses.** They became a 3D network laid out on the released attribution graphs' token × layer coordinates and are more detailed than v1.5.0 in every frame (+0.30 [+0.26, +0.31]).
+      - **Theory figures.** Each now finishes inside its block (a design check).
+      - **Atlas.** Its size follows the singer's loudness, measured on the separated vocal stem.
+      - **Finale.** A mosaic of ten live frozen copies of the video, one per section, compresses to about 4× the bytes of v1.5.0's ending (+2.02 [+1.98, +2.20]).
+      - **Elsewhere.** Detail is unchanged (+0.000 [−0.003, +0.003]).
 
   We report these as properties of this pipeline and this song. They are not general claims about the music model.
 ---
@@ -122,6 +129,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 ## 3.6 Illustration track and released data (v1.3.0)
 
 **Placement.**
+
 - `content/vignettes.toml` declares 86 cards. Each has a trigger regex on a sung word (optionally its n-th match in the section), a lane, a title, text, a provenance badge and a citation. In v1.3.0 the lane was a named screen box (a slot). Since v1.4.0 it is only a concurrency cap: four lanes, so at most four cards are active at once (§3.7).
 - A card appears 0.15 s before its word.
 - It ends at its section's cut, unless that would leave it on screen for less than 2 s.
@@ -130,6 +138,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - Coverage is the share of sung non-backing lines with a card triggered by one of their words. Its pre-specified target was 1.0.
 
 **Badges.**
+
 - *released data*: read from files released by the authors or a well-known third party.
 - *published numbers*: quoted from a paper's text or tables.
 - *live math*: computed in the video.
@@ -137,6 +146,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 - *schematic*: our illustration.
 
 **Data rule (set by the author).**
+
 - Never re-run an experiment whose models, results or data exist.
 - Prefer the original authors and well-known third parties.
 - Retrain only if nothing usable exists. Nothing had to be retrained.
@@ -144,6 +154,7 @@ The chosen take maximizes *coverage*, then minimizes `hootCer` (the provider's a
 `scripts/vignette_data.py` downloads 31 pinned files (523.8 MB) and records URL, revision, licence, size and sha256 for each. Downloaded `.pth` files load with `weights_only=True`. A pickle loads only through an unpickler that refuses every global except numpy reconstruction.
 
 The derived card data comes from these sources:
+
 - the Nanda et al. (2023) mainline grokking run: loss curves, and the Fourier spectrum of the embedding every 1,000 epochs;
 - the three attribution graphs behind Lindsey et al. (2025), collapsed to the authors' supernodes (also used to drive the chorus circuits);
 - ARENA's per-head induction scores for GPT-2 small;
@@ -177,6 +188,7 @@ A card's *heroness* is emerge × (1 − min(1, rank)) × (1 − dock), and the c
 While a hero is up, the scene layer is scaled by at most 1.08 about the hero's anchor and dimmed to 72 % brightness. The intent is that the general picture stays visible around the example rather than being replaced by it.
 
 The scenes also gained concrete layers inside their general pictures:
+
 - **Layer tunnel.** GPT-2 token ids of the sung line, from the pinned tokenizer.
 - **Loss surface.** The surface's own saddle and minima, found by Newton's method. The saddle's Hessian eigenvalues are −0.27 and +0.19. The sharp and flat basins have λmax 1.76 and 0.27, and both are shaken by ρ = 0.8, SAM's sharpness radius (Foret et al., 2021). The released grokking and double-descent curves are drawn as ribbons.
 - **Chorus.** The attribution graphs' real prompt tokens, ending in the model's output.
@@ -190,22 +202,58 @@ Labels that a hero would cover are drawn as margin callouts with leader lines.
 ## 3.8 Figures as part of their scenes, and the rewind (v1.5.0)
 
 After v1.4.0 the author reported that the figures still read as "two overlapped independent videos". The causes were measured from the timeline:
+
 - **Short hero times.** 41 of 86 cards were the hero for under 2 s, because the newest card always took the centre.
 - **Covered key objects.** The hero covered a key scene object the whole time it was up: the ladder, the theory blocks and the closing statement.
 - **Empty stretches.** There were empty stretches, for example 14–18 s.
 
 v1.5.0 replaces the hero model with a layout contract (`video/src/stage/layout.json`). Each scene declares:
+
 - at most two panel slots;
 - the protected rectangles of its key objects;
 - its lyric band.
 
 Slots are tested to lie on screen, to be readable (≥ 0.9 of the native 600 × 350 card) and to be disjoint from the protected regions and bands. Placement then works as follows:
+
 - **Panels** (lanes a/b) stay in their slot for their whole time and are wired by a connector to the object they explain. The objects are geometry the scene exports: rung label ends, star projections, surface points, manifold centres.
 - **Lane `scene`** marks figures the scene draws itself, in place.
 - **A `[[clear]]` cue** ends a section's figures before a highlight line.
 - **The curation** (86 → 82 cards, logged with reasons in exp09) gives every panel ≥ 3 s while keeping a figure on every sung line.
 
 **The rewind.** The outro is a pure schedule (`stage/rewind.ts`). Cuts sit on the beat grid and shrink from 1 beat to ¼ beat. Each cut plays an earlier moment of the video backwards at 2× rising to 12×. The moments are each figure's midpoint and each section's, latest first. The landing cut plays the intro backwards onto its single token. The copies are Remotion `<Freeze>` instances of the same `World` component that draws the live video (Remotion, 2026), with at most two on screen at once.
+
+## 3.9 A centred intro, a 3D chorus, theory clocks, a voice-driven atlas and an overview finale (v1.6.0)
+
+The author's six notes on v1.5.0 were traced to their causes in the code before any change (exp10):
+
+| Note | Cause in v1.5.0 | Change |
+|---|---|---|
+| 0:04 and 0:09: not centred | The token column sat at x = 300. The title's untyped letters were not laid out, its invisible cursor took width, and the letter-spacing after the last letter shifted the row | Column at x = 960, gliding left only when the tokens card appears. All letters laid out from the start (untyped ones invisible), cursor absolutely positioned, trailing spacing balanced |
+| 0:58: repetitive simple nodes in the chorus | A 7 × 6 dot grid | A 3D network on the graph's own axes (below) |
+| 2:23: solvable settings needs time | Its block was open about 1 s for a 2.5 s plot | Trigger on the first word of its line; blocks settle on "Predict"; each figure runs on a clock sped up (at most 1.6×) to end 0.3 s before its block narrows |
+| 3:10: no dimming; grow with the voice | The network faded to 40 % behind the statement | Sphere scale 1 + gain × vocal envelope (gain 0.15, then 0.6 from "science"), no dimming, an outlined statement |
+| 3:50: everything on one screen, celebrating | The rewind ended on a single token, statement and credits | The overview mosaic (below) |
+
+**The chorus network.**
+
+- **Layout.** Each supernode of the released graphs (Lindsey et al., 2025) has a token position `ctx` and a `layer`. The scene draws one column per prompt token and 18 layers. Each (token, layer) cell is a cluster of feature points whose brightness is a seeded sparse flicker scaled by the song's RMS energy.
+- **Motion.** Residual streams carry dots upward. Attention arcs from earlier to later tokens rise higher for farther pairs and pulse on the beat. Fading columns to the right of the prompt stand for the next positions.
+- **Schematic parts.** The flicker, the arcs and the next-position columns are schematic and are labelled so.
+- **Released parts.** The lit circuit is released data: the same strongest path as before, with supernodes at their (ctx, layer), thick edges with particles flowing to the output, and the authors' labels. So are the prompt and the output.
+- **Camera and panels.** The camera orbits slowly and kicks in on each downbeat. Panels anchor to projected cells (`chorusAnchor`), so they stay wired to what is drawn.
+
+**The vocal envelope.** `scripts/vocal_energy.py` reads the Demucs vocal stem of the take the video uses, written by exp06 (Rouard et al., 2022). It takes its RMS per video frame with the same function as the song's energy track (librosa `feature.rms`), smooths it over 0.4 s and normalises it by the 99th percentile. The output, `vocal_energy.json`, records the stem's sha256. No model is run.
+
+**The overview.**
+
+- **Rewind landing.** The rewind's last cut now lands on the token at the last downbeat before the last word (230.25 s).
+- **Tiles.** From there, ten tiles fly out of the token into a 4 × 3 grid whose two centre cells stay free for the statement. Each tile is a `<Freeze>` copy of `World` at its section's moment with the most figure cards on screen, sampled every 0.5 s, latest on ties. It plays on at half speed and stays more than 1 s inside its section.
+- **Celebration.** All figure titles orbit the centre in three lanes. Fireworks burst on each downbeat and ARC-palette confetti falls (Chollet, 2019). Gold rays turn, glitter twinkles, and the mosaic punches in on the downbeat. Every effect is a seeded function of the frame.
+- **Tests.** The tile plan and its geometry are a pure module tested for:
+  - one tile per earlier section;
+  - tiles on screen and disjoint;
+  - the centre left free;
+  - the flight from the token.
 
 # 4. Experiments and results
 
@@ -381,6 +429,7 @@ The fifth check uses a standard proxy for visual complexity (Machado et al., 201
 | 5 | **pass**: +0.263 [+0.177, +0.422]; frame bootstrap [+0.208, +0.343]; 114/120 frames larger; per section from +0.003 (verse 1) to +0.634 (bridge) |
 
 **Descriptive numbers from the released data** (not pre-registered):
+
 - **Weight decay.** With weight decay 1.0, test loss first drops below 1 at epoch 9,890; with 0.1, at epoch 90,890. The runs also differ in seed, and the 0.1 run's stored config is stale.
 - **Double descent.** Test error falls to 0.219 at width 4, peaks at 0.303 at width 10, and reaches 0.163 at width 64 (5 trials).
 - **Refusal.** Ablating the refusal direction raises JailbreakBench answers without a refusal phrase from 5 % to 100 % (LlamaGuard-2 judge: 3 % to 82 %).
@@ -406,6 +455,7 @@ The mirror reads its constants from the TypeScript source, and it agreed with it
 | 3 | **pass**: hero area 0.328 (0.193 with giant lyrics), longest hero 3.20 s, at most 4 active (6 in motion counting cards flying back to dock) |
 
 **Descriptive.**
+
 - **Hero time.** A figure is the hero (heroness ≥ 0.5) during 82.6 % of sung time and 74.6 % of the song. The scene has the frame alone for 25.4 % of the song.
 - **Coverage.** Mean nominal hero coverage over sung time is 23.3 % of the frame.
 - **Docking.** 71 of the 86 cards dock into a scene object; the 15 cards of the three fly-through scenes fly past the camera.
@@ -417,6 +467,7 @@ The mirror reads its constants from the TypeScript source, and it agreed with it
 ## 4.9 Figures as part of their scenes (exp09)
 
 **Pre-specified** (`reports/exp09_unified.md`, committed before the render):
+
 - **H0:** the render verifies.
 - **H1:** every panel is shown ≥ 3 s, or ≥ 2.5 s when its trigger is within 3 s of a cut.
 - **H2:** at most two panels at once.
@@ -439,6 +490,35 @@ The mirror reads its constants from the TypeScript source, and it agreed with it
 
 ![Exp09. (a) Empirical CDF of the seconds each figure is the hero (v1.4.0) or on screen (v1.5.0). (b) Per-frame log₂ PNG-size ratio v1.5.0 / v1.4.0 before the outro, with the margin. (c) The 0:13–0:18 window against v1.3.0.](figures/fig8_exp09.png){width=100%}
 
+## 4.10 Centring, the 3D chorus, theory timing, the atlas and the overview (exp10)
+
+**Pre-specified** (`reports/exp10_finale.md`, committed before any v1.6.0 code change):
+
+- **H0:** the render verifies.
+- **H1:** the horizontal centroid of pixels with luma > 160 lies within ±1 % of the width for the title band (y 520–700, 9.3 s) and within ±2 % for the token band (y 150–520, 4.0 s).
+- **H2:** every theory block is open at least as long as its figure's animation divided by its speed.
+- **H3 and H4:** chorus frames (2 s grid) and finale frames (1 s, 230.5–239.5 s) are more detailed than v1.5.0. The median log₂ PNG ratio must be > 0 with a frame-bootstrap 95 % CI excluding 0. Frames are resampled because there are only two choruses.
+- **H5:** all other frames before the overview are non-inferior, with margin 0.10 (section bootstrap).
+
+| Check | Render 13 (v1.6.0) |
+|---|---|
+| H0 | **pass**: 7212 frames, 240.405 s, rendered in 588.7 s |
+| H1 title | **pass**: 976.0 px (+16.0; tolerance ±19.2); v1.5.0 864.8 |
+| H1 token | **pass**: 922.9 px (−37.1; tolerance ±38.4); v1.5.0 266.2 |
+| H2 | **pass** (pytest) |
+| H3 | **pass**: +0.296 [+0.255, +0.314], 23 frames, all > 0 |
+| H4 | **pass**: +2.016 [+1.980, +2.201], 10 frames |
+| H5 | **pass**: +0.000 [−0.003, +0.003], 92 frames; section medians within ±0.02 |
+
+**Descriptive.**
+
+- **Token.** It passes by 1.3 px. Its rows are centred, but the brightest pixels (the squares) sit left of each row's centre.
+- **Title.** It sits 16 px right: the left padding that balances the trailing letter-spacing over-corrects slightly.
+- **Vocal envelope.** Over the bridge its mean is 0.647 (10th–90th percentile 0.50–0.80). The sphere scale stays at 1.05–1.14 before "science" and ranges over 1.27–1.57 after its ramp.
+- **Rendering cost.** Ten live `<Freeze>` copies per frame did not slow the render: 588.7 s, against 624.6 s for v1.5.0.
+
+![Exp10. (a) Per-frame log₂ PNG-size ratio v1.6.0 / v1.5.0: choruses (H3), the overview (H4) and everything else (H5) with its margin. (b) Horizontal offset of the bright-pixel centroid from the frame centre, with tolerances. (c) The bridge's vocal envelope and the sphere scale it drives.](figures/fig9_exp10.png){width=100%}
+
 # 5. Discussion
 
 **What the evidence supports.**
@@ -450,6 +530,7 @@ The mirror reads its constants from the TypeScript source, and it agreed with it
 - Concrete content can be added without re-running anyone's experiment. Released artifacts covered every "real data" card, and the two checks that could fail against the papers passed.
 - Concrete examples can be staged inside the general animation without losing measurable detail overall (exp08). The change redistributes detail between sections rather than adding it.
 - A per-scene layout contract (slots, protected objects, lyric bands, tested) satisfies the layout properties meant to address the author's "two overlapped videos" judgement, and keeps detail (exp09). Whether viewers perceive the video as more unified was not measured.
+- Specific visual notes from a viewer can be turned into measurable checks fixed in advance: a centroid for "not centred", an open-window test for "needs time", a paired detail ratio for "more maximalist" (exp10). All six passed, one by a narrow margin.
 - The video's line was changed with a one-call section replacement. Because the provider shifted the file and copied its old word times, the correction had to be re-estimated (−0.156 s) and could not be carried over.
 
 **What it does not support.**
@@ -486,6 +567,11 @@ The mirror reads its constants from the TypeScript source, and it agreed with it
   - The intro fix was post hoc, made after the pre-registered H4 failed.
   - The rewind's outro is excluded from the density test.
   - The curation removed four cards and moved 32 into their scenes; this is a judgement, logged with reasons.
+- **v1.6.0 (exp10).**
+  - The centring check is a pixel-statistic proxy; the token passed it by 1.3 px.
+  - The overview is denser by construction (ten frames in one), so H4 confirms the design rather than testing a risky prediction.
+  - The chorus flicker, arcs and next-position columns are schematic.
+  - The atlas gains were set by eye.
 - **Black-box components.** Schematic content is labelled per card. The music model and the provider are black boxes, and hootCer's definition is undocumented.
 
 # 7. Conclusion
@@ -496,7 +582,7 @@ A code-animated music video can be built as an ordinary, testable data pipeline:
 - the timing components are validated against references fixed in advance;
 - the render is deterministic and checked automatically.
 
-Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Adding concrete, cited content showed the same pattern: a fact-check of our own plan against the cited sources removed three overclaims before release. Moving that content into the scenes did too: a code review found a camera jump that no still frame could show, and a pre-registered density check surfaced a section that lost detail, which the aggregate hides. Making each scene own its figures then fixed the cover and dwell problems by construction, and a failed pre-registered check pointed at a planned element that had been skipped. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
+Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repair heuristic, and a 0.137 s lag in the provider's word onsets that is now corrected. A later one-line lyric edit added a fifth finding: the provider's edit moved the whole file by 17 ms and regenerated far more than the requested window, while reporting the old word times. None of these would have been visible from the finished video's description. Adding concrete, cited content showed the same pattern: a fact-check of our own plan against the cited sources removed three overclaims before release. Moving that content into the scenes did too: a code review found a camera jump that no still frame could show, and a pre-registered density check surfaced a section that lost detail, which the aggregate hides. Making each scene own its figures then fixed the cover and dwell problems by construction, and a failed pre-registered check pointed at a planned element that had been skipped. The last round showed that even aesthetic notes ("not centred", "too short", "more maximalist") can be checked against criteria fixed before the change. Code, data, logs-derived reports and the video are available at <https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem>.
 
 # References
 
@@ -506,6 +592,7 @@ Doing so turned up a quantization bug, a half-tempo failure mode, a harmful repa
 - Ashraf, M. (2024). ctc-forced-aligner. <https://github.com/MahmoudAshraf97/ctc-forced-aligner> (accessed 18 Oct 2026).
 - Besiroglu, T., Erdil, E., Barnett, M., & You, J. (2024). Chinchilla scaling: A replication attempt. arXiv:2404.10102. Data: <https://github.com/epoch-research/analyzing-chinchilla>.
 - Bricken, T., et al. (2023). Towards monosemanticity: Decomposing language models with dictionary learning. *Transformer Circuits Thread*.
+- Chollet, F. (2019). On the measure of intelligence. arXiv:1911.01547.
 - Demirel, E., Ahlbäck, S., & Dixon, S. (2021). Low resource audio-to-lyrics alignment from polyphonic music recordings. arXiv:2102.09202.
 - Durand, S., Stoller, D., & Ewert, S. (2023). Contrastive learning-based audio to lyrics alignment for multiple languages. arXiv:2306.07744.
 - Elhage, N., et al. (2022). Toy models of superposition. *Transformer Circuits Thread*. arXiv:2209.10652. Notebook: <https://github.com/anthropics/toy-models-of-superposition>.
