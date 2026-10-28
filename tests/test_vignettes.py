@@ -104,3 +104,13 @@ def test_real_cards_cover_every_sung_line_of_the_real_timeline():
     tl["vignettes"] = place_vignettes(s, tl)  # raises if any trigger is not sung where it is placed
     assert vignette_coverage(tl) == 1.0  # pre-specified target: every sung non-backing line is illustrated
     assert min(c["endS"] - c["startS"] for c in tl["vignettes"]) >= 1.0  # every card stays readable for >= 1 s
+
+
+def test_lyric_tokens_match_the_written_lyrics():
+    """lyric_tokens.json (written once by scripts/vignette_data.py) must still have one id list per word of every line,
+    or the layer scene's chips would show stale ids after a lyric edit."""
+    from anthem.lyrics import parse_lyrics  # same line numbering as timeline.json
+    tokens = json.loads((ROOT / "video" / "public" / "vignettes" / "lyric_tokens.json").read_text(encoding="utf-8"))
+    lines = [ln for sec in parse_lyrics((ROOT / "content" / "lyrics.txt").read_text(encoding="utf-8")) for ln in sec.lines]
+    assert {str(ln.index): len(ln.words) for ln in lines} == {k: len(v) for k, v in tokens.items()}
+    assert all(ids for v in tokens.values() for ids in v)  # every word has at least one token

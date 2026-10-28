@@ -48,9 +48,14 @@ const grad = (x: number, y: number): [number, number] => {
 };
 
 /** Local: the surface's own critical points (Newton from nearby seeds), so every label is computed from L. */
-const SADDLE = criticalPoint(loss, [-3.7, -2.3])!; // the saddle on the path between the two basins
-const WIDE = criticalPoint(loss, [4.8, 1.5])!; // wide basin minimum
-const SHARP = criticalPoint(loss, [-5.9, -4.9])!; // sharp basin minimum
+const critical = (seed: [number, number], what: string): [number, number] => { // fail loudly if the surface was edited
+	const p = criticalPoint(loss, seed);
+	if (!p) throw new Error(`LandscapeScene: Newton's method found no ${what} near ${seed}; update the seed after editing loss()`);
+	return p;
+};
+const SADDLE = critical([-3.7, -2.3], 'saddle'); // the saddle on the path between the two basins
+const WIDE = critical([4.8, 1.5], 'wide minimum'); // wide basin minimum
+const SHARP = critical([-5.9, -4.9], 'sharp minimum'); // sharp basin minimum
 const EIG = sym2Eig(hessian2(loss, ...SADDLE)); // one negative (escape) and one positive eigenvalue
 const lmax = (p: [number, number]) => sym2Eig(hessian2(loss, ...p)).values[1]; // largest curvature at a minimum
 const BASINS = [{p: SHARP, name: 'sharp', color: COLORS.magenta, l: lmax(SHARP)}, {p: WIDE, name: 'flat', color: COLORS.lime, l: lmax(WIDE)}];

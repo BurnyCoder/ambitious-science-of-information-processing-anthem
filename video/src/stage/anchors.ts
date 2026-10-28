@@ -12,7 +12,7 @@ import {BASE, LADDER_LEFT, RUNG_GAP, ladderRung} from '../scenes/LadderScene';
 import {FIELDS, projectStar} from '../scenes/AtlasScene';
 import {CHORUS_NODES, chorusNode} from '../scenes/ChorusScene';
 import {MANIFOLD_X, MANIFOLD_OF} from '../scenes/ManifoldsScene';
-import {PILLARS} from '../scenes/TheoryScene';
+import {DIRECTIONS, PILLARS} from '../scenes/TheoryScene';
 
 export type Dock = {kind: 'thumb'; x: number; y: number; s: number} | {kind: 'past'};
 export type Anchor = {x: number; y: number; dock: Dock};
@@ -47,11 +47,14 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 			return {x: MANIFOLD_X[m], y: 540, dock: {kind: 'thumb', x: MANIFOLD_X[m] + (below - 1) * 125, y: 812, s: 0.19}};
 		}
 		case 'theory': {
-			if (k < PILLARS.length) { // the five directions: out of the pillar, back into it
-				const [x, y, w, h] = PILLARS[k];
+			const pillar = (u: Vignette) => DIRECTIONS.findIndex(([name]) => u.title.toLowerCase().includes(name)); // the direction a card shows
+			const d = pillar(v);
+			if (d >= 0) { // the five directions: out of their pillar, back into it
+				const [x, y, w, h] = PILLARS[d];
 				return {x: x + w / 2, y: y + 60, dock: {kind: 'thumb', x: x + w / 2, y: y + h / 2 + 30, s: (w - 12) / 600}};
 			}
-			return {x: 1490, y: 690, dock: {kind: 'thumb', x: 1300 + (k - PILLARS.length) * 330, y: 330, s: 0.24}}; // beside the scaling plot
+			const n = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.startS < v.startS && pillar(u) < 0).length; // other cards so far
+			return {x: 1490, y: 690, dock: {kind: 'thumb', x: 1300 + n * 330, y: 330, s: 0.24}}; // beside the scaling plot
 		}
 		case 'atlas': {
 			const f = FIELDS.findIndex(([, re]) => re !== null && re.test(v.title)); // the star of the sung field

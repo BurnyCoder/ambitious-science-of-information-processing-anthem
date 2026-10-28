@@ -8,15 +8,14 @@
 import React from 'react'; // JSX
 import {AbsoluteFill} from 'remotion'; // full-frame layer
 import type {Timeline} from '../lib/timeline'; // data
-import {anchorOf} from './anchors'; // dive origins + docks
+import type {Anchor} from './anchors'; // dive origin + dock
 import {heroness, type Shot as ShotState} from './shots'; // lifecycle
 import {Shot} from './Shot'; // one card
 
-export const StageLayer: React.FC<{tl: Timeline; shots: ShotState[]; t: number; big: boolean; pulse: number}> = ({tl, shots, t, big, pulse}) => (
+export const StageLayer: React.FC<{tl: Timeline; staged: {shot: ShotState; anchor: Anchor}[]; t: number; big: boolean; pulse: number}> = ({tl, staged, t, big, pulse}) => (
 	<AbsoluteFill>
-		{[...shots].sort((a, b) => (b.dock - a.dock) || (heroness(a) - heroness(b)) || (b.rank - a.rank)).map((s) => {
-			const section = tl.sections.find((x) => x.index === s.v.sectionIndex)!; // its scene decides its anchor
-			return <Shot key={`${s.v.id}-${s.v.startS}`} tl={tl} shot={s} anchor={anchorOf(tl, section, s.v, s.k, t)} t={t} big={big} pulse={pulse} />;
-		})}
+		{[...staged].sort(({shot: a}, {shot: b}) => (b.dock - a.dock) || (heroness(a) - heroness(b)) || (b.rank - a.rank)).map(({shot, anchor}) => (
+			<Shot key={`${shot.v.id}-${shot.v.startS}`} tl={tl} shot={shot} anchor={anchor} t={t} big={big} pulse={pulse} /> // anchors come from Anthem (computed once per frame)
+		))}
 	</AbsoluteFill>
 );

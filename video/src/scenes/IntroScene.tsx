@@ -23,7 +23,7 @@ export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 	const shown = Math.floor(Math.max(0, (local - titleAt) / 0.12)); // one letter per 120 ms
 	const exit = smooth((local - (length - 1.2)) / 1.2); // last 1.2 s: zoom out
 	const tokenScale = smooth(local / 1.2) * (1 + 0.15 * pulse); // pop in, breathe on beats
-	const tokensAt = tl.vignettes.find((v) => v.sectionIndex === section.index)?.startS ?? Infinity; // the title's tokens card
+	const tokensAt = tl.vignettes.find((v) => v.sectionIndex === section.index && v.id === 'tokens')?.startS ?? Infinity; // the title's tokens card
 	const dissolve = smooth((t - tokensAt) / 0.6); // the title gives way to its tokens
 	return (
 		<AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', opacity: 1 - exit * 0.8, transform: `scale(${1 + exit * 0.3})`}}>

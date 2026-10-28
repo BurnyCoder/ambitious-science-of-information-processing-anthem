@@ -35,10 +35,10 @@ export const Anthem: React.FC<AnthemProps> = ({timeline}) => {
 	const glitch = section.index > 0 ? Math.max(0, 1 - (t - section.startS) / 0.25) : 0; // 1 -> 0 over 0.25 s after a cut
 	const jitter = glitch ? (random(`glitch${frame}`) - 0.5) * 36 * glitch : 0; // seeded horizontal shake
 	const shots = shotsAt(tl.vignettes, tl.sections, t); // every card on stage now
+	const staged = shots.map((s) => ({shot: s, anchor: anchorOf(tl, tl.sections.find((x) => x.index === s.v.sectionIndex) ?? section, s.v, s.k, t)})); // once per frame
 	const weights = shots.map(heroness); // how much each card is the hero
 	const push = Math.max(0, ...weights); // 0..1: how far the camera is pushed into the hero's object
-	const focus = focusOf(shots.flatMap((s, i) => weights[i] > 0 // camera aims at the objects the heroes came from
-		? [{...anchorOf(tl, tl.sections.find((x) => x.index === s.v.sectionIndex) ?? section, s.v, s.k, t), w: weights[i]}] : []));
+	const focus = focusOf(staged.flatMap(({anchor}, i) => (weights[i] > 0 ? [{...anchor, w: weights[i]}] : []))); // camera aims at the heroes' objects
 	const pulse = beatPulse(tl.beats, t); // beat kick for the cards
 	const lead = section.scene === 'finale' ? COLORS.amber : section.occurrence % 2 === 1 ? COLORS.cyan : COLORS.magenta; // giant-word colour
 	return (
@@ -58,7 +58,7 @@ export const Anthem: React.FC<AnthemProps> = ({timeline}) => {
 				);
 			})}
 			</AbsoluteFill>
-			<StageLayer tl={tl} shots={shots} t={t} big={Boolean(entry.bigLyrics)} pulse={pulse} />
+			<StageLayer tl={tl} staged={staged} t={t} big={Boolean(entry.bigLyrics)} pulse={pulse} />
 			{entry.bigLyrics ? <BigWords tl={tl} t={t} color={lead} y={262} maxSize={150} /> : <KineticLyrics tl={tl} t={t} />}
 			<BeatFlash tl={tl} t={t} section={section} />
 			<Hud tl={tl} t={t} section={section} caption={entry.caption} />

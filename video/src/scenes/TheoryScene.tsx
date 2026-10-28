@@ -17,8 +17,9 @@ import chin from '../../public/vignettes/chinchilla.json'; // points + both fits
 import type {SceneProps} from './types'; // contract
 
 const BUDGETS = [1e19, 1e20, 1e21]; // iso-FLOP budgets drawn (FLOPs)
-/** Local: the five directions of arXiv:2604.21691 and the sung word that lights each pillar. */
-const DIRECTIONS: [string, RegExp][] = [['solvable settings', /solve/i], ['tractable limits', /limits|infinity/i], ['simple laws', /laws|scaling/i],
+/** Local: the five directions of arXiv:2604.21691 and the sung word that lights each pillar. Global: also matched against
+ * card titles in stage/anchors.ts, so each direction's card docks into its own pillar. */
+export const DIRECTIONS: [string, RegExp][] = [['solvable settings', /solve/i], ['tractable limits', /limits|infinity/i], ['simple laws', /laws|scaling/i],
 	['hyperparameters', /hyperparameter/i], ['universal behaviors', /universal/i]];
 /** Local: pillar boxes [x, y, w, h]. Global: drawn here; stage/anchors.ts docks each direction's card into its pillar. */
 export const PILLARS: [number, number, number, number][] = DIRECTIONS.map((_, i) => [56 + i * 200, 236, 184, 610]);

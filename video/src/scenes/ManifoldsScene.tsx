@@ -12,9 +12,8 @@
 import React, {useMemo} from 'react'; // JSX + memo
 import {AbsoluteFill, random} from 'remotion'; // layer + RNG
 import {beatPulse, wordTime} from '../lib/timeline'; // timing
-import {COLORS, smooth, useSceneClock} from '../lib/theme'; // look + clock
+import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock + labels
 import {CameraRig, GlowLines, GlowPoints, Stage, projectToScreen, rgb} from '../components/three'; // 3D blocks
-import {COLORS as C, FONTS, glow} from '../lib/theme'; // labels
 import antonyms from '../../public/vignettes/antonyms.json'; // Todd et al. antonym pairs
 import world from '../../public/vignettes/world.json'; // [lon, lat] of real places
 import type {SceneProps} from './types'; // contract
@@ -104,12 +103,12 @@ export const ManifoldsScene: React.FC<SceneProps> = ({tl, section}) => {
 				<GlowLines positions={arrow.p} colors={arrow.c} opacity={fv} />
 			</Stage>
 			<svg width={1920} height={1080} style={{position: 'absolute'}}>
-				{ringLabels.map((l) => <text key={l.mo} x={l.x} y={l.y} fill={C.ink} fontFamily={FONTS.mono} fontSize={15} textAnchor="middle" opacity={0.75 * (1 - pent * 0.4)}>{l.mo}</text>)}
+				{ringLabels.map((l) => <text key={l.mo} x={l.x} y={l.y} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={15} textAnchor="middle" opacity={0.75 * (1 - pent * 0.4)}>{l.mo}</text>)}
 				{[['1900', 0.95], ['1950', 0.6], ['2000', 0.25], ['2050', -0.1]].map(([yr, h]) => { const q = projectToScreen([2.3, (h as number) * 3.5, 0], cam, [0, 0, 0], 50);
-					return <text key={yr as string} x={q.x} y={q.y} fill={C.ink} fontFamily={FONTS.mono} fontSize={15} opacity={0.7}>{yr as string}</text>; })}
-				<text x={tip.x + 14} y={tip.y - 8} fill={C.amber} fontFamily={FONTS.mono} fontSize={22} opacity={fv} style={{textShadow: glow(C.amber, 0.4)}}>{pair.input} + v → {pair.output}</text>
-				<text x={960} y={190} fill={C.lime} fontFamily={FONTS.mono} fontSize={18} textAnchor="middle" opacity={truth}>true | false</text>
-				<text x={1448} y={230} fill={C.ink} fontFamily={FONTS.display} fontSize={22} textAnchor="middle" opacity={smooth((t - biggerAt) / 0.4)} style={{textShadow: glow(C.lime, 0.5)}}>
+					return <text key={yr as string} x={q.x} y={q.y} fill={COLORS.ink} fontFamily={FONTS.mono} fontSize={15} opacity={0.7}>{yr as string}</text>; })}
+				<text x={tip.x + 14} y={tip.y - 8} fill={COLORS.amber} fontFamily={FONTS.mono} fontSize={22} opacity={fv} style={{textShadow: glow(COLORS.amber, 0.4)}}>{pair.input} + v → {pair.output}</text>
+				<text x={960} y={190} fill={COLORS.lime} fontFamily={FONTS.mono} fontSize={18} textAnchor="middle" opacity={truth}>true | false</text>
+				<text x={1448} y={230} fill={COLORS.ink} fontFamily={FONTS.display} fontSize={22} textAnchor="middle" opacity={smooth((t - biggerAt) / 0.4)} style={{textShadow: glow(COLORS.lime, 0.5)}}>
 					{SCALES[step][0]} · probe R² {SCALES[step][1].toFixed(3)}
 				</text>
 			</svg>
