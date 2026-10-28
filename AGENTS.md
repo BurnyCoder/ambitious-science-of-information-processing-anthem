@@ -9,7 +9,7 @@ uv sync                                   # Python env (.venv, Python 3.12)
 cd video && npm install && cd ..          # Remotion env
 uv run pytest -q                          # Python tests (no network, no credits)
 cd video && npx tsc --noEmit              # TypeScript typecheck
-cd video && npm test                      # mathviz known-answer tests + stage/shots.ts lifecycle tests (node --test, built-in type stripping)
+cd video && npm test                      # mathviz known-answer tests + stage/shots.ts lifecycle, rewind and overview tests (node --test, built-in type stripping)
 uv run anthem                             # full pipeline (song is cached -> no credits)
 uv run anthem --stage timeline            # rebuild video/public/timeline.json (offline)
 uv run anthem --stage render --preview    # 30 s, half-size render to out/anthem_preview.mp4
