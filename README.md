@@ -20,9 +20,18 @@ An original song plus a music video in which **every frame is drawn in code**. T
   - **The rewind.** The outro is a flying, accelerating rewind through the whole video, landing on the opening token.
   
   See [docs/scenes.md](docs/scenes.md) and [experiment 9](reports/exp09_unified.md).
+- **A living chorus and a grand finale (v1.6.0):** the author's six notes on v1.5.0, each fixed and checked.
+  - **Centred intro.** The token and the title are laid out centred.
+  - **The chorus as a model at work, in 3D.** It is laid out on the released attribution graph's own token × layer axes: flickering feature cells, residual streams, attention arcs, and the real circuit lit with particles flowing to its output.
+  - **Theory figures that finish.** Each of the five blocks runs its figure on a clock that ends while the block is open.
+  - **An atlas that grows with the voice.** It is no longer dimmed: its size follows the singer's loudness, measured on the separated vocal stem.
+  - **A maximalist overview.** At 3:50 the rewind lands on the token, which bursts into a live mosaic of every section, with all figure titles orbiting and fireworks, confetti, rays and glitter on the beat.
+  
+  See [experiment 10](reports/exp10_finale.md).
 - **One-line lyric edit:** the word "mind" was taken out of Verse 1 ("And out of it a **thing** that learns to answer why"). Only that part was re-sung, with Suno's replace-section. The line was fixed, but Suno regenerated about 30 s of audio rather than the requested 11.6 s window, and it shifted the file by 17 ms. See [experiment 6](reports/exp06_lyric_edit.md).
 
-**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.5.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.5.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.5.0): figures as part of their scenes, and the rewind finale. Older cuts:
+**Video:** [we-will-know-anthem.mp4](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/download/v1.6.0/we-will-know-anthem.mp4) (1920×1080, 30 fps, 4:00) from [release v1.6.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.6.0): a centred intro, the 3D chorus, a voice-driven atlas and the overview finale. Older cuts:
+- [v1.5.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.5.0): figures as part of their scenes, and the rewind finale.
 - [v1.4.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.4.0): figure cards as centre hero shots over a dimmed scene.
 - [v1.3.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.3.0): the same 86 cards in corner boxes beside the scenes.
 - [v1.2.0](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem/releases/tag/v1.2.0): the edited lyric with corrected onsets, no figure cards.
@@ -37,13 +46,23 @@ An original song plus a music video in which **every frame is drawn in code**. T
 | **Verse 2: ladder of abstraction** | **Verse 3: theory of deep learning** | **Bridge: atlas of the math** | **Final chorus: ideal solving** |
 | ![ladder](docs/img/s05_ladder.jpg) | ![theory](docs/img/s08_theory.jpg) | ![atlas](docs/img/s09_atlas.jpg) | ![finale](docs/img/s10_finale.jpg) |
 
-Figures inside the general scenes (frames of the v1.5.0 video):
+Frames of the v1.6.0 video:
 
-![Six frames of v1.4.0: GPT-2 token ids of the sung line in the layer tunnel; the loss surface with its own saddle, basins and the released grokking and double-descent curves; the chorus circuit over the traced prompt ending in Austin; the encyclopedia filing the ladder's figures; five theory pillars filled by their plots; the do()-intervention graph and the bit string collapsing into its program](docs/img/stage.jpg)
+![Six frames of v1.6.0: the centred title; the 3D chorus with the Dallas → Austin circuit lit over the traced prompt; the solvable-settings block with its finished plot; the undimmed atlas behind ONE SCIENCE OF INFORMATION; the flying rewind; the overview mosaic of every section around THE GOAL IS TO UNDERSTAND.](docs/img/stage.jpg)
 
 Twelve figure cards, all drawn from released data (shown as in v1.3.0):
 
 ![Twelve figure cards drawn from released data: attribution graph, grokking curves and Fourier spectrum, induction scores, refusal scores, world places, model scale, double descent, block-sparse featurizers, superposition, weekday latents, a Neuronpedia feature](docs/img/cards.jpg)
+
+**Highlights of v1.6.0** ([experiment 10](reports/exp10_finale.md)). All six pre-registered checks pass:
+- **Centred.** The title's bright-pixel centroid is +16 px from the frame centre (v1.5.0: −95 px), and the token's is −37 px (v1.5.0: −694 px). The token passes its ±38 px tolerance only narrowly.
+- **Richer choruses.** Every chorus frame is more detailed than in v1.5.0: median log₂ PNG-size ratio +0.30, 95 % CI [+0.26, +0.31].
+- **The overview.** It compresses to about 4× the bytes of the same moments in v1.5.0 (+2.02 [+1.98, +2.20]). Everywhere else nothing was lost (+0.000 [−0.003, +0.003]).
+- **The atlas.** It breathes with the voice (scale 1.05–1.14 through the bridge) and swells to 1.27–1.57 from "One science of information!".
+- **Negative findings and limits.**
+  - PNG size measures detail, not quality, and no viewer study was run.
+  - The chorus's flicker, attention arcs and next-position columns are schematic; only the circuit and its prompt are released data.
+  - The atlas gains (0.15, 0.6) were set by eye.
 
 **Highlights of v1.5.0** ([experiment 9](reports/exp09_unified.md)):
 - **Figures stay long enough to read.** The median time on screen is 6.0 s (v1.4.0: 2.2 s as the hero). 1 of 82 figures is shown under 2 s, against 41 of 86 before.
@@ -54,27 +73,9 @@ Twelve figure cards, all drawn from released data (shown as in v1.3.0):
   - The bridge lost detail (−0.22): its 21 formula cards became star labels that grow two at a time.
   - No viewer study was run.
 
-**Highlights of v1.4.0** ([experiment 8](reports/exp08_integration.md)):
-- **Inside the scenes.**
-  - 71 of the 86 cards dock into a scene object; the other 15 fly past the camera in the three fly-through scenes.
-  - A hero covers at most 33 % of the frame, for at most 3.2 s.
-  - The camera push is at most 8 %, so the general scene stays visible around every example.
-- **Real numbers in the general pictures.** Examples: the loss surface's own saddle (Hessian eigenvalues −0.27, +0.19, found by Newton's method), the sharp vs flat basin curvature (1.76 vs 0.27), and the traced prompt under the chorus circuits.
-- **Detail kept, not gained.** The pre-registered test passes: frames are not less detailed than v1.3.0 by more than the margin. The median log₂ PNG-size ratio is −0.014, with 95 % CI [−0.075, +0.016].
-- **Negative findings.**
-  - Verse 1 lost detail (−0.19), as did the bridge (−0.11); the finale gained (+0.13). Dimming the scene behind the hero may explain part of the loss, but this was not tested.
-  - A figure is centre stage 83 % of the sung time. The general scene has the frame alone for a quarter of the song.
-  - No viewer study was run.
-
-**Highlights of v1.3.0** ([experiment 7](reports/exp07_provenance.md)):
-- **Consistent with the papers.**
-  - The five largest Fourier frequencies of the released grokking embedding are exactly the paper's key frequencies {14, 35, 41, 42, 52}.
-  - ARENA's top induction heads include the IOI paper's 5.5 and 6.9.
-- **Coverage and density.** Every sung line has a card (56/56). Frames are more detailed than v1.2.0 at the same moments: median PNG size ×1.20 (log₂ +0.263, 95 % CI [+0.177, +0.422]).
-- **Negative findings.**
-  - The fact-check found three overclaims in our own plan (a Golden Gate quote, an ActAdd layer, a WeightWatcher "well trained" band), which were removed before release.
-  - Verse 1 gained no measurable detail (+0.003).
-  - Denser is not shown to be better: no viewer study was run.
+**Earlier versions:**
+- **v1.4.0** ([experiment 8](reports/exp08_integration.md)): figure cards as centre hero shots. Detail kept vs v1.3.0 (−0.014 [−0.075, +0.016]), but a figure held centre stage 83 % of the sung time.
+- **v1.3.0** ([experiment 7](reports/exp07_provenance.md)): the released-data cards. The grokking embedding's top-5 Fourier frequencies match the paper's exactly. Every sung line has a card, and frames are more detailed than v1.2.0 (+0.263 [+0.177, +0.422]).
 
 ## Methodology (how the song and the video are made)
 
@@ -119,7 +120,9 @@ Twelve figure cards, all drawn from released data (shown as in v1.3.0):
      - other figures are drawn by the scene itself;
    - a karaoke overlay, or giant kinetic words in the lower third of the choruses;
    - beat and cut flashes, a HUD and a scrolling citation ticker;
-   - in the outro, the rewind: Remotion `<Freeze>` copies of earlier frames, beat-cut backwards ever faster, landing on the opening token.
+   - in the outro, the rewind: Remotion `<Freeze>` copies of earlier frames, beat-cut backwards ever faster, landing on the opening token at the last downbeat before the last word;
+   - then the overview: ten live `<Freeze>` tiles, one per earlier section at its moment with the most figures, burst out of the token into a mosaic, under orbiting figure titles, downbeat fireworks, confetti, rays and glitter ([experiment 10](reports/exp10_finale.md)).
+   - Two scenes read extra data: the chorus lays its 3D network out on the attribution graphs' token × layer coordinates, and the bridge's atlas scales with the vocal envelope (`scripts/vocal_energy.py`: RMS of exp06's Demucs vocal stem, `video/public/vignettes/vocal_energy.json`).
 9. **Verification.** ffprobe checks resolution, fps, codecs and duration against the song. ffmpeg extracts one still per section for visual inspection.
 
 ## Quickstart
@@ -173,7 +176,7 @@ flowchart LR
         X[(released artifacts<br/>pinned URL + sha256)] --> Y[video/public/vignettes/*.json]
     end
     subgraph rd["phase 3: render (Remotion, video/)"]
-        R[Root.tsx calculateMetadata] --> V[Anthem.tsx: World = scene + its figure panels in layout slots + lyrics; outro: Freeze-frame rewind + flashes + HUD + ticker + audio]
+        R[Root.tsx calculateMetadata] --> V[Anthem.tsx: World = scene + its figure panels in layout slots + lyrics; outro: Freeze-frame rewind, then the Freeze-tile overview + flashes + HUD + ticker + audio]
     end
     subgraph vf["phase 4: verify"]
         F[ffprobe checks + section stills]
@@ -202,7 +205,7 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
    - Analyzes the audio (about 10 s), places the 82 figure cards at their sung words (logging trims and coverage), and writes `video/public/timeline.json` plus a copy of the MP3.
 3. **render**
    - `npx remotion render … --gl=angle` bundles the project, runs `calculateMetadata` (video length = song length, 7212 frames), and renders the frames in 8 parallel headless-Chrome tabs.
-   - It then encodes H.264 + AAC to `out/anthem.mp4`. This took about 11 minutes for v1.5.0 (7.5 for v1.3.0) on a 16-thread desktop.
+   - It then encodes H.264 + AAC to `out/anthem.mp4`. This took about 10 minutes for v1.6.0 (7.5 for v1.3.0) on a 16-thread desktop.
 4. **verify**
    - Checks 1920×1080, 30 fps, h264/aac, and duration within 0.5 s of the song.
    - Writes `out/anthem_verify.json` and `out/stills/verify_s*.png`.
@@ -223,7 +226,9 @@ Data flow during `uv run anthem`. Everything is logged with timestamps to the te
   
   See [docs/scenes.md](docs/scenes.md).
 - **Figures as part of their scenes (v1.5.0):** at most two panels per scene, in slots reserved away from its key objects, each wired to the rung, star, basin or node it explains. Some figures are drawn by the scene itself: atlas star labels grow into formulas, and the theory blocks open to their plots.
-- **A flying rewind finale:** the outro beat-cuts backwards through every section and figure, faster and faster, and lands on the opening token.
+- **A flying rewind and a maximalist overview (v1.6.0):** the outro beat-cuts backwards through every section and figure, faster and faster, lands on the opening token, and bursts into a live mosaic of every section with celebratory fireworks, confetti, rays and glitter.
+- **A 3D chorus on real coordinates (v1.6.0):** the attribution graph's supernodes sit at their token position and layer inside a flickering token × layer network, with the strongest circuit lit on every downbeat.
+- **Audio-reactive beyond the beat (v1.6.0):** the bridge's atlas follows the separated vocal loudness.
 - **82 figure cards**, at least one per sung line, each with a provenance badge and a citation. Released data is reused, never re-generated. Concrete examples include:
   - Anthropic's Dallas → Austin, rabbit-rhyme and 36+59 attribution graphs, and the grokking run with its Fourier key frequencies;
   - GPT-2's induction heads, the IOI circuit and the refusal direction;
@@ -254,11 +259,11 @@ content/            lyrics.txt, song.toml (Suno spec), scenes.toml (section -> s
 src/anthem/         pipeline.py (wrapper) + config, logging_setup, suno_client, song, lyrics,
                     alignment, take_selection, audio_analysis, timeline, vignettes, render, verify
 video/              Remotion project: src/Root.tsx, src/Anthem.tsx, src/lib (incl. mathviz.ts), src/components,
-                    src/scenes, src/stage (hero-shot lifecycle + anchors), src/vignettes (card bodies),
+                    src/scenes, src/stage (panel lifecycle, layout, anchors, rewind, overview), src/vignettes (card bodies),
                     public/vignettes (card data), scripts/stills.mjs, tests/
 data/song/          generated takes, covers, raw Suno timing JSON, song.json (cache)
 tests/              pytest suite (offline)
-scripts/            experiment scripts (exp02, exp03, exp05, exp06, exp07 data + density, exp08 integration, figures, card docs) + analysis/ (shared helpers: stats,
+scripts/            experiment scripts (exp02, exp03, exp05, exp06, exp07 data + density, exp08 integration, exp09, exp10, vocal envelope, figures, card docs) + analysis/ (shared helpers: stats,
                     released-artifact helpers, Whisper reference, Demucs separation, MMS_FA alignment, blinded anchors, decision rule, shot-lifecycle mirror)
 docs/               architecture, Suno API notes, scene guide, images
 reports/            per-experiment reports, summary, technical report (paper.md / paper.pdf)
