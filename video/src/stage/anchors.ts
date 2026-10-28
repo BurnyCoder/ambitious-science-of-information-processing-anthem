@@ -8,7 +8,7 @@
  * hero's anchor, so every concrete example visibly comes from, and returns to, the general picture.
  */
 import type {Section, Timeline, Vignette} from '../lib/timeline';
-import {BASE, LADDER_LEFT, RUNG_GAP, ladderRung} from '../scenes/LadderScene';
+import {ladderRung, rungAnchor} from '../scenes/LadderScene';
 import {FIELDS, projectStar} from '../scenes/AtlasScene';
 import {CHORUS_NODES, chorusNode} from '../scenes/ChorusScene';
 import {MANIFOLD_X, MANIFOLD_OF} from '../scenes/ManifoldsScene';
@@ -35,9 +35,9 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 		}
 		case 'ladder': {
 			const rung = ladderRung(tl, section, v);
-			const below = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.startS < v.startS && ladderRung(tl, section, u) === rung).length;
-			const y = BASE - rung * RUNG_GAP + 5; // rung height (the book sits one gap above the top rung)
-			return {x: LADDER_LEFT + 64, y, dock: {kind: 'thumb', x: LADDER_LEFT - 70 - below * 125, y, s: 0.19}}; // thumbnails stack left of the rail
+			const below = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.lane !== 'scene' && u.startS < v.startS && ladderRung(tl, section, u) === rung).length;
+			const a = rungAnchor(rung); // the end of the rung's label (or the book)
+			return {x: a.x, y: a.y, dock: {kind: 'thumb', x: a.x + 46 + below * 70, y: a.y, s: 0.1}}; // chips at the rung, before the panels
 		}
 		case 'manifolds': {
 			const before = (u: Vignette) => tl.vignettes.filter((w) => w.sectionIndex === u.sectionIndex && w.startS < u.startS).length; // order in section

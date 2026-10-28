@@ -67,12 +67,12 @@ Lanes a/b were then assigned greedily: each new panel takes the slot that has be
 | nngp "Tractable limits" | Trigger `^infinity$` → `^limits$`; now 144.6 s instead of 146.9 s | "Limits" opens the line; the old trigger was its last word |
 | "Nobody drew the plan" (Sutton's Bitter Lesson) | Lane `scene`: text on the tunnel wall | Third card within 3 s of verse 1's circuits line |
 | shoggoth "The drives behind the face" | Lane `scene`: mask behind the ladder's top rung | Decisions, behaviors and drives are sung within 1.8 s |
-| encyclopedia | Lane `scene`: the ladder's book | It is the book that files the rung figures |
+| encyclopedia | Stays a panel (slot a, after refusal) next to the book, which files the rung figures | First made `scene`; with slot a free after 98 s, a readable panel was better (refusal still gets 4.2 s) |
 | graphRabbit (verse 2) | Dropped | 1.3 s before the cut. The rhyme-planning graph is listed in the encyclopedia and lit in chorus 2's circuits |
 | curves | Lane `scene`: the tiles the landscape's "inside" dive ends in | Replaces a schematic card with the scene's own dive |
 | functionVector, truth, "the bigger they get" | Lane `scene`, timed by their cards: antonym stream, true/false split, Llama-2 R² steps | The scene already draws them; five cards in 5 s |
 | polysemantic (schematic) | Dropped | Superposition covers the same line with released data |
-| The five theory directions | Lane `scene`: drawn inside the theory blocks | You asked to fit them into the screen blocks |
+| The five theory directions | Lane `scene`: drawn inside the theory blocks | The author asked for them to fit into the screen blocks |
 | 15 bridge formulas, "One science of information" | Lane `scene`: star chips; the closing card becomes the statement's subtitle | 21 cards in 32 s; the statement must be the highlight |
 | neuronIcon, chip, hydrogen | Merged into `substrates`, one panel revealed word by word | Sung within 2.7 s |
 | (bridge) | `[[clear]]` at "science" | Earlier cards leave before "ONE SCIENCE OF INFORMATION" |

@@ -2,8 +2,10 @@
  * Verse 2 — the ladder of abstraction.
  * Local: a glowing ladder whose rungs light up, bottom to top, exactly when their keyword
  * is sung (neurons & heads -> activation manifolds -> parameter components -> algorithms ->
- * decisions -> behaviors -> drives); the climber rides up with them. Each rung's figure cards dive out of the rung
- * and dock beside it. On "encyclopedia" an open book appears above the top rung and the titles of the docked
+ * decisions -> behaviors -> drives); the climber rides up with them. The ladder stands in the left third at full
+ * height and stays visible: each rung's figure is a panel on the right (stage/layout.json), wired to the end of the
+ * rung's label, and docks there as a chip. On "drives" the shoggoth mask rises behind the top rungs (a card the
+ * scene draws itself). On "encyclopedia" an open book appears above the top rung and the titles of the docked
  * figures fly up into it, one entry each, so the encyclopedia visibly fills.
  * Global: visualizes Goodfire's research roadmap ("We can and must solve alignment",
  * https://www.goodfire.com/blog/we-can-and-must-solve-alignment).
@@ -12,6 +14,8 @@ import React from 'react'; // JSX
 import {AbsoluteFill} from 'remotion'; // layer
 import {beatPulse, sinceBeat, wordTime, type Section, type Timeline, type Vignette} from '../lib/timeline'; // keyword timing
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
+import {cardsOn} from '../stage/shots'; // the cards this scene draws itself
+import {VIGNETTES} from '../vignettes'; // their bodies
 import type {SceneProps} from './types'; // contract
 
 export const RUNGS: [string, RegExp][] = [ // label, keyword that triggers it
@@ -25,7 +29,12 @@ export const RUNGS: [string, RegExp][] = [ // label, keyword that triggers it
 ];
 export const RUNG_GAP = 100; // px between rungs
 export const BASE = 820; // y of the bottom rung (above the lyric overlay)
-export const LADDER_LEFT = 560; // x of the ladder container; rails at +60 and +300
+export const LADDER_LEFT = 120; // x of the ladder container; rails at +60 and +300, labels from +344 (left third)
+const LABEL_X = LADDER_LEFT + 344, CHAR_W = 17.3; // rung labels: start and advance of 27 px Orbitron bold (≈ 0.64 em)
+
+/** Local: where a rung's figure is wired to: the end of its label (rung RUNGS.length = the book). Global: stage/anchors.ts. */
+export const rungAnchor = (rung: number) => rung >= RUNGS.length ? {x: LADDER_LEFT + 290, y: BASE - RUNGS.length * RUNG_GAP}
+	: {x: LABEL_X + RUNGS[rung][0].length * CHAR_W + 12, y: BASE - rung * RUNG_GAP + 5};
 
 /** Local: when each rung's keyword is sung (evenly spaced if missing). Global: rung lighting here and card anchors in stage/anchors.ts. */
 export const rungTimes = (tl: Timeline, section: Section): number[] =>
@@ -63,8 +72,14 @@ export const LadderScene: React.FC<SceneProps> = ({tl, section}) => {
 	const flip = smooth(sinceBeat(tl.beats, t) / 0.35); // one page turn per beat: 0 -> 1 after each beat
 	const entries = tl.vignettes.filter((v) => v.sectionIndex === section.index && ladderRung(tl, section, v) < RUNGS.length); // figures on the rungs
 	const filed = entries.filter((_, i) => t > encyclo + 0.5 + i * 0.35 + 0.9).length; // entries already in the book
+	const mask = cardsOn(tl.vignettes, section.index, t).find((c) => c.v.id === 'shoggoth'); // "the drives behind the face"
+	const Mask = VIGNETTES.shoggoth?.Body;
 	return (
 		<AbsoluteFill>
+			{mask && Mask ? <div style={{position: 'absolute', left: LADDER_LEFT + 180 - 300, top: 120, width: 600, height: 250, opacity: 0.45 * mask.on,
+				transform: `scale(${0.85 + 0.15 * mask.on})`, filter: 'saturate(1.2)'}}> {/* behind the rails: the ladder stays in front */}
+				<Mask v={mask.v} tl={tl} t={t} local={t - mask.v.startS} p={0.5} w={600} h={250} pulse={pulse} accent={COLORS.amber} />
+			</div> : null}
 			<div style={{position: 'absolute', left: LADDER_LEFT, top: 0, width: 800, height: 1080}}>
 				{[0, 1].map((side) => ( // two rails
 					<div key={side} style={{position: 'absolute', left: side ? 300 : 60, top: BASE - (RUNGS.length - 1) * RUNG_GAP - 70, width: 8, height: (RUNGS.length - 1) * RUNG_GAP + 140,
