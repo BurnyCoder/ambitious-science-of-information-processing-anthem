@@ -223,6 +223,10 @@ def small_tables() -> None:
     tok = Tokenizer.from_file(str(EXT / "gpt2" / "tokenizer.json"))
     write("tokens", [{"text": t, "ids": e.ids, "tokens": e.tokens} for t in ["We will know", " The goal is to understand."]
                      for e in [tok.encode(t)]])
+    from anthem.lyrics import parse_lyrics  # the written lyrics, same line numbering as timeline.json
+    lines = [ln for sec in parse_lyrics((ROOT / "content" / "lyrics.txt").read_text(encoding="utf-8")) for ln in sec.lines]
+    write("lyric_tokens", {ln.index: [tok.encode((" " if k else "") + w.text).ids for k, w in enumerate(ln.words)]  # in running text
+                           for ln in lines})  # line index -> GPT-2 ids of each word, for the layer scene's token chips
     from PIL import Image  # resize the two released figures
     img = Image.open(EXT / "goodfire" / "figure_1.png").convert("RGB")
     img.resize((1200, round(1200 * img.height / img.width))).save(OUT / "bsf_figure1.jpg", quality=85)  # MIT, Goodfire
