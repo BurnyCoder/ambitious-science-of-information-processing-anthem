@@ -12,7 +12,7 @@ import {ladderRung, rungAnchor} from '../scenes/LadderScene';
 import {FIELDS, projectStar} from '../scenes/AtlasScene';
 import {landscapeAnchor} from '../scenes/LandscapeScene';
 import {CHORUS_NODES, chorusNode} from '../scenes/ChorusScene';
-import {MANIFOLD_X, MANIFOLD_OF} from '../scenes/ManifoldsScene';
+import {MANIFOLD_OF, manifoldAnchor} from '../scenes/ManifoldsScene';
 import {PLOT} from '../scenes/TheoryScene';
 
 export type Dock = {kind: 'thumb'; x: number; y: number; s: number} | {kind: 'past'};
@@ -45,8 +45,9 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 			const before = (u: Vignette) => tl.vignettes.filter((w) => w.sectionIndex === u.sectionIndex && w.startS < u.startS).length; // order in section
 			const mOf = (u: Vignette) => MANIFOLD_OF[u.id] ?? before(u) % 3; // ring, helix or globe (unlisted cards take turns)
 			const m = mOf(v);
-			const below = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.startS < v.startS && mOf(u) === m).length;
-			return {x: MANIFOLD_X[m], y: 540, dock: {kind: 'thumb', x: MANIFOLD_X[m] + (below - 1) * 125, y: 812, s: 0.19}};
+			const below = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.lane !== 'scene' && u.startS < v.startS && mOf(u) === m).length;
+			const a = manifoldAnchor(m, Math.min(1, (t - section.startS) / (section.endS - section.startS))); // the manifold's centre on screen
+			return {x: a.x, y: a.y, dock: {kind: 'thumb', x: a.x + (below - 0.5) * 80, y: a.y + 170, s: 0.1}}; // chips under the cloud
 		}
 		case 'theory': { // the slot's figures (learning mechanics, GPT-4's prediction) belong to the scaling plot under them
 			const x = PLOT.x + PLOT.w * 0.62, y = PLOT.y + PLOT.h * 0.4;
