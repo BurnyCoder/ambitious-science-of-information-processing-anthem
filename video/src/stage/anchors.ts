@@ -57,9 +57,7 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 				const p = projectStar(f, local);
 				return {x: p.x, y: p.y, dock: {kind: 'thumb', x: p.x + 70, y: p.y + 42, s: 0.11 + 0.05 * p.s}};
 			}
-			const a = -Math.PI / 2 + k * 0.83; // other lenses take the outer ring
-			const x = 960 + Math.cos(a) * 820, y = 520 + Math.sin(a) * 380;
-			return {x, y, dock: {kind: 'thumb', x, y, s: 0.12}};
+			return {x: 960, y: 400, dock: PAST}; // cards with no star (carbon · silicon · stars) belong to the whole sphere
 		}
 		case 'finale': {
 			const a = -Math.PI / 2 + k * (Math.PI / 4); // halo around the words
