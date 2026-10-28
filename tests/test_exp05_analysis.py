@@ -5,6 +5,7 @@ line-cluster bootstrap, the cross-correlation lag finder, the windowed CTC emiss
 symmetric anchor selection and the pre-registered decision rule.
 Global context: exp05 decides whether the video's karaoke gets a global time offset; these
 functions turn raw onsets into that decision, so each is pinned here before it is run on the song.
+Also: the density decision rule of exp07 and exp08.
 Sources: numpy random Generator https://numpy.org/doc/stable/reference/random/generator.html ,
          scipy.signal.correlation_lags https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.correlation_lags.html
 """
@@ -85,3 +86,13 @@ def test_decision_rule_cases():
     assert fb["offset_s"] == pytest.approx(-0.21) and fb["basis"] == "anchors"  # fallback to the anchors
     assert decide_offset(**{**ok, "alpha_s": -0.1, "alpha_s_ci": (-0.2, -0.05)})["offset_s"] == 0  # D4: wrong sign
     assert decide_offset(**{**ok, "n_anchors": 5, "alpha_s_ci": (-0.1, 0.3)})["offset_s"] == 0  # D3 and D4 fail
+
+
+def test_density_decision_superiority_and_non_inferiority():
+    """exp07 asks 'more detail' (CI above 0); exp08 asks 'not less detail' (CI lower bound above −margin)."""
+    from analysis.stats import density_decision  # unit under test
+    assert density_decision(0.2, (0.05, 0.3)) is True  # superiority: CI above 0
+    assert density_decision(0.2, (-0.01, 0.3)) is False  # superiority: CI touches 0
+    assert density_decision(-0.05, (-0.09, 0.0), margin=0.10) is True  # non-inferior: lower bound −0.09 > −0.10
+    assert density_decision(-0.05, (-0.12, 0.0), margin=0.10) is False  # lower bound below the margin
+    assert density_decision(0.0, (float("nan"), 0.1), margin=0.10) is False  # NaN bound never passes

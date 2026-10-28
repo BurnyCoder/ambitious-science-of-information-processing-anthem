@@ -41,3 +41,13 @@ def cluster_median_ci(x, clusters, n_resamples: int = 10_000, seed: int = 0) -> 
 def excludes_zero(ci) -> bool:
     """Local: True if a (low, high) interval lies strictly on one side of 0.  Global: decision condition D1/D4."""
     return bool(ci[0] > 0 or ci[1] < 0)  # NaN bounds compare False -> "does not exclude"
+
+
+def density_decision(median: float, ci, margin: float | None = None) -> bool:
+    """Local: the pre-specified density test. Without a margin, superiority: median > 0 and the CI excludes 0
+    (exp07, "more detailed"). With a margin m, non-inferiority: the CI's lower bound is above −m (exp08, "not less
+    detailed").  Global: validate_density.py.  Source: non-inferiority by the CI bound vs the margin, Piaggio et al.
+    2012, CONSORT extension for non-inferiority trials, JAMA 308(24):2594, https://doi.org/10.1001/jama.2012.87802"""
+    if margin is None:
+        return bool(median > 0 and excludes_zero(ci))
+    return bool(ci[0] > -margin)  # NaN compares False -> fails
