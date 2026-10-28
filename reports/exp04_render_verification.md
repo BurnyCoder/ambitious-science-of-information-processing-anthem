@@ -27,7 +27,7 @@ Chorus, manifolds, theory and outro needed no layout fixes. The re-rendered stil
 
 Command (from `src/anthem/render.py`, logged in full): `npx remotion render src/index.ts Anthem out/anthem.mp4 --gl=angle --concurrency=8 --log=info`
 
-There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections), the sixth (before two label fixes found in its card stills) and the seventh (before the code-review fixes of PR #9) were not released; the eighth is v1.3.0.
+There were three full renders: the first with repair v1 timings, the second with repair v2 (after exp03, released as v1.0.0), and the third with repair v2 plus the −0.137 s word offset decided by [exp05](exp05_onset_offset.md) (released as v1.1.0). The fourth uses the edited take from [exp06](exp06_lyric_edit.md) ("mind" replaced by "thing") with its re-estimated −0.156 s offset (released as v1.2.0). The fifth and sixth add the illustration track of [exp07](exp07_provenance.md) (86 figure cards, real-data scene upgrades, punch zoom, cut glitch, equation dust and citation ticker). The fifth (before the fact-check corrections), the sixth (before two label fixes found in its card stills) and the seventh (before the code-review fixes of PR #9) were not released; the eighth is v1.3.0. The ninth and tenth stage the cards as hero shots inside the scenes ([exp08](exp08_integration.md)); the ninth was rendered before the code-review fixes of the v1.4.0 PR, and the tenth is v1.4.0.
 
 | Render | Frames | Wall time | File size | Streams (ffprobe) | Duration (video / song) | Verify |
 |---|---|---|---|---|---|---|
@@ -39,6 +39,8 @@ There were three full renders: the first with repair v1 timings, the second with
 | 6 (illustration track, fact-checked; not released) | 7212 | 517.3 s | 244.6 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 | 7 (illustration track, label fixes; not released) | 7212 | 531.4 s | 244.4 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 | 8 (illustration track + review fixes, v1.3.0) | 7212 | 441.3 s | 244.4 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
+| 9 (hero shots + concrete scene layers; not released) | 7212 | 691.9 s | 263.0 MB | h264 1920×1080 30/1 + aac | not recorded (file replaced by render 10) / 240.41 s | **ok** |
+| 10 (hero shots + review fixes, v1.4.0) | 7212 | 694.1 s | 263.6 MB | h264 1920×1080 30/1 + aac | 240.405 s / 240.41 s | **ok** |
 
 - **Hardware.** A 16-thread Windows 11 desktop, Remotion 4.0.536, concurrency 8, ANGLE GL.
 - **Log volume.** Render 1 logged one line per frame (about 14k lines), and its Remotion lines contained ANSI colour codes. Both were fixed before render 2: progress is logged every 5 %, and the codes are stripped (`render.keep_line`, `render.ANSI`). Render 2's run log shows 64 Remotion lines with no escape codes.
@@ -63,6 +65,22 @@ Before the full render, `node scripts/stills.mjs --vignettes` rendered one still
 | Equation dust was too strong near the lyrics in the finale | Opacity halved and kept above the lyric band |
 
 After render 6, its card stills showed two remaining defects: overlapping rabbit-graph labels and a clipped WeightWatcher legend. Both were fixed with one shared label shortener and a two-line legend, then rendered again. The code review of PR #9 then changed four on-screen details (a chord-width floor, the Othello card's board now shows the real opening position instead of random pieces, the " know" token label, a fail-fast check for the chorus circuits), so the video was rendered once more. The 11 verification stills of render 8 show every scene in order, with the karaoke lit on the sung word and the cards in their slots. No error or warning lines appear in the run log of render 8.
+
+## Iteration 4: hero shots inside the scenes (v1.4.0)
+
+The cards no longer sit in boxes. Each one dives out of a scene object, is hero for at most 3.2 s, and docks back. The scenes gained concrete layers ([docs/scenes.md](../docs/scenes.md)). Stills were rendered per scene while each was rebuilt, then for every card at its hero moment (`stills.mjs --vignettes`, 86 stills) and for every section just before its end (`--docks`, 11 stills). All were tiled into contact sheets and inspected by eye. Problems found and fixed before the full render:
+
+| Problem seen | Fix |
+|---|---|
+| The camera push (×1.15) cropped the theory title at the left edge | Push reduced to ×1.08, brightness 0.72 |
+| Layer tunnel: attention arcs and the token-row label ran into the HUD; mile markers floated above the chips | Arcs flattened, the label moved into the left margin, markers moved onto the tunnel walls at the frame edges |
+| Landscape: the grokking and double-descent ribbons and the saddle label projected above the top of the frame and under the hero | Ribbons moved onto side walls and lowered; labels became margin callouts with leader lines (x between 110 and 1810, outside the push's crop) |
+| Landscape: the double-descent "train" label collided with the flat-minimum callout | Basin callouts moved down to y = 640 |
+| Chorus: circuit node labels near the top reached the HUD once the camera pushed in; the prompt row sat close to the ticker | Node grid starts at y = 180; the row moved up to y = 958 |
+| Finale: the program's caption collided with the citation ticker | Program and compression ratio on one line at y = 972 |
+| Intro: the tokens card's caption overlapped the title's subtitle | The title dissolves as its own tokens emerge |
+
+The code review of the branch then found a visible defect that stills cannot show. When one hero handed over to the next, the push origin jumped from one anchor to the other in a single frame. With the scale near 1.04–1.07 at that moment, the scene would jerk by up to about 70 px. The push origin is now the heroes' anchors averaged by heroness (`focusOf`, tested). The review also docked verse-3 cards by order rather than by direction, which is now fixed. Render 10 includes these fixes.
 
 ## Learnings
 

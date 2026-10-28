@@ -64,4 +64,50 @@ These were fixed in the approved plan and in this file **before** the v1.4.0 ren
 
 ## Results
 
-*(filled in after the render; see below)*
+Raw data: [`data/exp08_density.json`](data/exp08_density.json) and [`data/exp08_integration.json`](data/exp08_integration.json). Figure: [`figures/fig7_exp08.png`](figures/fig7_exp08.png).
+
+| Check | Result |
+|---|---|
+| 1. Render verification | **pass**: render 10, 7212 frames, h264 1920×1080 30/1 + aac, 240.405 s for a 240.41 s song, 694 s wall time, 263.6 MB ([exp04](exp04_render_verification.md)) |
+| 2. Density non-inferiority (primary) | **pass**: median log₂(v1.4.0 / v1.3.0) = −0.014, section-bootstrap 95 % CI [−0.075, +0.016]; the lower bound is above −0.10 |
+| 3a. Hero area ≤ 0.6 of the frame | **pass**: 0.328 (most scenes), 0.193 (chorus, finale) |
+| 3b. Hero time ≤ 3.2 s + 0.2 s + 1 frame | **pass**: longest 3.20 s |
+| 3c. ≤ 4 cards active at once | **pass**: 4 |
+
+![Exp08. (a) Per-frame log₂ PNG-size ratio v1.4.0 / v1.3.0 with sections shaded and the pre-specified margin. (b) Largest heroness over the song; the dashed line is the 0.5 threshold. (c) Cards docked into a scene object per section.](figures/fig7_exp08.png)
+
+**Density, in more detail.** The pre-specified test passes: the frames did not become emptier by more than the 0.10 margin. They also did not become richer. Details:
+- The median moved slightly down (−0.014, about 1 % fewer PNG bytes), and only 47 of 120 paired frames are larger.
+- The frame-level bootstrap, a secondary view that ignores the autocorrelation within sections, gives [−0.043, −0.002].
+- **Per section, the change is not uniform.**
+  - The finale (+0.133) and the outro (+0.111) gained detail: the bit rain, the frame-wide do()-graph, and the figure titles spiralling into the token.
+  - Verse 1 (−0.191), the bridge (−0.111) and verse 2 (−0.094) lost bytes.
+- *Post-hoc, untested explanation.* In those three sections v1.3.0 showed up to four corner cards at full brightness at once. v1.4.0 shows one hero over a scene dimmed to 72 % brightness, with smaller receded cards. Dimming alone lowers compressed size without removing any drawn element, so the proxy confounds "less detail" with "darker". Separating the two would need an ablation, a render with the dimming off, which was not run.
+
+**Integration measures (descriptive):**
+- **Hero time.** A figure is the hero during **82.6 %** of the sung time and 74.6 % of the whole song. The general scene has the frame to itself for **25.4 %** of the song: gaps between lines, instrumental passages, and the time after a card's 3.2 s of hero time before the next card arrives.
+- **Coverage.** The mean nominal hero coverage over sung time is 23.3 % of the frame. A hero covers at most 32.8 % of it (nominal box), so even with a hero up, about two thirds of the frame shows the scene, pushed in by at most 8 %.
+- **Docking.**
+  - 71 of the 86 cards dock into a scene object: 6 + 6 chorus nodes, 11 ladder rungs and book, 8 manifolds, 7 theory pillars and plot, 21 atlas stars, 8 finale halo slots, and 4 into the outro token.
+  - The 15 cards of the intro, verse 1 and pre-chorus 1 fly past the camera, because those scenes are fly-throughs.
+- **Cards in motion.** At most 4 cards are active at once, as the lanes guarantee. Counting cards still flying back to dock, up to 6 are in motion at once (descriptive; not a design check).
+- **Mirror check.** The Python mirror and `shots.ts` gave identical heroness on 2,400 samples (every 0.1 s) of the real timeline, with a maximum absolute difference of 0. This was a one-off check run with node during the experiment.
+
+## What this does and does not show
+
+- It shows that the hero-shot staging met its own design constraints and kept the video's overall detail within the pre-specified margin.
+- It does not show that the video is easier to follow or more engaging. No viewer study was run, and PNG size measures detail, not quality.
+- The 82.6 % hero share also means a figure is on stage most of the time. Whether that balance is right is a design judgement, and the user asked for a maximalist video. The measure is reported so the balance can be changed knowingly: `HERO_MAX_S` in `shots.ts` sets it.
+- **Limitations.**
+  - The hero area is a nominal box (600 × 350 px times the hero scale), not measured pixels.
+  - Legibility was judged by the agent from 86 hero stills, 11 dock stills and the 11 verification stills, not by viewers.
+  - The baseline is a single render of v1.3.0. Renders are deterministic, so there is no seed variance to estimate.
+
+## Learnings
+
+- **Stills catch layout; only motion catches jumps.**
+  - Every layout defect in [exp04 iteration 4](exp04_render_verification.md) was found in stills.
+  - The camera-origin jump at hero hand-overs was invisible in any single frame. It was found by reading the code: the origin was the current hero's anchor, and it switched at a heroness tie.
+  - Making the origin a heroness-weighted average removed the discontinuity by construction.
+- **A density proxy can move for reasons unrelated to content.** Dimming the scene is the obvious one here. Exp07 used the same proxy to show *more* detail. Here it is used only as a guard against *less*, and the per-section numbers are reported because the aggregate hides a −0.19 section.
+- **Geometry exported from the scenes keeps anchors honest.** Ladder rungs, pillars, star projections and chorus nodes are imported by `anchors.ts`, so a card docks where the object is actually drawn. The theory pillars were first assigned by card order, which the code review flagged. They are now assigned by the direction named in the card's title.

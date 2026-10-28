@@ -9,6 +9,7 @@ and writes PNG figures to reports/figures/:
   fig5_lyric_edit.png    exp06: where replace-section changed the audio, and per-line Suno - MMS on both takes
   fig6_exp07.png         exp07: released grokking run, its Fourier spectrum, induction scores, density v1.3.0 vs v1.2.0
   fig7_exp08.png         exp08: density v1.4.0 vs v1.3.0, hero share over the song, cards docked per section
+and the README images docs/img/s*.jpg (the verify stills) and docs/img/stage.jpg (six frames of out/anthem.mp4)
 Global context: every number plotted is read from the committed raw data, so figures are reproducible.
 Design notes (avoiding misleading plots): shared, labelled axes; log scale only where errors span 3 decades and it
 is stated on the axis; half-tempo failures are marked explicitly instead of being clipped away.
@@ -17,7 +18,9 @@ Sources: matplotlib https://matplotlib.org/stable/api/pyplot_summary.html ,
 Usage: uv run --group analysis python scripts/make_figures.py
 """
 
+import io  # PNG bytes from ffmpeg
 import json  # raw data
+import subprocess  # ffmpeg frame extraction
 from pathlib import Path  # paths
 
 import matplotlib  # plotting backend selection
@@ -230,6 +233,28 @@ def fig_exp08() -> None:
     plt.close(fig)
 
 
+SHOWCASE = [(33.6, "verse 1: GPT-2 ids of the sung line"), (53.7, "pre-chorus: the surface's own saddle, basins, released curves"),
+            (81.1, "chorus: the traced prompt -> Austin"), (99.7, "verse 2: the encyclopedia files the rung figures"),
+            (163.6, "verse 3: five pillars filled by their plots"), (206.7, "final chorus: do(circuit := c'), bits -> program")]  # (song time, caption; ASCII: PIL's default font)
+
+
+def readme_images() -> None:
+    """Local: docs/img/s*.jpg from the verify stills, and docs/img/stage.jpg, a 3 x 2 grid of frames of the final MP4
+    at fixed song times with captions.  Global: the README's scene table and hero-shot showcase come from the video."""
+    from PIL import Image, ImageDraw  # image tiling (analysis group)
+    img = ROOT / "docs" / "img"
+    for f in sorted((ROOT / "out" / "stills").glob("verify_s*.png")):  # one still per section, from verify.py
+        Image.open(f).convert("RGB").resize((640, 360)).save(img / f"{f.stem.removeprefix('verify_')}.jpg", quality=85)
+    grid = Image.new("RGB", (3 * 640, 2 * 360))
+    for i, (t, caption) in enumerate(SHOWCASE):
+        png = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", str(ROOT / "out" / "anthem.mp4"), "-frames:v", "1",
+                              "-f", "image2pipe", "-vcodec", "png", "-"], check=True, capture_output=True).stdout  # decoded frame
+        tile = Image.open(io.BytesIO(png)).convert("RGB").resize((640, 360))
+        ImageDraw.Draw(tile).text((8, 340), caption, fill=(255, 210, 90))
+        grid.paste(tile, ((i % 3) * 640, (i // 3) * 360))
+    grid.save(img / "stage.jpg", quality=85)
+
+
 if __name__ == "__main__":
     FIG.mkdir(parents=True, exist_ok=True)  # reports/figures
     fig_stills()
@@ -243,4 +268,6 @@ if __name__ == "__main__":
         fig_exp07()
     if (DATA / "exp08_density.json").exists() and (DATA / "exp08_integration.json").exists():  # written by the exp08 scripts
         fig_exp08()
+    if (ROOT / "out" / "anthem.mp4").exists():  # the README images come from the rendered video
+        readme_images()
     print("figures written to", FIG)
