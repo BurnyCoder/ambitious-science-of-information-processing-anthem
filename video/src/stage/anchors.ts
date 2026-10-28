@@ -7,8 +7,8 @@
  * Global: Shot.tsx flies cards from the anchor to centre stage and back, and Anthem pushes the camera toward the
  * hero's anchor, so every concrete example visibly comes from, and returns to, the general picture.
  */
-import {wordTime, type Section, type Timeline, type Vignette} from '../lib/timeline';
-import {BASE, LADDER_LEFT, RUNG_GAP, RUNGS, rungTimes} from '../scenes/LadderScene';
+import type {Section, Timeline, Vignette} from '../lib/timeline';
+import {BASE, LADDER_LEFT, RUNG_GAP, ladderRung} from '../scenes/LadderScene';
 import {FIELDS, projectStar} from '../scenes/AtlasScene';
 import {CHORUS_NODES, chorusNode} from '../scenes/ChorusScene';
 import {MANIFOLD_X, MANIFOLD_OF} from '../scenes/ManifoldsScene';
@@ -19,14 +19,6 @@ export type Anchor = {x: number; y: number; dock: Dock};
 
 const PAST: Dock = {kind: 'past'};
 const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 11); // stable small hash
-
-/** Local: the rung a ladder card belongs to: the last rung sung by its start, or the "book" above the ladder
- * once "encyclopedia" has been sung. Global: ladder anchors and their stacking. */
-const ladderRung = (tl: Timeline, section: Section, v: Vignette): number => {
-	const encyclo = wordTime(tl, section, /encyclopedia/i);
-	if (encyclo !== null && v.startS >= encyclo - 0.3) return RUNGS.length; // the encyclopedia sits above the top rung
-	return Math.max(0, rungTimes(tl, section).filter((s) => s <= v.startS + 0.3).length - 1);
-};
 
 /** Local: anchor of card v (k-th card of its section) at song time t. Global: dive origin + dock target. */
 export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number, t: number): Anchor => {
