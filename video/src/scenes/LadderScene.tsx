@@ -18,7 +18,7 @@ import {cardsOn} from '../stage/shots'; // the cards this scene draws itself
 import {VIGNETTES} from '../vignettes'; // their bodies
 import type {SceneProps} from './types'; // contract
 
-export const RUNGS: [string, RegExp][] = [ // label, keyword that triggers it
+const RUNGS: [string, RegExp][] = [ // label, keyword that triggers it
 	['neurons & attention heads', /neuron/i],
 	['activation manifolds', /manifold/i],
 	['parameter components', /parameter/i],
@@ -27,17 +27,17 @@ export const RUNGS: [string, RegExp][] = [ // label, keyword that triggers it
 	['behaviors', /behavior/i],
 	['drives', /drive/i],
 ];
-export const RUNG_GAP = 100; // px between rungs
-export const BASE = 820; // y of the bottom rung (above the lyric overlay)
-export const LADDER_LEFT = 120; // x of the ladder container; rails at +60 and +300, labels from +344 (left third)
+const RUNG_GAP = 100; // px between rungs
+const BASE = 820; // y of the bottom rung (above the lyric overlay)
+const LADDER_LEFT = 120; // x of the ladder container; rails at +60 and +300, labels from +344 (left third)
 const LABEL_X = LADDER_LEFT + 344, CHAR_W = 17.3; // rung labels: start and advance of 27 px Orbitron bold (≈ 0.64 em)
 
 /** Local: where a rung's figure is wired to: the end of its label (rung RUNGS.length = the book). Global: stage/anchors.ts. */
 export const rungAnchor = (rung: number) => rung >= RUNGS.length ? {x: LADDER_LEFT + 290, y: BASE - RUNGS.length * RUNG_GAP}
 	: {x: LABEL_X + RUNGS[rung][0].length * CHAR_W + 12, y: BASE - rung * RUNG_GAP + 5};
 
-/** Local: when each rung's keyword is sung (evenly spaced if missing). Global: rung lighting here and card anchors in stage/anchors.ts. */
-export const rungTimes = (tl: Timeline, section: Section): number[] =>
+/** Local: when each rung's keyword is sung (evenly spaced if missing). Global: rung lighting here and ladderRung (which stage/anchors.ts uses). */
+const rungTimes = (tl: Timeline, section: Section): number[] =>
 	RUNGS.map(([, re], i) => wordTime(tl, section, re) ?? section.startS + ((i + 1) / 9) * (section.endS - section.startS));
 
 /** Local: the rung a ladder card belongs to: the last rung sung by its start, or the book above the ladder (RUNGS.length)

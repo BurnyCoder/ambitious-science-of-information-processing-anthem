@@ -41,7 +41,8 @@ export const rewindPlan = (tl: Timeline): RewindPlan | null => {
 	const cuts: Cut[] = bounds.slice(0, -1).map((from, i) => {
 		const to = bounds[i + 1], m = marks[Math.round((i * (marks.length - 1)) / Math.max(1, n - 1))]; // spread over the whole song
 		const span = (to - from) * (2 + 10 * (i / Math.max(1, n - 1))); // source seconds covered: 2x -> 12x speed
-		return {from, to, src0: Math.min(start - 0.1, m + span / 2), src1: Math.max(LANDING_SRC + 0.5, m - span / 2)};
+		const src1 = Math.max(LANDING_SRC + 0.5, m - span / 2); // never into the landing's intro stretch
+		return {from, to, src0: Math.max(src1 + 0.5, Math.min(start - 0.1, m + span / 2)), src1}; // always backwards, even for an early moment
 	});
 	cuts.push({from: land, to: end, src0: LANDING_SRC, src1: TOKEN_SRC}); // the intro backwards onto its token
 	return {start, land, end, cuts};

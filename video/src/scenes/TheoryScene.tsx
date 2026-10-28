@@ -53,7 +53,6 @@ export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 	const open = DIRECTIONS.map((_, i) => ease((t - startOf(i)) / 0.5) * (i < 4 ? 1 - ease((t - startOf(i + 1)) / 0.5) : 1)); // newest is open
 	const widths = open.map((o) => (BLOCKS.narrow + (WIDE - BLOCKS.narrow) * o) * (1 - settle) + ((BLOCKS.w - 4 * BLOCKS.gap) / 5) * settle);
 	const lefts = widths.map((_, i) => BLOCKS.x + widths.slice(0, i).reduce((a, b) => a + b + BLOCKS.gap, 0));
-	const pulse = 0; // blocks keep still; the card bodies animate themselves
 	return (
 		<AbsoluteFill>
 			<div style={{position: 'absolute', left: 60, top: 92, fontFamily: FONTS.display, fontWeight: 900, fontSize: 34, color: COLORS.ink, textShadow: glow(COLORS.cyan, 0.6), opacity: smooth(local / 0.6)}}>
@@ -75,7 +74,7 @@ export const TheoryScene: React.FC<SceneProps> = ({tl, section}) => {
 						</div>
 						{v ? <div style={{position: 'absolute', left: 10, top: w < 150 ? BLOCKS.h - 20 - 350 * s : Math.max(44, (BLOCKS.h - 350 * s) / 2 + 14), width: 600, transformOrigin: 'left top',
 							transform: `scale(${s})`, opacity: on}}>
-							<CardFace tl={tl} v={v} t={t} accent={COLORS.cyan} pulse={pulse} words={smooth((w - 300) / 120)} />
+							<CardFace tl={tl} v={v} t={t} accent={COLORS.cyan} pulse={0} words={smooth((w - 300) / 120)} />
 						</div> : null}
 					</div>
 				);

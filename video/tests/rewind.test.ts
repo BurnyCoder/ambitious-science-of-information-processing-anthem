@@ -41,3 +41,11 @@ test('at most two copies, the incoming one behind the outgoing one', () => {
 	}
 	assert.deepEqual(rewindAt(plan, plan.start - 1), []); // nothing before the outro
 });
+
+test('a moment early in the song still plays backwards', () => {
+	const toy = {tempoBpm: 120, downbeats: Array.from({length: 20}, (_, i) => i * 2), vignettes: [{startS: 2, endS: 4}, {startS: 12, endS: 14}],
+		sections: [{index: 0, scene: 'intro', startS: 0, endS: 1}, {index: 1, scene: 'layers', startS: 1, endS: 20}, {index: 2, scene: 'outro', startS: 20, endS: 40}],
+		lines: [{endS: 36}]};
+	const p = rewindPlan(toy as never)!;
+	p.cuts.forEach((c) => assert.ok(c.src0 > c.src1, `${c.src0} > ${c.src1}`)); // a moment at 3 s must not run forwards
+});
