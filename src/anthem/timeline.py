@@ -92,7 +92,7 @@ def build_timeline(sections: list[Section], words: list[TimedWord], audio: Audio
         line["text"] = " ".join(x["text"] for x in line["words"])
         line["backing"] = all(x["backing"] for x in line["words"])  # whole line is a backing echo
     timeline = {
-        "version": 3, "title": title, "fps": fps, "audio": "anthem.mp3",
+        "version": 4, "title": title, "fps": fps, "audio": "anthem.mp3",
         "durationS": _r(audio.duration_s), "durationInFrames": int(round(audio.duration_s * fps)),
         "tempoBpm": _r(audio.tempo_bpm), "sections": out_sections,
         "lines": [lines[k] for k in sorted(lines)],

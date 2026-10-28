@@ -25,11 +25,11 @@ How cards are placed and drawn: [architecture](architecture.md). Checks of every
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 2 | 18.7–24.7 | `^matrix$` | **A matrix: the most general linear map** (matmul) | live math | [Strang 2016, Introduction to Linear Algebra, ch. 2](https://math.mit.edu/~gs/linearalgebra/) |
+| 2 | 18.7–24.4 | `^matrix$` | **A matrix: the most general linear map** (matmul) | live math | [Strang 2016, Introduction to Linear Algebra, ch. 2](https://math.mit.edu/~gs/linearalgebra/) |
 | 3 | 19.7–25.7 | `^bend$` | **And a bend: one nonlinearity** (activations) | live math | [Nair & Hinton 2010 · Hendrycks & Gimpel 2016 · Shazeer 2020, GLU Variants](https://arxiv.org/abs/2002.05202) |
 | 4 | 24.4–30.4 | `^trillion$` | **Stacked a trillion high** (scale) | released data | [Epoch AI, Notable AI Models (CC BY 4.0)](https://epoch.ai/data/ai-models) |
 | 5 | 26.7–32.7 | `^nonlinear$` | **Linear, then nonlinear, again** (regions) | live math | [Montúfar et al. 2014 · Balestriero & Baraniuk 2018, A Spline Theory of Deep Networks](https://arxiv.org/abs/1402.1869) |
-| 6 | 32.0–38.0 | `^answer$` | **How it answers: the residual stream** (residual) | schematic | [Elhage et al. 2021, A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) |
+| 6 | 32.0–37.5 | `^answer$` | **How it answers: the residual stream** (residual) | schematic | [Elhage et al. 2021, A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) |
 | 7 | 34.8–40.8 | `^circuits$` | **Nobody wrote its circuits: induction heads** (induction) | released data | [Olsson et al. 2022 · scores: ARENA 3.0, repeated random tokens](https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html) |
 | 8 | 36.7–41.5 | `^plan$` | **Nobody drew the plan** (formula) | from the paper | [Sutton 2019, The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html) |
 | 9 | 37.5–41.5 | `^gradient$` | **Gradient by gradient** (backprop) | from the paper | [Rumelhart, Hinton & Williams 1986 · Loshchilov & Hutter 2019 (AdamW)](https://www.nature.com/articles/323533a0) |
@@ -38,9 +38,9 @@ How cards are placed and drawn: [architecture](architecture.md). Checks of every
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 10 | 42.2–48.2 | `^billion` | **A billion-dimensional night** (concentration) | live math | [Vershynin 2018, High-Dimensional Probability, ch. 3](https://www.math.uci.edu/~rvershyn/papers/HDP-book/HDP-book.html) |
-| 11 | 46.0–52.0 | `^saddle$` | **Past every saddle** (saddle) | schematic | [Dauphin et al. 2014 · Sagun et al. 2017](https://arxiv.org/abs/1406.2572) |
-| 12 | 47.4–53.4 | `^flat$` | **To valleys flat and wide** (flat) | schematic | [Hochreiter & Schmidhuber 1997 · Keskar et al. 2017 · Foret et al. 2021 · Garipov et al. 2018](https://arxiv.org/abs/2010.01412) |
+| 10 | 42.2–47.4 | `^billion` | **A billion-dimensional night** (concentration) | live math | [Vershynin 2018, High-Dimensional Probability, ch. 3](https://www.math.uci.edu/~rvershyn/papers/HDP-book/HDP-book.html) |
+| 11 | 46.0–49.7 | `^saddle$` | **Past every saddle** (saddle) | schematic | [Dauphin et al. 2014 · Sagun et al. 2017](https://arxiv.org/abs/1406.2572) |
+| 12 | 47.4–50.5 | `^flat$` | **To valleys flat and wide** (flat) | schematic | [Hochreiter & Schmidhuber 1997 · Keskar et al. 2017 · Foret et al. 2021 · Garipov et al. 2018](https://arxiv.org/abs/2010.01412) |
 | 13 | 49.7–55.7 | `^minima$` | **Bigger can generalize better: double descent** (doubleDescent) | released data | [Nakkiran et al. 2019, Deep Double Descent (Fig. 1 data)](https://arxiv.org/abs/1912.02292) |
 | 14 | 50.5–56.5 | `^generalize$` | **Minima that generalize: grokking** (grokking) | released data | [Nanda et al. 2023, Progress Measures for Grokking (mainline run, via ARENA)](https://arxiv.org/abs/2301.05217) |
 | 15 | 54.5–57.4 | `^go$` | **So we go inside: curve detectors** (curves) | schematic | [Cammarata et al. 2020, Curve Detectors (Distill)](https://distill.pub/2020/circuits/curve-detectors/) |
@@ -49,7 +49,7 @@ How cards are placed and drawn: [architecture](architecture.md). Checks of every
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 16 | 58.1–64.1 | `^know$` | **Ambitious mechanistic interpretability** (formula) | from the paper | [leogao 2025, An Ambitious Vision for Interpretability (LessWrong)](https://www.lesswrong.com/posts/Hy6PX43HGgmfiTaKu/an-ambitious-vision-for-interpretability) |
+| 16 | 58.1–61.8 | `^know$` | **Ambitious mechanistic interpretability** (formula) | from the paper | [leogao 2025, An Ambitious Vision for Interpretability (LessWrong)](https://www.lesswrong.com/posts/Hy6PX43HGgmfiTaKu/an-ambitious-vision-for-interpretability) |
 | 17 | 60.3–66.3 | `^understand$` | **Monosemantic features from a sparse dictionary** (sae) | published numbers | [Bricken et al. 2023, Towards Monosemanticity](https://transformer-circuits.pub/2023/monosemantic-features/index.html) |
 | 18 | 61.8–67.8 | `^cause$` | **Every cause: Dallas → Texas → Austin** (graphDallas) | released data | [Lindsey et al. 2025, On the Biology of a Large Language Model (Claude 3.5 Haiku)](https://transformer-circuits.pub/2025/attribution-graphs/biology.html) |
 | 19 | 67.4–73.4 | `^black$` | **Open the black box: activation patching** (patching) | schematic | [Vig et al. 2020 · Meng et al. 2022 · Heimersheim & Nanda 2024](https://arxiv.org/abs/2404.15255) |
@@ -60,98 +60,94 @@ How cards are placed and drawn: [architecture](architecture.md). Checks of every
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 22 | 82.1–88.1 | `^neurons$` | **Start with neurons and features** (neuronFeature) | released data | [Bloom 2024, GPT-2 small residual SAEs · Neuronpedia](https://www.neuronpedia.org/gpt2-small/7-res-jb/4733) |
+| 22 | 82.1–85.8 | `^neurons$` | **Start with neurons and features** (neuronFeature) | released data | [Bloom 2024, GPT-2 small residual SAEs · Neuronpedia](https://www.neuronpedia.org/gpt2-small/7-res-jb/4733) |
 | 23 | 83.2–89.2 | `^heads$` | **Heads: QK picks where, OV picks what** (formula) | from the paper | [Elhage et al. 2021, A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) |
-| 24 | 85.8–91.8 | `^manifolds$` | **Manifolds of meaning: the week is a circle** (dayCircle) | released data | [Engels et al. 2024, Not All Language Model Features Are Linear · Neuronpedia](https://arxiv.org/abs/2405.14860) |
-| 25 | 89.3–93.9 | `^parameter$` | **Parameter components** (paramDecomp) | schematic | [Braun et al. 2025 (APD) · Bushnaq et al. 2025 (SPD)](https://arxiv.org/abs/2501.14926) |
-| 26 | 90.9–95.0 | `^algorithms$` | **An algorithm, reverse-engineered** (grokClock) | released data | [Nanda et al. 2023 (mainline run, via ARENA)](https://arxiv.org/abs/2301.05217) |
+| 24 | 85.8–90.9 | `^manifolds$` | **Manifolds of meaning: the week is a circle** (dayCircle) | released data | [Engels et al. 2024, Not All Language Model Features Are Linear · Neuronpedia](https://arxiv.org/abs/2405.14860) |
+| 25 | 89.3–93.2 | `^parameter$` | **Parameter components** (paramDecomp) | schematic | [Braun et al. 2025 (APD) · Bushnaq et al. 2025 (SPD)](https://arxiv.org/abs/2501.14926) |
+| 26 | 90.9–93.9 | `^algorithms$` | **An algorithm, reverse-engineered** (grokClock) | released data | [Nanda et al. 2023 (mainline run, via ARENA)](https://arxiv.org/abs/2301.05217) |
 | 27 | 93.2–99.2 | `^decisions$` | **Decisions from a world model: Othello-GPT** (othello) | published numbers | [Li et al. 2023 · Nanda, Lee & Wattenberg 2023, Table 1](https://arxiv.org/abs/2309.00941) |
 | 28 | 93.9–99.9 | `^behaviors$` | **A behavior with one direction: refusal** (refusal) | released data | [Arditi et al. 2024, Refusal in Language Models Is Mediated by a Single Direction](https://arxiv.org/abs/2406.11717) |
 | 29 | 95.0–101.0 | `^drives$` | **The drives behind the face** (shoggoth) | schematic | [Chen et al. 2025, Persona Vectors · the shoggoth-with-a-mask meme (2022)](https://arxiv.org/abs/2507.21509) |
 | 30 | 98.1–104.0 | `^encyclopedia$` | **The encyclopedia so far** (encyclopedia) | from the paper | [Goodfire, We can and must solve alignment](https://www.goodfire.com/blog/we-can-and-must-solve-alignment) |
 | 31 | 101.3–104.0 | `^recalls$` | **How it recalls a fact** (rome) | schematic | [Meng et al. 2022, Locating and Editing Factual Associations in GPT (ROME)](https://arxiv.org/abs/2202.05262) |
-| 32 | 102.8–104.8 | `^reasoning$` | **Where the reasoning hides: planning a rhyme** (graphRabbit) | released data | [Lindsey et al. 2025, On the Biology of a Large Language Model](https://transformer-circuits.pub/2025/attribution-graphs/biology.html) |
 
 ## Pre-Chorus (manifolds, 104.0–120.1 s)
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 33 | 105.2–110.5 | `^noise$` | **Not noise: superposition** (superposition) | released data | [Elhage et al. 2022, Toy Models of Superposition (figure saved in the authors' notebook)](https://transformer-circuits.pub/2022/toy_model/index.html) |
-| 34 | 107.0–113.0 | `^read$` | **Can't be read? Untangle it** (polysemantic) | schematic | [Elhage et al. 2022 · Cunningham et al. 2023 · Bricken et al. 2023](https://arxiv.org/abs/2309.08600) |
-| 35 | 107.9–113.4 | `^structure$` | **Structure everywhere: concepts as regions** (bsf) | released data | [Goodfire 2026, block-sparse-featurizer (MIT)](https://github.com/goodfire-ai/block-sparse-featurizer) |
-| 36 | 108.9–114.9 | `^function$` | **Function vectors** (functionVector) | released data | [Todd et al. 2024, Function Vectors in Large Language Models](https://arxiv.org/abs/2310.15213) |
-| 37 | 110.5–116.5 | `^thought$` | **Shapes of thought: a direction for truth** (truth) | schematic | [Marks & Tegmark 2024, The Geometry of Truth](https://arxiv.org/abs/2310.06824) |
-| 38 | 113.0–119.0 | `^world$` | **Geometry that mirrors the world** (worldMap) | released data | [Gurnee & Tegmark 2024, Language Models Represent Space and Time](https://arxiv.org/abs/2310.02207) |
-| 39 | 113.4–119.4 | `^bigger$` | **The bigger they get, the more they agree** (formula) | from the paper | [Huh et al. 2024, The Platonic Representation Hypothesis](https://arxiv.org/abs/2405.07987) |
-| 40 | 115.3–120.1 | `^crisper$` | **The crisper the concepts** (probeR2) | published numbers | [Gurnee & Tegmark 2024, Table 2](https://arxiv.org/abs/2310.02207) |
+| 32 | 105.2–111.2 | `^noise$` | **Not noise: superposition** (superposition) | released data | [Elhage et al. 2022, Toy Models of Superposition (figure saved in the authors' notebook)](https://transformer-circuits.pub/2022/toy_model/index.html) |
+| 33 | 107.9–113.9 | `^structure$` | **Structure everywhere: concepts as regions** (bsf) | released data | [Goodfire 2026, block-sparse-featurizer (MIT)](https://github.com/goodfire-ai/block-sparse-featurizer) |
+| 34 | 108.9–114.9 | `^function$` | **Function vectors** (functionVector) | released data | [Todd et al. 2024, Function Vectors in Large Language Models](https://arxiv.org/abs/2310.15213) |
+| 35 | 110.5–116.5 | `^thought$` | **Shapes of thought: a direction for truth** (truth) | schematic | [Marks & Tegmark 2024, The Geometry of Truth](https://arxiv.org/abs/2310.06824) |
+| 36 | 113.0–119.0 | `^world$` | **Geometry that mirrors the world** (worldMap) | released data | [Gurnee & Tegmark 2024, Language Models Represent Space and Time](https://arxiv.org/abs/2310.02207) |
+| 37 | 113.4–119.4 | `^bigger$` | **The bigger they get, the more they agree** (formula) | from the paper | [Huh et al. 2024, The Platonic Representation Hypothesis](https://arxiv.org/abs/2405.07987) |
+| 38 | 115.3–120.1 | `^crisper$` | **The crisper the concepts** (probeR2) | published numbers | [Gurnee & Tegmark 2024, Table 2](https://arxiv.org/abs/2310.02207) |
 
 ## Chorus (chorus, 120.1–141.2 s)
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 41 | 120.8–126.8 | `^know$` | **Universality** (formula) | from the paper | [Olah et al. 2020 · Olsson et al. 2022 · Chughtai et al. 2023](https://arxiv.org/abs/2302.03025) |
-| 42 | 123.6–129.6 | `^understand$` | **36 + 59: two paths at once** (graphCalc) | released data | [Lindsey et al. 2025, On the Biology of a Large Language Model](https://transformer-circuits.pub/2025/attribution-graphs/biology.html) |
-| 43 | 124.5–130.5 | `^cause$` | **Turn one cause up: Golden Gate Claude** (goldenGate) | published numbers | [Templeton et al. 2024, Scaling Monosemanticity](https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html) |
-| 44 | 130.0–136.0 | `^black$` | **Simple probes catch sleeper agents** (formula) | from the paper | [MacDiarmid et al. 2024, Simple probes can catch sleeper agents (Anthropic)](https://www.anthropic.com/research/probes-catch-sleeper-agents) |
-| 45 | 133.7–139.7 | `^understand$` | **The same graph, on an open model** (graphGemma) | released data | [circuit-tracer (Anthropic, 2025) · Neuronpedia graph gemma-fact-dallas-austin](https://github.com/safety-research/circuit-tracer) |
-| 46 | 137.3–141.2 | `^know$` | **Shared concepts across languages** (formula) | from the paper | [Lindsey et al. 2025, On the Biology of a Large Language Model](https://transformer-circuits.pub/2025/attribution-graphs/biology.html) |
+| 39 | 120.8–124.5 | `^know$` | **Universality** (formula) | from the paper | [Olah et al. 2020 · Olsson et al. 2022 · Chughtai et al. 2023](https://arxiv.org/abs/2302.03025) |
+| 40 | 123.6–129.6 | `^understand$` | **36 + 59: two paths at once** (graphCalc) | released data | [Lindsey et al. 2025, On the Biology of a Large Language Model](https://transformer-circuits.pub/2025/attribution-graphs/biology.html) |
+| 41 | 124.5–130.5 | `^cause$` | **Turn one cause up: Golden Gate Claude** (goldenGate) | published numbers | [Templeton et al. 2024, Scaling Monosemanticity](https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html) |
+| 42 | 130.0–136.0 | `^black$` | **Simple probes catch sleeper agents** (formula) | from the paper | [MacDiarmid et al. 2024, Simple probes can catch sleeper agents (Anthropic)](https://www.anthropic.com/research/probes-catch-sleeper-agents) |
+| 43 | 133.7–139.7 | `^understand$` | **The same graph, on an open model** (graphGemma) | released data | [circuit-tracer (Anthropic, 2025) · Neuronpedia graph gemma-fact-dallas-austin](https://github.com/safety-research/circuit-tracer) |
+| 44 | 137.3–141.2 | `^know$` | **Shared concepts across languages** (formula) | from the paper | [Lindsey et al. 2025, On the Biology of a Large Language Model](https://transformer-circuits.pub/2025/attribution-graphs/biology.html) |
 
 ## Verse 3 (theory, 141.2–164.0 s)
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 47 | 143.6–149.6 | `^solve$` | **Solvable settings** (saxe) | live math | [Saxe, McClelland & Ganguli 2014](https://arxiv.org/abs/1312.6120) |
-| 48 | 146.9–152.9 | `^infinity$` | **Tractable limits** (nngp) | live math | [Neal 1996 · Lee et al. 2018 · Jacot et al. 2018 (NTK)](https://arxiv.org/abs/1806.07572) |
-| 49 | 148.2–154.2 | `^laws$` | **Simple laws** (formula) | published numbers | [Kaplan et al. 2020, Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) |
-| 50 | 151.4–157.4 | `^hyperparameters$` | **Theories of hyperparameters** (weightDecay) | released data | [Nanda et al. 2023 (official saved runs) · Yang et al. 2022 (μTransfer)](https://github.com/mechanistic-interpretability-grokking/progress-measures-paper) |
-| 51 | 153.7–159.7 | `^universals$` | **Universal behaviors** (collapse) | schematic | [Papyan, Han & Donoho 2020 · Cohen et al. 2021](https://arxiv.org/abs/2008.08186) |
-| 52 | 155.6–159.0 | `^mechanics$` | **Learning mechanics** (formula) | from the paper | [Seung, Sompolinsky & Tishby 1992 · Simon, Kunin et al. 2026](https://arxiv.org/abs/2604.21691) |
-| 53 | 159.0–164.0 | `^predict$` | **Predict it before you train it** (gpt4) | schematic | [OpenAI 2023, GPT-4 Technical Report, Fig. 1](https://arxiv.org/abs/2303.08774) |
+| 45 | 143.6–149.6 | `^solve$` | **Solvable settings** (saxe) | live math | [Saxe, McClelland & Ganguli 2014](https://arxiv.org/abs/1312.6120) |
+| 46 | 144.6–150.6 | `^limits$` | **Tractable limits** (nngp) | live math | [Neal 1996 · Lee et al. 2018 · Jacot et al. 2018 (NTK)](https://arxiv.org/abs/1806.07572) |
+| 47 | 148.2–154.2 | `^laws$` | **Simple laws** (formula) | published numbers | [Kaplan et al. 2020, Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) |
+| 48 | 151.4–157.4 | `^hyperparameters$` | **Theories of hyperparameters** (weightDecay) | released data | [Nanda et al. 2023 (official saved runs) · Yang et al. 2022 (μTransfer)](https://github.com/mechanistic-interpretability-grokking/progress-measures-paper) |
+| 49 | 153.7–159.7 | `^universals$` | **Universal behaviors** (collapse) | schematic | [Papyan, Han & Donoho 2020 · Cohen et al. 2021](https://arxiv.org/abs/2008.08186) |
+| 50 | 155.6–161.6 | `^mechanics$` | **Learning mechanics** (formula) | from the paper | [Seung, Sompolinsky & Tishby 1992 · Simon, Kunin et al. 2026](https://arxiv.org/abs/2604.21691) |
+| 51 | 159.0–164.0 | `^predict$` | **Predict it before you train it** (gpt4) | schematic | [OpenAI 2023, GPT-4 Technical Report, Fig. 1](https://arxiv.org/abs/2303.08774) |
 
 ## Bridge (atlas, 164.0–196.7 s)
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 54 | 164.2–167.5 | `^linear$` | **Linear algebra** (formula) | from the paper | [Eckart & Young 1936 · Hu et al. 2021 (LoRA)](https://arxiv.org/abs/2106.09685) |
-| 55 | 165.3–168.4 | `^calculus$` | **Calculus** (formula) | from the paper | [Linnainmaa 1970 (reverse-mode differentiation) · Rumelhart et al. 1986](https://www.nature.com/articles/323533a0) |
-| 56 | 165.8–169.2 | `^probability$` | **Probability** (formula) | from the paper | [Bengio et al. 2003, A Neural Probabilistic Language Model](https://www.jmlr.org/papers/v3/bengio03a.html) |
-| 57 | 166.6–170.9 | `^information$` | **Information** (formula) | from the paper | [Shannon 1948 · Delétang et al. 2024, Language Modeling Is Compression](https://arxiv.org/abs/2309.10668) |
-| 58 | 167.5–172.4 | `^optimization$` | **Optimization** (formula) | from the paper | [Kingma & Ba 2015, Adam](https://arxiv.org/abs/1412.6980) |
-| 59 | 168.4–173.7 | `^dynamics$` | **Dynamics** (formula) | from the paper | [Li, Tai & E 2017, Stochastic Modified Equations](https://arxiv.org/abs/1511.06251) |
-| 60 | 169.2–174.6 | `^geometry$` | **The geometry of loss** (formula) | from the paper | [Amari 1998, Natural Gradient Works Efficiently in Learning](https://doi.org/10.1162/089976698300017746) |
-| 61 | 170.9–175.5 | `^statistical$` | **Statistical mechanics** (formula) | published numbers | [Gardner 1988, The space of interactions in neural network models](https://doi.org/10.1088/0305-4470/21/1/030) |
-| 62 | 172.4–176.2 | `^random$` | **Random matrices** (mp) | released data | [Marchenko & Pastur 1967 · Martin & Mahoney 2021 (ww-trends-2020)](https://github.com/CalculatedContent/ww-trends-2020) |
-| 63 | 173.7–177.2 | `^singular$` | **Singular learning theory** (formula) | from the paper | [Watanabe 2009 · Lau et al. 2023 (local learning coefficient)](https://arxiv.org/abs/2308.12108) |
-| 64 | 174.6–180.6 | `^symmetry$` | **Symmetry** (formula) | from the paper | [Bronstein et al. 2021, Geometric Deep Learning](https://arxiv.org/abs/2104.13478) |
-| 65 | 175.5–180.0 | `^categories$` | **Categories** (category) | from the paper | [Gavranović et al. 2024, Categorical Deep Learning](https://arxiv.org/abs/2402.15332) |
-| 66 | 176.2–181.1 | `^causality$` | **Causality** (pearl) | from the paper | [Pearl 2009, Causality · Pearl & Mackenzie 2018](https://bayes.cs.ucla.edu/BOOK-2K/) |
-| 67 | 177.2–182.0 | `^compression$` | **Compression** (formula) | from the paper | [Rissanen 1978 · Kolmogorov 1965 · Solomonoff 1964](https://doi.org/10.1016/0005-1098(78)90005-5) |
-| 68 | 180.0–186.0 | `^invariants$` | **Invariants** (formula) | from the paper | [Du, Hu & Lee 2018 · Arora et al. 2018](https://arxiv.org/abs/1806.00900) |
-| 69 | 181.1–187.1 | `^bounds$` | **Bounds** (formula) | published numbers | [Landauer 1961 · Lloyd 2000, Ultimate physical limits to computation](https://arxiv.org/abs/quant-ph/9908043) |
-| 70 | 182.0–188.0 | `^level$` | **Every level** (formula) | from the paper | [Marr 1982, Vision](https://mitpress.mit.edu/9780262514620/vision/) |
-| 71 | 185.7–191.7 | `^carbon$` | **In carbon** (neuronIcon) | published numbers | [Azevedo et al. 2009, J. Comp. Neurol.](https://doi.org/10.1002/cne.21974) |
-| 72 | 186.5–192.5 | `^silicon$` | **In silicon** (chip) | published numbers | [NVIDIA H100 Tensor Core GPU Architecture whitepaper (2022)](https://resources.nvidia.com/en-us-tensor-core) |
-| 73 | 188.4–194.4 | `^stars$` | **Or something from the stars** (hydrogen) | published numbers | [Sagan, Salzman Sagan & Drake 1972, A Message from Earth](https://doi.org/10.1126/science.175.4024.881) |
-| 74 | 189.3–195.3 | `^science$` | **One science of information** (formula) | from the paper | [Shannon 1948, A Mathematical Theory of Communication](https://doi.org/10.1002/j.1538-7305.1948.tb01338.x) |
+| 52 | 164.2–170.2 | `^linear$` | **Linear algebra** (formula) | from the paper | [Eckart & Young 1936 · Hu et al. 2021 (LoRA)](https://arxiv.org/abs/2106.09685) |
+| 53 | 165.3–171.3 | `^calculus$` | **Calculus** (formula) | from the paper | [Linnainmaa 1970 (reverse-mode differentiation) · Rumelhart et al. 1986](https://www.nature.com/articles/323533a0) |
+| 54 | 165.8–171.8 | `^probability$` | **Probability** (formula) | from the paper | [Bengio et al. 2003, A Neural Probabilistic Language Model](https://www.jmlr.org/papers/v3/bengio03a.html) |
+| 55 | 166.6–172.6 | `^information$` | **Information** (formula) | from the paper | [Shannon 1948 · Delétang et al. 2024, Language Modeling Is Compression](https://arxiv.org/abs/2309.10668) |
+| 56 | 167.5–173.5 | `^optimization$` | **Optimization** (formula) | from the paper | [Kingma & Ba 2015, Adam](https://arxiv.org/abs/1412.6980) |
+| 57 | 168.4–174.4 | `^dynamics$` | **Dynamics** (formula) | from the paper | [Li, Tai & E 2017, Stochastic Modified Equations](https://arxiv.org/abs/1511.06251) |
+| 58 | 169.2–175.2 | `^geometry$` | **The geometry of loss** (formula) | from the paper | [Amari 1998, Natural Gradient Works Efficiently in Learning](https://doi.org/10.1162/089976698300017746) |
+| 59 | 170.9–176.9 | `^statistical$` | **Statistical mechanics** (formula) | published numbers | [Gardner 1988, The space of interactions in neural network models](https://doi.org/10.1088/0305-4470/21/1/030) |
+| 60 | 172.4–176.2 | `^random$` | **Random matrices** (mp) | released data | [Marchenko & Pastur 1967 · Martin & Mahoney 2021 (ww-trends-2020)](https://github.com/CalculatedContent/ww-trends-2020) |
+| 61 | 173.7–179.7 | `^singular$` | **Singular learning theory** (formula) | from the paper | [Watanabe 2009 · Lau et al. 2023 (local learning coefficient)](https://arxiv.org/abs/2308.12108) |
+| 62 | 174.6–180.6 | `^symmetry$` | **Symmetry** (formula) | from the paper | [Bronstein et al. 2021, Geometric Deep Learning](https://arxiv.org/abs/2104.13478) |
+| 63 | 175.5–181.5 | `^categories$` | **Categories** (category) | from the paper | [Gavranović et al. 2024, Categorical Deep Learning](https://arxiv.org/abs/2402.15332) |
+| 64 | 176.2–182.2 | `^causality$` | **Causality** (pearl) | from the paper | [Pearl 2009, Causality · Pearl & Mackenzie 2018](https://bayes.cs.ucla.edu/BOOK-2K/) |
+| 65 | 177.2–183.2 | `^compression$` | **Compression** (formula) | from the paper | [Rissanen 1978 · Kolmogorov 1965 · Solomonoff 1964](https://doi.org/10.1016/0005-1098(78)90005-5) |
+| 66 | 180.0–186.0 | `^invariants$` | **Invariants** (formula) | from the paper | [Du, Hu & Lee 2018 · Arora et al. 2018](https://arxiv.org/abs/1806.00900) |
+| 67 | 181.1–187.1 | `^bounds$` | **Bounds** (formula) | published numbers | [Landauer 1961 · Lloyd 2000, Ultimate physical limits to computation](https://arxiv.org/abs/quant-ph/9908043) |
+| 68 | 182.0–188.0 | `^level$` | **Every level** (formula) | from the paper | [Marr 1982, Vision](https://mitpress.mit.edu/9780262514620/vision/) |
+| 69 | 185.7–189.0 | `^carbon$` | **In carbon, in silicon, or from the stars** (substrates) | published numbers | [Azevedo et al. 2009 · NVIDIA H100 whitepaper (2022) · Sagan, Salzman Sagan & Drake 1972 (Pioneer plaque)](https://doi.org/10.1002/cne.21974) |
+| 70 | 189.3–195.3 | `^science$` | **One science of information** (formula) | from the paper | [Shannon 1948, A Mathematical Theory of Communication](https://doi.org/10.1002/j.1538-7305.1948.tb01338.x) |
 
 ## Final Chorus (finale, 196.7–214.0 s)
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 75 | 197.4–201.7 | `^know$` | **Ideal solving** (checklist) | schematic | [project brief (L. Burian)](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem) |
-| 76 | 200.1–206.1 | `^understand$` | **Understanding = learning new skills efficiently** (arc) | schematic | [Chollet 2019, On the Measure of Intelligence (ARC)](https://arxiv.org/abs/1911.01547) |
-| 77 | 200.6–206.6 | `^shortest$` | **The shortest theory that predicts it all** (kProgram) | live math | [Kolmogorov 1965 · Solomonoff 1964](https://doi.org/10.1080/00207166808803030) |
-| 78 | 201.7–207.7 | `^predicts$` | **Predicts it all: AIXI** (formula) | from the paper | [Solomonoff 1964 · Hutter 2000, A Theory of Universal Artificial Intelligence](https://arxiv.org/abs/cs/0004001) |
-| 79 | 204.6–210.6 | `^counterfactual$` | **Every counterfactual: do(circuit := c′)** (dag) | schematic | [Pearl 2009, Causality](https://bayes.cs.ucla.edu/BOOK-2K/) |
-| 80 | 207.1–213.1 | `^steer$` | **Every cause that we can steer** (actadd) | published numbers | [Turner et al. 2023, Activation Addition](https://arxiv.org/abs/2308.10248) |
-| 81 | 209.6–214.0 | `^understand$` | **Compression as a test of understanding** (formula) | from the paper | [Hutter Prize for Lossless Compression of Human Knowledge](http://prize.hutter1.net/) |
-| 82 | 213.7–215.7 | `^know$` | **Intentional design** (formula) | from the paper | [Goodfire, We can and must solve alignment](https://www.goodfire.com/blog/we-can-and-must-solve-alignment) |
+| 71 | 197.4–201.7 | `^know$` | **Ideal solving** (checklist) | schematic | [project brief (L. Burian)](https://github.com/BurnyCoder/ambitious-science-of-information-processing-anthem) |
+| 72 | 200.1–204.6 | `^understand$` | **Understanding = learning new skills efficiently** (arc) | schematic | [Chollet 2019, On the Measure of Intelligence (ARC)](https://arxiv.org/abs/1911.01547) |
+| 73 | 200.6–206.6 | `^shortest$` | **The shortest theory that predicts it all** (kProgram) | live math | [Kolmogorov 1965 · Solomonoff 1964](https://doi.org/10.1080/00207166808803030) |
+| 74 | 201.7–207.1 | `^predicts$` | **Predicts it all: AIXI** (formula) | from the paper | [Solomonoff 1964 · Hutter 2000, A Theory of Universal Artificial Intelligence](https://arxiv.org/abs/cs/0004001) |
+| 75 | 204.6–209.6 | `^counterfactual$` | **Every counterfactual: do(circuit := c′)** (dag) | schematic | [Pearl 2009, Causality](https://bayes.cs.ucla.edu/BOOK-2K/) |
+| 76 | 207.1–213.1 | `^steer$` | **Every cause that we can steer** (actadd) | published numbers | [Turner et al. 2023, Activation Addition](https://arxiv.org/abs/2308.10248) |
+| 77 | 209.6–214.0 | `^understand$` | **Compression as a test of understanding** (formula) | from the paper | [Hutter Prize for Lossless Compression of Human Knowledge](http://prize.hutter1.net/) |
+| 78 | 213.0–214.0 | `^we$` | **Intentional design** (formula) | from the paper | [Goodfire, We can and must solve alignment](https://www.goodfire.com/blog/we-can-and-must-solve-alignment) |
 
 ## Outro (outro, 214.0–240.4 s)
 
 | FIG | Time (s) | Trigger | Card | Badge | Source |
 |---|---|---|---|---|---|
-| 83 | 215.4–221.4 | `^ai$` | **The mathematics of AI** (formula) | from the paper | [Vaswani et al. 2017, Attention Is All You Need](https://arxiv.org/abs/1706.03762) |
-| 84 | 218.8–224.8 | `^intelligence$` | **The mathematics of intelligence** (formula) | from the paper | [Legg & Hutter 2007, Universal Intelligence](https://arxiv.org/abs/0712.3329) |
-| 85 | 221.4–227.4 | `^information$` | **Of information itself** (formula) | from the paper | [Shannon 1948 · Landauer 1961](https://doi.org/10.1147/rd.53.0183) |
-| 86 | 224.7–227.9 | `^now$` | **We must now** (milestones) | published numbers | [McCulloch & Pitts 1943 → Simon, Kunin et al. 2026](https://arxiv.org/abs/2604.21691) |
+| 79 | 215.4–221.4 | `^ai$` | **The mathematics of AI** (formula) | from the paper | [Vaswani et al. 2017, Attention Is All You Need](https://arxiv.org/abs/1706.03762) |
+| 80 | 218.8–224.8 | `^intelligence$` | **The mathematics of intelligence** (formula) | from the paper | [Legg & Hutter 2007, Universal Intelligence](https://arxiv.org/abs/0712.3329) |
+| 81 | 221.4–227.4 | `^information$` | **Of information itself** (formula) | from the paper | [Shannon 1948 · Landauer 1961](https://doi.org/10.1147/rd.53.0183) |
+| 82 | 224.7–227.9 | `^now$` | **We must now** (milestones) | published numbers | [McCulloch & Pitts 1943 → Simon, Kunin et al. 2026](https://arxiv.org/abs/2604.21691) |

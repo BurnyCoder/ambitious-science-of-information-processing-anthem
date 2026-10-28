@@ -16,7 +16,7 @@ export type Vignette = {
 	title: string; text: string; badge: Badge; cite: string; url: string; // what it says and where it comes from
 }; // one figure card (content/vignettes.toml placed by anthem/vignettes.py)
 export type Timeline = {
-	version: number; // schema version (3: vignettes with lanes)
+	version: number; // schema version (4: lanes a/b are panel slots, lane "scene" = drawn by the scene; no spill past a cut)
 	title: string; // song title
 	fps: number; // frames per second
 	audio: string; // file name inside public/

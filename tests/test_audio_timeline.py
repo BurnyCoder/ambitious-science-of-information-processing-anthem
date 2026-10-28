@@ -61,7 +61,7 @@ def test_build_timeline_contract(click_track):
     tl = build_timeline(sections, words, analyze_audio(path, fps=30), fps=30, title="We Will Know",
                         scene_map={"intro": "intro", "verse 1": "layers", "chorus": "chorus"})
     assert tl["fps"] == 30 and tl["durationInFrames"] == 600  # 20 s at 30 fps
-    assert tl["version"] == 3 and tl["vignettes"] == []  # no card catalog passed -> no cards
+    assert tl["version"] == 4 and tl["vignettes"] == []  # no card catalog passed -> no cards
     assert [s["scene"] for s in tl["sections"]] == ["intro", "layers", "chorus"]  # scene per section
     starts = [s["startS"] for s in tl["sections"]]  # section boundaries
     assert starts[0] == 0.0 and starts == sorted(starts)  # intro at 0, monotonic
