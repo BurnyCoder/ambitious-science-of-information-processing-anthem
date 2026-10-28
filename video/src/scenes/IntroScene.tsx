@@ -2,17 +2,20 @@
  * Intro: a single token glows, unfolds into an embedding vector, then the title card.
  * Local: 2D SVG/CSS; the GPT-2 token "know" (id 760, public/vignettes/tokens.json; GPT-2 small has d = 768) -> 16
  * embedding cells (cells slide out; bar lengths are illustrative seeded values, not the real weights)
- * -> "WE WILL KNOW" letter-by-letter -> subtitle and credits -> the title dissolves as its own GPT-2 tokens emerge
- * as the first figure card ("every answer starts as tokens").
+ * -> "WE WILL KNOW" letter-by-letter -> subtitle and credits -> the title splits at its real GPT-2 token boundaries
+ * (We | will | know: 1135 · 481 · 760) and condenses into the first figure card, which takes the title's place until
+ * the cut, while the embedding column keeps streaming (the 768-d vector scrolling past).
  * Global: first scene; sets the "information processing starts from one token" motif that the outro reverses.
  */
 import React from 'react'; // JSX
 import {AbsoluteFill, random} from 'remotion'; // layer + deterministic RNG
 import {beatPulse} from '../lib/timeline'; // beat pulse
+import tokens from '../../public/vignettes/tokens.json'; // the title's real GPT-2 tokens
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
 import type {SceneProps} from './types'; // contract
 
 const CELLS = 16; // embedding dimensions shown
+const WORDS = tokens[0].tokens.map((s, i) => ({text: s.replace('Ġ', '').toUpperCase(), id: tokens[0].ids[i]})); // WE 1135 · WILL 481 · KNOW 760
 
 export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 	const {t, local, length} = useSceneClock(section); // absolute + local time
@@ -24,14 +27,16 @@ export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 	const exit = smooth((local - (length - 1.2)) / 1.2); // last 1.2 s: zoom out
 	const tokenScale = smooth(local / 1.2) * (1 + 0.15 * pulse); // pop in, breathe on beats
 	const tokensAt = tl.vignettes.find((v) => v.sectionIndex === section.index && v.id === 'tokens')?.startS ?? Infinity; // the title's tokens card
-	const dissolve = smooth((t - tokensAt) / 0.6); // the title gives way to its tokens
+	const split = smooth((t - tokensAt) / 0.5); // the title breaks at its token boundaries
+	const dissolve = smooth((t - tokensAt - 0.5) / 0.5); // then condenses into the card
+	const stream = Math.max(0, t - tokensAt) * 60; // px the embedding column has scrolled since
 	return (
 		<AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', opacity: 1 - exit * 0.8, transform: `scale(${1 + exit * 0.3})`}}>
 			{/* token and its unfolding vector */}
 			<div style={{position: 'absolute', left: 300, top: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 1 - smooth((local - titleAt) / 2) * 0.75}}>
 				{Array.from({length: CELLS}, (_, i) => {
-					const offset = (i - (CELLS - 1) / 2) * 24 * unfold; // cells spread vertically from the token (±180 px)
-					const v = random(`emb${i}`) * 2 - 1; // seeded component in [-1, 1]
+					const offset = (((i - (CELLS - 1) / 2) * 24 * unfold - stream) % (CELLS * 24) + CELLS * 36) % (CELLS * 24) - CELLS * 12; // spread, then scroll (wraps)
+					const v = random(`emb${i}-${Math.floor(((i * 24 - stream) / (CELLS * 24)))}`) * 2 - 1; // seeded component; a new one each time the cell wraps
 					return (
 						<div key={i} style={{position: 'absolute', top: offset, display: 'flex', alignItems: 'center', opacity: i === 7 ? 1 : unfold}}>
 							<div style={{width: 26, height: 22, borderRadius: 4, background: v > 0 ? COLORS.cyan : COLORS.magenta, opacity: 0.35 + 0.65 * Math.abs(v),
@@ -44,16 +49,20 @@ export const IntroScene: React.FC<SceneProps> = ({tl, section}) => {
 					{unfold < 0.5 ? '" know" = GPT-2 token 760' : '" know" (token 760) → embedding x ∈ ℝ⁷⁶⁸'}
 				</div>
 			</div>
-			{/* title card: dissolves (letters spread and fade) as its own GPT-2 tokens emerge as the section's figure card */}
-			<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 1 - dissolve, filter: dissolve > 0 ? `blur(${6 * dissolve}px)` : undefined}}>
-				<div style={{marginTop: 260, fontFamily: FONTS.display, fontWeight: 900, fontSize: 150, letterSpacing: `${0.08 + 0.5 * dissolve}em`, color: COLORS.ink, textShadow: glow(COLORS.cyan, 1 + 0.5 * pulse)}}>
-					{title.slice(0, shown)}
+			{/* title card: splits at its GPT-2 token boundaries (ids appear under each piece), then condenses into the tokens card */}
+			<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 1 - dissolve, transform: `scale(${1 - 0.35 * dissolve})`, filter: dissolve > 0 ? `blur(${5 * dissolve}px)` : undefined}}>
+				<div style={{marginTop: 260, display: 'flex', gap: `${0.3 + 0.15 * split}em`, fontFamily: FONTS.display, fontWeight: 900, fontSize: 150, letterSpacing: '0.08em', color: COLORS.ink, textShadow: glow(COLORS.cyan, 1 + 0.5 * pulse)}}>
+					{WORDS.map((w, i) => { const before = WORDS.slice(0, i).reduce((n, x) => n + x.text.length + 1, 0); // letters typed before this token
+						return <span key={i} style={{position: 'relative', outline: split > 0 ? `${3 * split}px solid rgba(34,228,255,${0.7 * split})` : undefined, borderRadius: 12, padding: '0 0.1em'}}>
+							{w.text.slice(0, Math.max(0, shown - before))}
+							<span style={{position: 'absolute', left: 0, right: 0, top: '100%', fontFamily: FONTS.mono, fontSize: 34, fontWeight: 400, color: COLORS.cyan, textAlign: 'center', opacity: split}}>{w.id}</span>
+						</span>; })}
 					<span style={{opacity: shown < title.length ? 1 : 0}}>▍</span>
 				</div>
-				<div style={{fontFamily: FONTS.body, fontSize: 36, color: COLORS.ink, opacity: smooth((local - titleAt - 2) / 1.2), marginTop: 10}}>
+				<div style={{fontFamily: FONTS.body, fontSize: 36, color: COLORS.ink, opacity: smooth((local - titleAt - 2) / 1.2) * (1 - split), marginTop: 10}}>
 					an anthem of ambitious science of information processing
 				</div>
-				<div style={{fontFamily: FONTS.mono, fontSize: 20, color: COLORS.dim, opacity: smooth((local - titleAt - 4) / 1.2), marginTop: 26}}>
+				<div style={{fontFamily: FONTS.mono, fontSize: 20, color: COLORS.dim, opacity: smooth((local - titleAt - 4) / 1.2) * (1 - split), marginTop: 26}}>
 					song: Suno V6 · lyrics, code &amp; every frame: Claude · concept: Libor Burian
 				</div>
 			</div>

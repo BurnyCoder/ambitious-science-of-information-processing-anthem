@@ -24,7 +24,7 @@ const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >
 export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number, t: number): Anchor => {
 	switch (section.scene) {
 		case 'intro':
-			return {x: 313, y: 411, dock: PAST}; // the token cell
+			return {x: 960, y: 615, dock: PAST}; // the title, which condenses into the tokens card
 		case 'layers':
 			return {x: 960, y: 470, dock: PAST}; // the fly-through's vanishing point; cards fly past the camera
 		case 'landscape':
