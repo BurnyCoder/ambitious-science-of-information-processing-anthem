@@ -10,7 +10,7 @@
  */
 import React from 'react'; // JSX
 import {AbsoluteFill} from 'remotion'; // layer
-import {beatPulse, wordTime, type Section, type Timeline, type Vignette} from '../lib/timeline'; // keyword timing
+import {beatPulse, sinceBeat, wordTime, type Section, type Timeline, type Vignette} from '../lib/timeline'; // keyword timing
 import {COLORS, FONTS, glow, smooth, useSceneClock} from '../lib/theme'; // look + clock
 import type {SceneProps} from './types'; // contract
 
@@ -60,8 +60,7 @@ export const LadderScene: React.FC<SceneProps> = ({tl, section}) => {
 	const level = lit.reduce((a, b) => a + b, 0); // how many rungs are lit (fractional)
 	const encyclo = wordTime(tl, section, /encyclopedia/i) ?? section.endS - 7; // the book opens
 	const open = smooth((t - encyclo) / 0.6);
-	const beat = tl.beats.filter((b) => b <= t).length; // beats so far: one page turn per beat
-	const flip = smooth(((t - (tl.beats[beat - 1] ?? 0)) / 0.35)); // 0 -> 1 after each beat
+	const flip = smooth(sinceBeat(tl.beats, t) / 0.35); // one page turn per beat: 0 -> 1 after each beat
 	const entries = tl.vignettes.filter((v) => v.sectionIndex === section.index && ladderRung(tl, section, v) < RUNGS.length); // figures on the rungs
 	const filed = entries.filter((_, i) => t > encyclo + 0.5 + i * 0.35 + 0.9).length; // entries already in the book
 	return (

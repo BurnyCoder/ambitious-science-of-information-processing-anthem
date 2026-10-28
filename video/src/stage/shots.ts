@@ -8,7 +8,7 @@
  *  Ranks are sums of eased steps, so cards glide between states instead of jumping. No imports at runtime,
  *  so `node --test tests/shots.test.ts` runs it.
  * Global: StageLayer draws each shot from these numbers and Anthem pushes the camera toward the hero's object
- * (heroPush), so the concrete examples live inside the scenes instead of in boxes beside them.
+ * (focusOf), so the concrete examples live inside the scenes instead of in boxes beside them.
  */
 import type {Section, Vignette} from '../lib/timeline';
 
@@ -47,5 +47,13 @@ export const shotsAt = (vignettes: Vignette[], sections: Section[], t: number): 
 /** Local: how much a shot is "the hero" right now (0..1). Global: camera push and drawing order. */
 export const heroness = (s: Shot): number => s.emerge * (1 - Math.min(1, s.rank)) * (1 - s.dock);
 
-/** Local: the shot with the most hero weight, or null. Global: where the camera pushes in. */
-export const heroOf = (shots: Shot[]): Shot | null => shots.reduce<Shot | null>((best, s) => (heroness(s) > (best ? heroness(best) : 0) ? s : best), null);
+/** Local: camera focus = the heroes' anchors averaged by heroness, with the frame centre holding whatever weight no
+ * hero has. During a hand-over both heroes are near 0.5, so the focus glides between their objects instead of jumping
+ * (a jump of the transform origin under a scale s moves the whole scene by (s − 1) × the jump).
+ * Global: Anthem's transform-origin for the camera push. */
+export const focusOf = (points: {x: number; y: number; w: number}[], cx = 960, cy = 540): {x: number; y: number} => {
+	const sum = points.reduce((a, p) => a + p.w, 0); // total hero weight
+	const rest = Math.max(0, 1 - sum); // weight left for the frame centre
+	const total = sum + rest; // >= 1, so never divides by 0
+	return {x: (rest * cx + points.reduce((a, p) => a + p.w * p.x, 0)) / total, y: (rest * cy + points.reduce((a, p) => a + p.w * p.y, 0)) / total};
+};

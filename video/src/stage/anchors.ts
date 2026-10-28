@@ -40,8 +40,10 @@ export const anchorOf = (tl: Timeline, section: Section, v: Vignette, k: number,
 			return {x: LADDER_LEFT + 64, y, dock: {kind: 'thumb', x: LADDER_LEFT - 70 - below * 125, y, s: 0.19}}; // thumbnails stack left of the rail
 		}
 		case 'manifolds': {
-			const m = MANIFOLD_OF[v.id] ?? k % 3; // ring, helix or globe
-			const below = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.startS < v.startS && (MANIFOLD_OF[u.id] ?? 0) === m).length;
+			const before = (u: Vignette) => tl.vignettes.filter((w) => w.sectionIndex === u.sectionIndex && w.startS < u.startS).length; // order in section
+			const mOf = (u: Vignette) => MANIFOLD_OF[u.id] ?? before(u) % 3; // ring, helix or globe (unlisted cards take turns)
+			const m = mOf(v);
+			const below = tl.vignettes.filter((u) => u.sectionIndex === v.sectionIndex && u.startS < v.startS && mOf(u) === m).length;
 			return {x: MANIFOLD_X[m], y: 540, dock: {kind: 'thumb', x: MANIFOLD_X[m] + (below - 1) * 125, y: 812, s: 0.19}};
 		}
 		case 'theory': {

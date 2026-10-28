@@ -1,12 +1,13 @@
 /**
  * Tests for src/stage/shots.ts (run with `npm test`).
  * Local: one card emerges, is hero, recedes after its hero time, docks at its end and disappears at the cut;
- * a newer card takes over as hero and pushes the older one back; everything is deterministic.
+ * a newer card takes over as hero and pushes the older one back; the camera focus glides between heroes; everything is
+ * deterministic.
  * Global: the stage draws every figure card from these states, so the phases must be right.
  */
 import {test} from 'node:test'; // built-in runner
 import assert from 'node:assert/strict'; // assertions
-import {heroOf, heroness, shotsAt} from '../src/stage/shots.ts';
+import {focusOf, heroness, shotsAt} from '../src/stage/shots.ts';
 
 const card = (id: string, startS: number, endS: number, sectionIndex = 0) =>
 	({id, lane: 'a', sectionIndex, lineIndex: 0, startS, endS, title: id, text: '', badge: 'schematic', cite: '', url: ''}) as const;
@@ -27,7 +28,7 @@ test('one card: emerge, hero, recede, dock, gone at the cut', () => {
 test('a newer card becomes hero and pushes the older one back', () => {
 	const v = [card('old', 1, 9), card('new', 2, 9)];
 	const s = shotsAt(v, sections, 2.6);
-	assert.equal(heroOf(s)?.v.id, 'new');
+	assert.equal(s.reduce((a, b) => (heroness(b) > heroness(a) ? b : a)).v.id, 'new');
 	assert.ok(s.find((x) => x.v.id === 'old')!.rank >= 1);
 	assert.deepEqual(shotsAt(v, sections, 2.6), s); // pure: same input, same output
 	assert.equal(s.find((x) => x.v.id === 'new')!.k, 1); // second card of its section
@@ -36,4 +37,12 @@ test('a newer card becomes hero and pushes the older one back', () => {
 test('cards of other sections do not push each other', () => {
 	const v = [card('a', 1, 7, 0), card('b', 1.5, 7, 1)];
 	assert.equal(shotsAt(v, [...sections, {...sections[0], index: 1, startS: 0, endS: 20}], 2)[0].rank, 0);
+});
+
+test('camera focus glides between heroes and returns to the centre', () => {
+	assert.deepEqual(focusOf([]), {x: 960, y: 540}); // no hero: frame centre
+	assert.deepEqual(focusOf([{x: 100, y: 200, w: 1}]), {x: 100, y: 200}); // one full hero: its anchor
+	assert.deepEqual(focusOf([{x: 100, y: 200, w: 0.5}, {x: 300, y: 400, w: 0.5}]), {x: 200, y: 300}); // hand-over: in between
+	const near = focusOf([{x: 100, y: 200, w: 0.001}]); // a hero fading out pulls only a little
+	assert.ok(Math.abs(near.x - 960) < 1 && Math.abs(near.y - 540) < 1);
 });

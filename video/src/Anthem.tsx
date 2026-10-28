@@ -16,7 +16,7 @@ import {Background, BeatFlash, EquationDust, Hud, SpectrumRing, Ticker} from './
 import {KineticLyrics} from './components/KineticLyrics'; // karaoke
 import {BigWords} from './components/BigWords'; // giant sung words (chorus-type scenes)
 import {StageLayer} from './stage/StageLayer'; // figure cards as dive-in hero shots
-import {heroOf, heroness, shotsAt} from './stage/shots'; // shot lifecycle
+import {focusOf, heroness, shotsAt} from './stage/shots'; // shot lifecycle + camera focus
 import {anchorOf} from './stage/anchors'; // where the hero comes from
 import {SCENES} from './scenes'; // scene registry
 
@@ -35,10 +35,10 @@ export const Anthem: React.FC<AnthemProps> = ({timeline}) => {
 	const glitch = section.index > 0 ? Math.max(0, 1 - (t - section.startS) / 0.25) : 0; // 1 -> 0 over 0.25 s after a cut
 	const jitter = glitch ? (random(`glitch${frame}`) - 0.5) * 36 * glitch : 0; // seeded horizontal shake
 	const shots = shotsAt(tl.vignettes, tl.sections, t); // every card on stage now
-	const hero = heroOf(shots); // the card at centre stage, if any
-	const push = hero ? heroness(hero) : 0; // 0..1: how far the camera is pushed into the hero's object
-	const heroSection = hero ? tl.sections.find((s) => s.index === hero.v.sectionIndex) ?? section : section;
-	const focus = hero ? anchorOf(tl, heroSection, hero.v, hero.k, t) : {x: 960, y: 540}; // camera aims at the object the card came from
+	const weights = shots.map(heroness); // how much each card is the hero
+	const push = Math.max(0, ...weights); // 0..1: how far the camera is pushed into the hero's object
+	const focus = focusOf(shots.flatMap((s, i) => weights[i] > 0 // camera aims at the objects the heroes came from
+		? [{...anchorOf(tl, tl.sections.find((x) => x.index === s.v.sectionIndex) ?? section, s.v, s.k, t), w: weights[i]}] : []));
 	const pulse = beatPulse(tl.beats, t); // beat kick for the cards
 	const lead = section.scene === 'finale' ? COLORS.amber : section.occurrence % 2 === 1 ? COLORS.cyan : COLORS.magenta; // giant-word colour
 	return (

@@ -82,7 +82,8 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 	const pulse = beatPulse(tl.beats, t); // beat kick
 	const at = (re: RegExp, frac: number) => wordTime(tl, section, re) ?? section.startS + frac * (section.endS - section.startS); // lyric trigger
 	const saddle = smooth((t - at(/saddle/i, 0.3)) / 0.7); // eigen-axes grow
-	const flat = smooth((t - at(/flat/i, 0.4)) / 0.5); // basins shake
+	const flatAt = at(/flat/i, 0.4); // "flat" sung
+	const flat = smooth((t - flatAt) / 0.5); // basins shake
 	const gen = at(/generalize/i, 0.55); // ribbons draw from here
 	const insideAt = at(/inside/i, 0.85);
 	const dive = smooth((t - insideAt) / Math.max(0.5, section.endS - insideAt)); // camera dive into the winning particle
@@ -183,7 +184,6 @@ export const LandscapeScene: React.FC<SceneProps> = ({tl, section}) => {
 	};
 	const ribbonOp = (k: number) => smooth((t - gen - k) / 0.5) * (1 - dive);
 	const tagAt = (r: (typeof RIBBONS)[number]) => proj(r.pts[Math.round(r.tag * (r.pts.length - 1))]);
-	const flatAt = at(/flat/i, 0.4);
 	return (
 		<AbsoluteFill>
 			<Stage fov={FOV}>
