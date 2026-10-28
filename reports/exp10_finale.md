@@ -63,4 +63,43 @@ Fixed in the approved plan and in this file **before** any v1.6.0 render or comp
 
 ## Results
 
-*(filled in after the render)*
+Render 13 is the v1.6.0 video: 7212 frames, h264 1920×1080 30/1 + AAC, 240.405 s, 356.6 MB, sha256 `52c9182a…6b1e`. It rendered in 588.7 s, as listed in [exp04](exp04_render_verification.md). Raw numbers are in [`data/exp10_finale.json`](data/exp10_finale.json) and the figure is `figures/fig9_exp10.png`.
+
+| Check | Pre-specified criterion | Result | Verdict |
+|---|---|---|---|
+| H0 render | exp04 criteria | `verify` ok, no problems; no error or warning lines in the run log apart from the known `THREE.Clock` notice | **pass** |
+| H1 title at 9.3 s | bright-pixel centroid within ±19.2 px of 960 | 976.0 px (+16.0); v1.5.0 864.8 (−95.2) | **pass** |
+| H1 token at 4.0 s | within ±38.4 px | 922.9 px (−37.1); v1.5.0 266.2 (−693.8) | **pass, narrowly** |
+| H2 theory windows | every block open ≥ its animation / its speed (speed ≤ 1.6) | `test_theory_blocks_finish_their_figures` passes | **pass** |
+| H3 chorus detail | median log₂ ratio > 0, frame-bootstrap CI excludes 0 | +0.296 [+0.255, +0.314], 23 frames, all > 0 | **pass** |
+| H4 finale detail | same | +2.016 [+1.980, +2.201], 10 frames | **pass** |
+| H5 elsewhere | section-bootstrap CI lower bound > −0.10 | +0.000 [−0.003, +0.003], 92 frames | **pass** |
+
+![exp10](figures/fig9_exp10.png)
+
+**What the numbers say:**
+- **H1.**
+  - Both bright-pixel centroids are now within tolerance. The token's margin is small (1.3 px).
+  - Its column is centred row by row, but the squares (the brightest pixels) sit left of each row's centre and the dimmer bars to the right, so the bright-pixel centroid falls left of 960.
+  - The title is 16 px right of centre: the extra left padding that balances the trailing letter-spacing slightly over-corrects.
+- **H3.** In PNG bytes, every chorus frame is more detailed than in v1.5.0. The per-frame ratio ranges from +0.04 to +0.45, a factor of about 1.23 on the median.
+- **H4.** The overview frames compress to about 4× the bytes of v1.5.0's frames at the same moments: median +2.02 log₂, where v1.5.0 showed a token, a statement and credits. The first frame (230.5 s, +0.57) is the burst, before the tiles have landed.
+- **H5.**
+  - Outside the choruses and the overview, frames are essentially unchanged: 9 of 9 section medians lie within ±0.02.
+  - The individual frames that moved are the ones the requests touched: the theory blocks (up to +0.36), the bridge after "science" (≈ +0.3, the swelling, undimmed graph), and one rewind frame showing a chorus copy (+0.56).
+- **Descriptive.**
+  - Over the bridge the vocal envelope has mean 0.647 (10th–90th percentile 0.50–0.80).
+  - Before "science" the sphere scale stays between 1.05 and 1.14. Once ramped up after it, the scale ranges from 1.27 to 1.57 and follows the voice (figure, right panel).
+
+**Limitations:**
+- PNG size measures detail, not quality or legibility. The overview is denser by construction: ten frames of the video in one.
+- No viewer study was run.
+- The H1 centroid is a proxy for "looks centred": it weights bright pixels, not shapes.
+- The flicker, the attention arcs and the next-position columns of the chorus are schematic. Only the circuit, its positions, labels, prompt and output are released data.
+- The sphere's gain values (0.15, 0.6) were chosen by eye before the render. They are not fitted to anything.
+
+**Learnings:**
+- **Layout width.** Layout bugs that make text "look off-centre" came from invisible elements taking width: the typing cursor, untyped letters, trailing letter-spacing. Laying out the final text from the start removes the drift entirely.
+- **JSX whitespace.** A space before a JSX comment on the same line becomes a text node. Inside the per-letter spans it added a space after every letter and wrapped the title. The stills caught it before any render.
+- **Case-insensitive paths.** On Windows, `stage/Overview.tsx` and `stage/overview.ts` resolve to the same module. The component file is now `OverviewLayer.tsx`.
+- **Rendering cost.** Ten live `<Freeze>` copies of the whole video per frame rendered without trouble: render 13 took 588.7 s, against 624.6 s for render 12. The tiles' source moments stay more than 1 s from their section ends, so no premounted next scene adds WebGL contexts.
