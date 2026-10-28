@@ -66,7 +66,7 @@ How cards are placed and drawn: [architecture](architecture.md). Checks of every
 | 25 | 89.3–93.2 | `^parameter$` | **Parameter components** (paramDecomp) | schematic | [Braun et al. 2025 (APD) · Bushnaq et al. 2025 (SPD)](https://arxiv.org/abs/2501.14926) |
 | 26 | 90.9–93.9 | `^algorithms$` | **An algorithm, reverse-engineered** (grokClock) | released data | [Nanda et al. 2023 (mainline run, via ARENA)](https://arxiv.org/abs/2301.05217) |
 | 27 | 93.2–99.2 | `^decisions$` | **Decisions from a world model: Othello-GPT** (othello) | published numbers | [Li et al. 2023 · Nanda, Lee & Wattenberg 2023, Table 1](https://arxiv.org/abs/2309.00941) |
-| 28 | 93.9–99.9 | `^behaviors$` | **A behavior with one direction: refusal** (refusal) | released data | [Arditi et al. 2024, Refusal in Language Models Is Mediated by a Single Direction](https://arxiv.org/abs/2406.11717) |
+| 28 | 93.9–98.1 | `^behaviors$` | **A behavior with one direction: refusal** (refusal) | released data | [Arditi et al. 2024, Refusal in Language Models Is Mediated by a Single Direction](https://arxiv.org/abs/2406.11717) |
 | 29 | 95.0–101.0 | `^drives$` | **The drives behind the face** (shoggoth) | schematic | [Chen et al. 2025, Persona Vectors · the shoggoth-with-a-mask meme (2022)](https://arxiv.org/abs/2507.21509) |
 | 30 | 98.1–104.0 | `^encyclopedia$` | **The encyclopedia so far** (encyclopedia) | from the paper | [Goodfire, We can and must solve alignment](https://www.goodfire.com/blog/we-can-and-must-solve-alignment) |
 | 31 | 101.3–104.0 | `^recalls$` | **How it recalls a fact** (rome) | schematic | [Meng et al. 2022, Locating and Editing Factual Associations in GPT (ROME)](https://arxiv.org/abs/2202.05262) |
