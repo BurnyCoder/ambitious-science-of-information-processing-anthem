@@ -106,8 +106,8 @@ export const Actadd: React.FC<BodyProps> = ({local, h, accent}) => {
 };
 
 /** Dated landmarks on one line, lighting up left to right. */
-export const MILESTONES: [number, string][] = [[1943, 'McCulloch–Pitts neuron'], [1948, 'Shannon: information'], [1958, 'perceptron'], [1986, 'backprop'], [2012, 'AlexNet'],
-	[2017, 'Transformer'], [2020, 'scaling laws'], [2022, 'induction heads'], [2024, 'Golden Gate feature'], [2025, 'attribution graphs'], [2026, 'theory of deep learning?']]; // also spiral into the outro token
+const MILESTONES: [number, string][] = [[1943, 'McCulloch–Pitts neuron'], [1948, 'Shannon: information'], [1958, 'perceptron'], [1986, 'backprop'], [2012, 'AlexNet'],
+	[2017, 'Transformer'], [2020, 'scaling laws'], [2022, 'induction heads'], [2024, 'Golden Gate feature'], [2025, 'attribution graphs'], [2026, 'theory of deep learning?']]; // dated landmarks
 export const Milestones: React.FC<BodyProps> = ({local, w, h, accent}) => {
 	const ms = MILESTONES;
 	const row = h / ms.length; // one line per landmark
